@@ -1,0 +1,73 @@
+Virtual Machine Project Outline
+=================================
+
+Phase 1: Initial Planning
+--------------------------
+[ ] Understand requirements and osX instruction set.
+[ ] Decide on memory layout and structure (Code, Static Data, Heap, Stack).
+[ ] Plan registers and their roles (e.g., PC, SP, Z).
+[ ] Set up development environment (e.g., Java, IDE, version control).
+[ ] Familiarize yourself with provided tools and osX assembler.
+
+Phase 2: Core Components
+-------------------------
+2.1 Memory Model
+[ ] Implement memory as an array or segmented structure.
+[ ] Divide memory into Code, Static Data, Heap, and Stack segments.
+[ ] Write utility methods for reading/writing memory with boundary checks.
+
+2.2 Registers
+[ ] Create an array or structure for registers.
+[ ] Define constants for special-purpose registers (PC, SP, Z).
+[ ] Write utility methods for register access (getRegister, setRegister).
+
+2.3 Loader
+[ ] Implement file reading to load `.osx` bytecode.
+[ ] Parse and validate file headers.
+[ ] Load instructions into the Code Segment.
+[ ] Initialize PC to the first instruction address.
+
+2.4 Instruction Set
+[ ] Implement handlers for arithmetic instructions (ADD, SUB, etc.).
+[ ] Implement logical instructions (AND, CMP, ORR, etc.).
+[ ] Implement branching instructions (BNE, BEQ, etc.).
+[ ] Implement data movement instructions (MOV, LDR, STR, etc.).
+[ ] Implement interrupt instructions (SWI).
+
+2.5 Fetch-Decode-Execute Cycle
+[ ] Write a loop to simulate the instruction cycle:
+    [ ] Fetch instructions using PC.
+    [ ] Decode instructions and operands.
+    [ ] Execute instructions and update PC.
+
+Phase 3: Shell Interface
+-------------------------
+[ ] Implement shell interface using Java's Scanner or BufferedReader.
+[ ] Add commands:
+    [ ] load - Load osX program into memory.
+    [ ] run - Execute loaded program.
+    [ ] coredump - Dump memory and registers for debugging.
+    [ ] errordump - Display error details if execution fails.
+
+Phase 4: Debugging and Testing
+------------------------------
+[ ] Write `.asm` programs for testing:
+    [ ] Include basic cases.
+    [ ] Test edge cases and invalid instructions.
+[ ] Implement logging for debugging (memory, registers, errors).
+[ ] Add `coredump` functionality for debugging memory and state.
+[ ] Validate outputs against expected results.
+
+Phase 5: User and Kernel Modes
+------------------------------
+[ ] Add a mode bit to differentiate user and kernel modes.
+[ ] Restrict certain operations in user mode.
+[ ] Implement system calls using interrupts (SWI).
+
+Phase 6: Documentation and Submission
+--------------------------------------
+[ ] Write a README with usage instructions and design details.
+[ ] Create diagrams:
+    [ ] Architecture Diagram (system and memory layout).
+    [ ] Class Diagram (code structure and relationships).
+[ ] Perform final testing and ensure milestone requirements are met.

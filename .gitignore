@@ -8,3 +8,5 @@ out/
 
 ### Other ###
 osx_mac
+*.xml
+*.iml

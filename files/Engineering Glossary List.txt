@@ -1,0 +1,22 @@
+﻿Engineering Glossary Translation List
+
+Project			Virtual Machine Operating System
+Document Number	UVU-CS-VMOS-2017
+Author
+Revision		00
+Approved by		Jingpeng Tang
+Status			Draft
+
+DEFINITIONs
+
+1. SWI
+      Definition: Software Interrupt 
+      Supporting Information:
+      	0 - Standard input
+      	1 - Standard output
+      	2 - Standard error 
+      
+
+
+
+
