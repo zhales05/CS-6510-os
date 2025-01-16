@@ -2,8 +2,7 @@
 Operating System for CS-6510 Operating System Design
 
 # Instructions
-Compile with javax Main.java  
-Run with java Main
+Run the program to access the custom shell. 
 
 # Assemble
 Create valid assembly code file like test.asm
