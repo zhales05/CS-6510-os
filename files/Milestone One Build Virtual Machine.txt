@@ -53,13 +53,13 @@ For more details see Appendix.
 
 Details:
 (1) Write a Virtual Machine (VM) that can execute your osX byte code. You will need to load the bytecode (.osx file) into memory before you can begin to execute code.
-* Hardware: CPU, register, memory, clock, cash, etc. Add hardware as needed as the project evolves. 
-You need to decide the Memory Layout first. There are a few major options to consider. Pick one solution or the other. Don't Mix them together that is not a solution. That is a MESS! Just make a choice a stick to it! Don't waffle that just wastes time. 
+* hardware.Hardware: CPU, register, memory, clock, cash, etc. Add hardware as needed as the project evolves.
+You need to decide the hardware.Memory Layout first. There are a few major options to consider. Pick one solution or the other. Don't Mix them together that is not a solution. That is a MESS! Just make a choice a stick to it! Don't waffle that just wastes time.
 • Starting with Code first makes it easy to determine your initial PC (PC=0).
 • Starting with Static Data first seems to be more readable than the inverse.
 * Data structure: array, stack, heap, etc. 
 
-Real Memory Layout
+Real hardware.Memory Layout
                     
 
  
@@ -91,7 +91,7 @@ switch(byte) {
 Simulate the basic fetch-decode-execute instruction cycle includes fetch the instruction, decode the instruction, fetch operand, execute the instruction. You can use a while-statement and a switch-statement. Increment the Cycle by one for each instruction cycle. 
 
 Example:
-Registers are stored in the array reg[]; Memory is in the array mem[]. In pseudo code you can have something like the following:
+Registers are stored in the array reg[]; hardware.Memory is in the array mem[]. In pseudo code you can have something like the following:
 
 PC = Beginning_Address;
 Running = True;
@@ -145,4 +145,31 @@ Thoughts:
 (4) Should you chose a layered approach, modules approach, microkernel approach, or hybrid approach? Which one do you choose? How do you design and implement it?  This is critical in architecture design, and is one of the critical factors that determines whether your project will success or fail.  
 
 Acceptance Testing 
-1shell52load -v program.osx, memory model 203run -v program.osx, fetch-decode-execution 204coredump -v program.osx105errordump -v program.osx55read me, engineering glossary list107Architecture diagram (system, memory), class diagram108Test cases109User mode and kernel mode design and implementation10
+1
+shell
+5
+2
+load -v program.osx, memory model 
+20
+3
+run -v program.osx, fetch-decode-execution 
+20
+4
+coredump -v program.osx
+10
+5
+errordump -v program.osx
+5
+5
+read me, engineering glossary list
+10
+7
+Architecture diagram (system, memory), class diagram
+10
+8
+Test cases
+10
+9
+User mode and kernel mode design and implementation
+10
+

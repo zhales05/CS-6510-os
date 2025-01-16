@@ -175,11 +175,11 @@ Suggested Usage: general purpose Register
 R5 ; General Purpose Register, Encode as 5 
 Suggested Usage: general purpose Register
 SP ; Space Pointer Register, Encode as 6
-Suggested Usage: Point at top of run-time stack, used with SL register to test for Stack-Overflow and Out-Of-Memory.
+Suggested Usage: Point at top of run-time stack, used with SL register to test for Stack-Overflow and Out-Of-hardware.Memory.
 FP ; Frame Pointer Register, Encoded as 7
 Suggested Usage: Point at current frame on run-time stack
 SL ; Stack Limit Register, Encode as 8
-Suggested Usage: Limit the size of the run-time stack, set this register in your VM to the byteSize value stored as the first value in the osX byte file. Can be used to test for Stack-Overflow and Out-Of-Memory
+Suggested Usage: Limit the size of the run-time stack, set this register in your VM to the byteSize value stored as the first value in the osX byte file. Can be used to test for Stack-Overflow and Out-Of-hardware.Memory
 Z ; Flag Register, Encode as 9
 Suggested Usage: Set when CMP instruction is run, used by conditional branch instructions
 SB ; Stack Base Register, Encode as 10

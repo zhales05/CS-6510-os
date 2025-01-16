@@ -3,10 +3,14 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
+# IntelliJ IDEA project files
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+
 ### Mac OS ###
 .DS_Store
 
 ### Other ###
-osx_mac
 *.xml
 *.iml
