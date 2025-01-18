@@ -13,11 +13,11 @@ import java.util.Scanner;
 
 public class VirtualMachine {
     VerboseModeLogger logger = VerboseModeLogger.getInstance();
+    ErrorDump errorDump = ErrorDump.getInstance();
 
     public void startShell() {
         String prompt = "VM-> ";
         Scanner scanner = new Scanner(System.in);
-        ErrorDump errorDump = ErrorDump.getInstance();
         String[] previousCommand = null;
         boolean rerunMode = false;
 
@@ -67,11 +67,12 @@ public class VirtualMachine {
                 case "coredump":
                     System.out.println(Memory.getInstance().coreDump());
                     break;
-                case "clearmemory":
+                case "clearmem":
                     logger.print("Clearing memory");
                     Memory.getInstance().clear();
                     break;
                 case "help":
+                    logger.print("Need some help huh");
                     printHelp();
                     break;
                 case "exit":

@@ -23,11 +23,11 @@ coredump
     - dumps memory contents
 redo
     - re-executes the last command
-clearmemory optional: -v
+clearmem optional: -v
     - clears the memory
-help
+help optional: -v
     - displays help information
-exit
+exit optional: -v
     - exits the shell
 
 DEFINITIONS
