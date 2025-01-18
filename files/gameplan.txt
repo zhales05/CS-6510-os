@@ -11,7 +11,7 @@ Phase 1: Initial Planning
 
 Phase 2: Core Components
 -------------------------
-2.1 hardware.Memory Model
+2.1 java.hardware.Memory Model
 [ ] Implement memory as an array or segmented structure.
 [ ] Divide memory into Code, Static Data, Heap, and Stack segments.
 [ ] Write utility methods for reading/writing memory with boundary checks.

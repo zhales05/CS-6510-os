@@ -1,4 +1,4 @@
-package hardware;
+package vm.hardware;
 
 public interface Hardware {
 

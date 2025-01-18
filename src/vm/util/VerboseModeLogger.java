@@ -1,4 +1,4 @@
-package util;
+package vm.util;
 
 public class VerboseModeLogger {
     private boolean verboseMode = false;

@@ -53,13 +53,13 @@ For more details see Appendix.
 
 Details:
 (1) Write a Virtual Machine (VM) that can execute your osX byte code. You will need to load the bytecode (.osx file) into memory before you can begin to execute code.
-* hardware.Hardware: CPU, register, memory, clock, cash, etc. Add hardware as needed as the project evolves.
-You need to decide the hardware.Memory Layout first. There are a few major options to consider. Pick one solution or the other. Don't Mix them together that is not a solution. That is a MESS! Just make a choice a stick to it! Don't waffle that just wastes time.
+* java.hardware.Hardware: CPU, register, memory, clock, cash, etc. Add java.hardware as needed as the project evolves.
+You need to decide the java.hardware.Memory Layout first. There are a few major options to consider. Pick one solution or the other. Don't Mix them together that is not a solution. That is a MESS! Just make a choice a stick to it! Don't waffle that just wastes time.
 • Starting with Code first makes it easy to determine your initial PC (PC=0).
 • Starting with Static Data first seems to be more readable than the inverse.
 * Data structure: array, stack, heap, etc. 
 
-Real hardware.Memory Layout
+Real java.hardware.Memory Layout
                     
 
  
@@ -91,7 +91,7 @@ switch(byte) {
 Simulate the basic fetch-decode-execute instruction cycle includes fetch the instruction, decode the instruction, fetch operand, execute the instruction. You can use a while-statement and a switch-statement. Increment the Cycle by one for each instruction cycle. 
 
 Example:
-Registers are stored in the array reg[]; hardware.Memory is in the array mem[]. In pseudo code you can have something like the following:
+Registers are stored in the array reg[]; java.hardware.Memory is in the array mem[]. In pseudo code you can have something like the following:
 
 PC = Beginning_Address;
 Running = True;

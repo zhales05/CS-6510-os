@@ -1,6 +1,8 @@
-import hardware.Memory;
-import util.ErrorDump;
-import util.VerboseModeLogger;
+package vm;
+
+import vm.hardware.Memory;
+import vm.util.ErrorDump;
+import vm.util.VerboseModeLogger;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +12,7 @@ import java.util.Scanner;
 
 public class VirtualMachine {
     public void startShell() {
-        final String PROMPT = "MYVM-> ";
+        String prompt = "VM-> ";
         Scanner scanner = new Scanner(System.in);
         ErrorDump errorDump = ErrorDump.getInstance();
         VerboseModeLogger logger = VerboseModeLogger.getInstance();
@@ -18,18 +20,18 @@ public class VirtualMachine {
         boolean rerunMode = false;
 
         while (true) {
-            System.out.print(PROMPT);
+            System.out.print(prompt);
             String userInput = scanner.nextLine();
             String[] inputs = Arrays.stream(userInput.split(" "))
                     .map(String::toLowerCase)
                     .toArray(String[]::new);
 
-            if(inputs.length == 0) {
+            if (inputs.length == 0) {
                 errorDump.logError("No input provided");
             }
 
-            if(inputs[0].equals("rerun")) {
-                if(previousCommand == null || previousCommand.length == 0) {
+            if (inputs[0].equals("rerun")) {
+                if (previousCommand == null) {
                     System.out.println("No previous command to rerun");
                     errorDump.logError("No previous command to rerun");
                     continue;
@@ -46,6 +48,15 @@ public class VirtualMachine {
                     Memory.getInstance().load(readProgram(inputs[1]));
                     break;
                 case "run":
+                    logger.print("Starting run");
+                    Cpu.getInstance().run();
+                    break;
+                case "myvm":
+                    prompt = "MYVM-> ";
+                    break;
+                case "vm":
+                    prompt = "VM-> ";
+                    break;
                 case "errordump":
                     errorDump.printLogs();
                     break;
@@ -65,7 +76,7 @@ public class VirtualMachine {
                     break;
             }
 
-            if(!rerunMode) {
+            if (!rerunMode) {
                 previousCommand = inputs;
             }
         }

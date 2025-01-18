@@ -1,7 +1,8 @@
-package hardware;
+package vm.hardware;
 
-import util.ErrorDump;
-import util.VerboseModeLogger;
+import vm.Cpu;
+import vm.util.ErrorDump;
+import vm.util.VerboseModeLogger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -10,9 +11,8 @@ import java.util.Arrays;
 public class Memory implements Hardware {
     private static final int TOTAL_SIZE = 100000;
     private static Memory instance;
-
+    private static final Cpu cpu = Cpu.getInstance();
     private final byte[] memory = new byte[TOTAL_SIZE];
-    private int pc = 0;
 
     private final VerboseModeLogger logger = VerboseModeLogger.getInstance();
 
@@ -27,18 +27,29 @@ public class Memory implements Hardware {
         return instance;
     }
 
-    public void load(byte[] program) {
-        ByteBuffer bb = ByteBuffer.wrap(program);
-        bb.order(ByteOrder.LITTLE_ENDIAN);
+    public byte getByte() {
+        return memory[cpu.getProgramCounter()];
+    }
 
+    public int getInt(){
+        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, cpu.getProgramCounter(), cpu.getProgramCounter() + 4));
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        return bb.getInt();
+    }
+
+
+    public void load(byte[] program) {
         if(!validateLoad(program)){
             return;
         }
 
+        ByteBuffer bb = ByteBuffer.wrap(program);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+
         int programSize = bb.getInt();
         logger.print("Program size: " + programSize);
-        pc = bb.getInt();
-        logger.print("PC: " + pc);
+        cpu.setProgramCounter(bb.getInt());
+        logger.print("PC: " + cpu.getProgramCounter());
         int index = bb.getInt();
         logger.print("Index: " + index);
 
@@ -48,18 +59,25 @@ public class Memory implements Hardware {
         }
 
         logger.print("Copying program to memory");
-        System.arraycopy(program, 12, memory, pc, programSize);
+        System.arraycopy(program, 12, memory, index, programSize);
         logger.print(coreDump());
-        index = programSize;
+        index += programSize;
+       // index += index % 6;
+        memory[index++] = (byte) 99;
     }
 
     private boolean validateLoad(byte[] program) {
+        if(program == null) {
+            ErrorDump.getInstance().logError("Program is null");
+            return false;
+        }
+
         if(program.length < 12) {
             ErrorDump.getInstance().logError("Program size is less than 12 bytes");
             return false;
         }
 
-        if(pc > 0) {
+        if(cpu.getProgramCounter() > 0) {
             ErrorDump.getInstance().logError("Program already loaded. Please call clear.");
             return false;
         }
@@ -69,7 +87,7 @@ public class Memory implements Hardware {
 
     public void clear() {
         Arrays.fill(memory, (byte) 0);
-        pc = 0;
+        cpu.setProgramCounter(0);
         logger.print("Memory cleared");
     }
 
