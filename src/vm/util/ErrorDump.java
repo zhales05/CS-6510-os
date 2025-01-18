@@ -7,7 +7,7 @@ public class ErrorDump {
     private static ErrorDump instance;
     VerboseModeLogger logger = VerboseModeLogger.getInstance();
 
-    private List<String> logs = new ArrayList<>();
+    private final List<String> logs = new ArrayList<>();
 
     private ErrorDump() {
     }

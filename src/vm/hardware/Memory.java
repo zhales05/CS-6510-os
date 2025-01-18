@@ -76,7 +76,6 @@ public class Memory implements Hardware {
         logger.print("Copying program to memory");
         System.arraycopy(program, 12, memory, index, programSize);
         index += programSize;
-       // index += index % 6;
         memory[index++] = (byte) Cpu.END;
         logger.print(coreDump());
     }

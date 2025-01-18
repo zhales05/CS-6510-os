@@ -12,8 +12,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class VirtualMachine {
-    VerboseModeLogger logger = VerboseModeLogger.getInstance();
-    ErrorDump errorDump = ErrorDump.getInstance();
+    static VerboseModeLogger logger = VerboseModeLogger.getInstance();
+    static ErrorDump errorDump = ErrorDump.getInstance();
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -95,7 +95,7 @@ public class VirtualMachine {
         try {
             return Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
-            ErrorDump.getInstance().logError("Error reading file: " + filePath);
+            errorDump.logError("Error reading file: " + filePath + ": \n" + e.getMessage());
             return null;
         }
     }
@@ -110,7 +110,7 @@ public class VirtualMachine {
             String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             System.out.println(content);
         } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            errorDump.logError("Error reading file: " + FILE_PATH + ": \n" + e.getMessage());
         }
     }
 
