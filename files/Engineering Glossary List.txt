@@ -7,16 +7,29 @@ Revision		00
 Approved by		Jingpeng Tang
 Status			Draft
 
-DEFINITIONs
+GENERAL INFORMATION
+Shell is not case sensitive.
+
+COMMANDS
+load file.osx optional: -v
+run file.osx optional: -v
+myvm
+    - changes shell to MYVM
+vm
+    - changes shell to VM
+errordump
+    - dumps error messages
+coredump
+    - dumps memory contents
+redo
+    - re-executes the last command
+clearmemory optional: -v
+    - clears the memory
+help
+    - displays help information
+exit
+    - exits the shell
+
+DEFINITIONS
 
 1. SWI
-      Definition: Software Interrupt 
-      Supporting Information:
-      	0 - Standard input
-      	1 - Standard output
-      	2 - Standard error 
-      
-
-
-
-

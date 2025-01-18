@@ -1,5 +1,6 @@
 package vm;
 
+import vm.hardware.Cpu;
 import vm.hardware.Memory;
 import vm.util.ErrorDump;
 import vm.util.VerboseModeLogger;
@@ -11,11 +12,12 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class VirtualMachine {
+    VerboseModeLogger logger = VerboseModeLogger.getInstance();
+
     public void startShell() {
         String prompt = "VM-> ";
         Scanner scanner = new Scanner(System.in);
         ErrorDump errorDump = ErrorDump.getInstance();
-        VerboseModeLogger logger = VerboseModeLogger.getInstance();
         String[] previousCommand = null;
         boolean rerunMode = false;
 
@@ -28,19 +30,21 @@ public class VirtualMachine {
 
             if (inputs.length == 0) {
                 errorDump.logError("No input provided");
+                continue;
             }
 
-            if (inputs[0].equals("rerun")) {
+            if (inputs[0].equals("redo")) {
                 if (previousCommand == null) {
-                    System.out.println("No previous command to rerun");
-                    errorDump.logError("No previous command to rerun");
+                    System.out.println("No previous command to redo");
+                    errorDump.logError("No previous command to redo");
                     continue;
                 }
+
+                logger.print("Redo: " + Arrays.toString(previousCommand));
                 inputs = previousCommand;
             }
 
-            //TODO: need to handle verbose mode when there is only two inputs "clear -v"
-            logger.setVerboseMode(inputs.length > 2 && inputs[2].equals("-v"));
+            logger.setVerboseMode(isVerboseMode(inputs));
 
             switch (inputs[0]) {
                 case "load":
@@ -63,12 +67,15 @@ public class VirtualMachine {
                 case "coredump":
                     System.out.println(Memory.getInstance().coreDump());
                     break;
-                case "clear":
+                case "clearmemory":
                     logger.print("Clearing memory");
                     Memory.getInstance().clear();
                     break;
-                case "stop":
-                    logger.print("Stopping VM");
+                case "help":
+                    printHelp();
+                    break;
+                case "exit":
+                    logger.print("Exiting VM");
                     scanner.close();
                     return;
                 default:
@@ -82,12 +89,27 @@ public class VirtualMachine {
         }
     }
 
+
     private byte[] readProgram(String filePath) {
         try {
             return Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
             ErrorDump.getInstance().logError("Error reading file: " + filePath);
             return null;
+        }
+    }
+
+    private boolean isVerboseMode(String[] inputs) {
+        return inputs[inputs.length - 1].equals("-v");
+    }
+
+    public static void printHelp() {
+        final String FILE_PATH = "files/Engineering Glossary List.txt";
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
+            System.out.println(content);
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
         }
     }
 
