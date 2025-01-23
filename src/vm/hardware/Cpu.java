@@ -10,6 +10,8 @@ public class Cpu implements Hardware {
     private final ErrorDump errorDump = ErrorDump.getInstance();
     private final Memory memory = Memory.getInstance();
 
+    private boolean kernelMode = false;
+
     private final int[] registers = new int[12];
 
     static final int ADD = 16;
@@ -32,6 +34,13 @@ public class Cpu implements Hardware {
         registers[11] += val;
     }
 
+    public boolean isKernelMode() {
+        return kernelMode;
+    }
+
+    public void setKernelMode(boolean kernelMode) {
+        this.kernelMode = kernelMode;
+    }
 
     public static Cpu getInstance() {
         if (instance == null) {
@@ -61,10 +70,9 @@ public class Cpu implements Hardware {
                     addToPC(2);
                     registers[resultR] = registers[val1R] + registers[val2R];
 
-                    logger.print("Adding");
+                    logger.print("ADD");
                     logger.print("Register: " + val1R + " Value: " + registers[val1R]);
                     logger.print("Register: " + val2R + " Value: " + registers[val2R]);
-                    logger.print("Result Register: " + resultR);
                     logger.print(registers[val1R] + " + " + registers[val2R] + " = " + registers[resultR]);
                     break;
                 case SUB:
@@ -78,7 +86,6 @@ public class Cpu implements Hardware {
                     logger.print("SUB");
                     logger.print("Register: " + sub1R + " Value: " + registers[sub1R]);
                     logger.print("Register: " + sub2R + " Value: " + registers[sub2R]);
-                    logger.print("Result Register: " + subR);
                     logger.print(registers[sub1R] + " - " + registers[sub2R] + " = " + registers[subR]);
                     break;
                 case END:

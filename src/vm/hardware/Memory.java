@@ -61,12 +61,20 @@ public class Memory implements Hardware {
         ByteBuffer bb = ByteBuffer.wrap(program);
         bb.order(ByteOrder.LITTLE_ENDIAN);
 
+        //program size is first int in the program header
         int programSize = bb.getInt();
         logger.print("Program size: " + programSize);
+
+        //program counter(pc) is second int in the program header
         cpu.setProgramCounter(bb.getInt());
-        logger.print("PC: " + cpu.getProgramCounter());
+
+        //index is third int in the program header
         index += bb.getInt();
         logger.print("Index: " + index);
+
+        //pc needs to be adjusted for index
+        cpu.addToPC(index);
+        logger.print("PC: " + cpu.getProgramCounter());
 
         if (programSize + index > TOTAL_SIZE) {
             ErrorDump.getInstance().logError("Program size exceeds memory capacity");
@@ -97,6 +105,7 @@ public class Memory implements Hardware {
     public void clear() {
         Arrays.fill(memory, (byte) 0);
         cpu.setProgramCounter(0);
+        index = 0;
         logger.print("Memory cleared");
     }
 
