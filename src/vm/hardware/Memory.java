@@ -112,10 +112,10 @@ public class Memory implements Hardware {
     public String coreDump() {
         StringBuilder sb = new StringBuilder();
         sb.append("Core Dump:\n");
-        for (int i = 0; i < index; i++) {
+        for (int i = cpu.getProgramCounter(); i < index; i++) {
             sb.append(memory[i]);
             sb.append(" ");
-            if(i % 6 == 0 && i != 0){
+            if ((i - cpu.getProgramCounter() + 1) % 6 == 0) {
                 sb.append("\n");
             }
         }
