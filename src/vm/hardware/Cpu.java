@@ -16,6 +16,9 @@ public class Cpu implements Hardware {
 
     static final int ADD = 16;
     static final int SUB = 17;
+    static final int MUL = 18;
+    static final int DIV = 19;
+    static final int SWI = 20;
     static final int MVI = 22;
     static final int END = 99;
 
@@ -87,7 +90,36 @@ public class Cpu implements Hardware {
                     logger.print("Register: " + sub1R + " Value: " + registers[sub1R]);
                     logger.print("Register: " + sub2R + " Value: " + registers[sub2R]);
                     logger.print(registers[sub1R] + " - " + registers[sub2R] + " = " + registers[subR]);
+                case MUL:
+                    int mulR = memory.getByte();
+                    int mul1R = memory.getByte();
+                    int mul2R = memory.getByte();
+
+                    addToPC(2);
+                    registers[mulR] = registers[mul1R] * registers[mul2R];
+
+                    logger.print("MUL");
+                    logger.print("Register: " + mul1R + " Value: " + registers[mul1R]);
+                    logger.print("Register: " + mul2R + " Value: " + registers[mul2R]);
+                    logger.print(registers[mul1R] + " * " + registers[mul2R] + " = " + registers[mulR]);
                     break;
+                case DIV:
+                    int divR = memory.getByte();
+                    int div1R = memory.getByte();
+                    int div2R = memory.getByte();
+
+                    addToPC(2);
+                    registers[divR] = registers[div1R] / registers[div2R];
+
+                    logger.print("DIV");
+                    logger.print("Register: " + div1R + " Value: " + registers[div1R]);
+                    logger.print("Register: " + div2R + " Value: " + registers[div2R]);
+                    logger.print(registers[div1R] + " / " + registers[div2R] + " = " + registers[divR]);
+                    break;
+                    case SWI:
+                        swi();
+                        logger.print("DIV");
+                        break;
                 case END:
                     logger.print("Program ended");
                     return;
@@ -97,5 +129,10 @@ public class Cpu implements Hardware {
                     return;
             }
         }
+    }
+
+    private void swi() {
+        //future implementation of switch statement will go here
+        logger.print("Not implemented");
     }
 }
