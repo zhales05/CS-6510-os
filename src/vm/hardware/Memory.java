@@ -1,7 +1,7 @@
 package vm.hardware;
 
-import vm.util.ErrorDump;
-import vm.util.VerboseModeLogger;
+import os.util.ErrorDump;
+import os.util.VerboseModeLogger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

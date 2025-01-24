@@ -2,8 +2,8 @@ package vm;
 
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
-import vm.util.ErrorDump;
-import vm.util.VerboseModeLogger;
+import os.util.ErrorDump;
+import os.util.VerboseModeLogger;
 
 import java.io.IOException;
 import java.nio.file.Files;
