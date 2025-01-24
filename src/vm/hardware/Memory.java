@@ -17,6 +17,8 @@ public class Memory implements Hardware {
     private final byte[] memory = new byte[TOTAL_SIZE];
     private int index = 0;
 
+    private int codeStart = 0;
+
     private Memory() {
     }
 
@@ -87,6 +89,9 @@ public class Memory implements Hardware {
         cpu.addToPC(index);
         logger.print("PC: " + cpu.getProgramCounter());
 
+        // Temporary fix for milestone 1
+        codeStart = cpu.getProgramCounter();
+
         if (programSize + index > TOTAL_SIZE) {
             ErrorDump.getInstance().logError("Program size exceeds memory capacity");
             return;
@@ -123,7 +128,7 @@ public class Memory implements Hardware {
     public String coreDump() {
         StringBuilder sb = new StringBuilder();
         sb.append("Core Dump:\n");
-        for (int i = cpu.getProgramCounter(); i < index; i++) {
+        for (int i = codeStart; i < index; i++) {
             sb.append(memory[i]);
             sb.append(" ");
             if ((i - cpu.getProgramCounter() + 1) % 6 == 0) {
