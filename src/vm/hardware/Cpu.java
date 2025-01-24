@@ -14,6 +14,9 @@ public class Cpu implements Hardware {
 
     private final int[] registers = new int[12];
 
+    static final int MOV = 1;
+    static final int STR = 2;
+    static final int BX = 6;
     static final int ADD = 16;
     static final int SUB = 17;
     static final int MUL = 18;
@@ -59,14 +62,7 @@ public class Cpu implements Hardware {
         while (true) {
             int curr = memory.getByte();
             switch (curr) {
-                case MVI:
-                    int r = memory.getByte();
-                    int val = memory.getInt();
-                    registers[r] = val;
 
-                    logger.print("MVI");
-                    logger.print("Register: " + r + " Value: " + val);
-                    break;
                 case ADD:
                     int resultR = memory.getByte();
                     int val1R = memory.getByte();
@@ -92,6 +88,7 @@ public class Cpu implements Hardware {
                     logger.print("Register: " + sub1R + " Value: " + registers[sub1R]);
                     logger.print("Register: " + sub2R + " Value: " + registers[sub2R]);
                     logger.print(registers[sub1R] + " - " + registers[sub2R] + " = " + registers[subR]);
+                    break;
                 case MUL:
                     int mulR = memory.getByte();
                     int mul1R = memory.getByte();
@@ -118,10 +115,37 @@ public class Cpu implements Hardware {
                     logger.print("Register: " + div2R + " Value: " + registers[div2R]);
                     logger.print(registers[div1R] + " / " + registers[div2R] + " = " + registers[divR]);
                     break;
-                    case SWI:
-                        swi();
-                        logger.print("DIV");
-                        break;
+                case SWI:
+                    swi();
+                    logger.print("SWI");
+                    break;
+                case MVI:
+                    int r = memory.getByte();
+                    int val = memory.getInt();
+                    registers[r] = val;
+
+                    logger.print("MVI");
+                    logger.print("Register: " + r + " Value: " + val);
+                    break;
+                case MOV:
+                    int dest = memory.getByte();
+                    int src = memory.getByte();
+                    registers[dest] = registers[src];
+                    addToPC(3);
+                    logger.print("MOV");
+                    logger.print("Register: " + src + " Value: " + registers[src]);
+                    logger.print("Register: " + dest + " Value: " + registers[dest]);
+                    break;
+                case STR:
+                    int destR = memory.getByte();
+                    int srcR = memory.getByte();
+                    memory.setInt((byte) registers[srcR], registers[destR]);
+                    addToPC(3);
+                    logger.print("STR");
+                    logger.print("Register: " + srcR + " Value: " + registers[srcR]);
+                    logger.print("Register: " + destR + " Value: " + registers[destR]);
+                    break;
+
                 case END:
                     logger.print("Program ended");
                     return;
