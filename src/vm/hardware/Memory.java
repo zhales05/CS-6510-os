@@ -42,6 +42,17 @@ public class Memory implements Hardware {
         return i;
     }
 
+    public void setInt(byte location, int value) {
+        ByteBuffer bb = ByteBuffer.allocate(4);
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        bb.putInt(value);
+        System.arraycopy(bb.array(), 0, memory, location, 4);
+    }
+
+    public void setByte(byte location, byte value) {
+        memory[location] = value;
+    }
+
     public byte peakByte() {
         return memory[cpu.getProgramCounter()];
     }
