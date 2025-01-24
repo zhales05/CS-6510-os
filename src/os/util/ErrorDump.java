@@ -1,4 +1,4 @@
-package vm.util;
+package os.util;
 
 import java.util.ArrayList;
 import java.util.List;

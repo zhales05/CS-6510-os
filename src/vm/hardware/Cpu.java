@@ -1,7 +1,7 @@
 package vm.hardware;
 
-import vm.util.ErrorDump;
-import vm.util.VerboseModeLogger;
+import os.util.ErrorDump;
+import os.util.VerboseModeLogger;
 
 public class Cpu implements Hardware {
     private static Cpu instance;
@@ -54,6 +54,8 @@ public class Cpu implements Hardware {
     }
 
     public void run() {
+        logger.print(kernelMode ? "Kernel mode" : "User mode");
+
         while (true) {
             int curr = memory.getByte();
             switch (curr) {
