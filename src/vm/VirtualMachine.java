@@ -1,117 +1,98 @@
 package vm;
 
-import vm.hardware.Cpu;
-import vm.hardware.Memory;
-import vm.util.ErrorDump;
-import vm.util.VerboseModeLogger;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class VirtualMachine {
-    static VerboseModeLogger logger = VerboseModeLogger.getInstance();
-    static ErrorDump errorDump = ErrorDump.getInstance();
+    private static final int MEMORY_SIZE = 1024; // Example size of memory
+    private byte[] memory = new byte[MEMORY_SIZE];
+    private int[] registers = new int[16]; // Example register count
+    private int pc = 0; // Program Counter
+    private boolean running = false;
 
-    public void startShell() {
-        String prompt = "VM-> ";
-        Scanner scanner = new Scanner(System.in);
-        String[] previousCommand = null;
-        boolean rerunMode = false;
-
-        while (true) {
-            System.out.print(prompt);
-            String userInput = scanner.nextLine();
-            String[] inputs = Arrays.stream(userInput.split(" "))
-                    .map(String::toLowerCase)
-                    .toArray(String[]::new);
-
-            if (inputs.length == 0) {
-                errorDump.logError("No input provided");
-                continue;
-            }
-
-            if (inputs[0].equals("redo")) {
-                if (previousCommand == null) {
-                    System.out.println("No previous command to redo");
-                    errorDump.logError("No previous command to redo");
-                    continue;
+    public void load(String filename) throws IOException {
+        // Read the .osx file into memory
+        try (FileInputStream fis = new FileInputStream(filename)) {
+            int address = 0;
+            int data;
+            while ((data = fis.read()) != -1) {
+                if (address >= MEMORY_SIZE) {
+                    throw new IOException("Program exceeds memory size!");
                 }
-
-                logger.print("Redo: " + Arrays.toString(previousCommand));
-                inputs = previousCommand;
+                memory[address++] = (byte) data;
             }
-
-            logger.setVerboseMode(isVerboseMode(inputs));
-
-            switch (inputs[0]) {
-                case "load":
-                    logger.print("Starting load");
-                    Memory.getInstance().load(readProgram(inputs[1]));
-                    break;
-                case "run":
-                    logger.print("Starting run");
-                    Cpu.getInstance().run();
-                    break;
-                case "myvm":
-                    prompt = "MYVM-> ";
-                    break;
-                case "vm":
-                    prompt = "VM-> ";
-                    break;
-                case "errordump":
-                    errorDump.printLogs();
-                    break;
-                case "coredump":
-                    System.out.println(Memory.getInstance().coreDump());
-                    break;
-                case "clearmem":
-                    logger.print("Clearing memory");
-                    Memory.getInstance().clear();
-                    break;
-                case "help":
-                    logger.print("Need some help huh");
-                    printHelp();
-                    break;
-                case "exit":
-                    logger.print("Exiting VM");
-                    scanner.close();
-                    return;
-                default:
-                    System.out.println("Unknown input -  please try again.");
-                    break;
-            }
-
-            if (!rerunMode) {
-                previousCommand = inputs;
-            }
+            System.out.println("Program loaded successfully into memory.");
         }
     }
 
+    public void run() {
+        running = true;
+        System.out.println("Starting execution...");
+        while (running) {
+            try {
+                fetchDecodeExecute();
+            } catch (Exception e) {
+                System.err.println("Execution error: " + e.getMessage());
+                running = false;
+            }
+        }
+        System.out.println("Execution finished.");
+    }
 
-    private byte[] readProgram(String filePath) {
-        try {
-            return Files.readAllBytes(Paths.get(filePath));
+    private void fetchDecodeExecute() {
+        // Fetch: Get the instruction at the current PC
+        byte instruction = memory[pc++];
+
+        // Decode and Execute
+        switch (instruction) {
+            case 0x10: // Example: ADD instruction
+                int reg1 = memory[pc++] & 0xFF;
+                int reg2 = memory[pc++] & 0xFF;
+                int reg3 = memory[pc++] & 0xFF;
+                registers[reg1] = registers[reg2] + registers[reg3];
+                break;
+
+            case 0x20: // Example: MOV instruction
+                reg1 = memory[pc++] & 0xFF;
+                int value = memory[pc++] & 0xFF;
+                registers[reg1] = value;
+                break;
+
+            case 0x30: // Example: HALT instruction
+                running = false;
+                break;
+
+            default:
+                throw new IllegalArgumentException("Unknown instruction: " + instruction);
+        }
+    }
+
+    public void coreDump(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.write("Memory Dump:\n");
+            for (int i = 0; i < MEMORY_SIZE; i++) {
+                writer.write(String.format("%02X ", memory[i]));
+                if ((i + 1) % 16 == 0) {
+                    writer.write("\n");
+                }
+            }
+            writer.write("\nRegisters:\n");
+            for (int i = 0; i < registers.length; i++) {
+                writer.write(String.format("R%d: %d\n", i, registers[i]));
+            }
+            System.out.println("Core dump saved to " + filename);
         } catch (IOException e) {
-            errorDump.logError("Error reading file: " + filePath + ": \n" + e.getMessage());
-            return null;
+            System.err.println("Error during core dump: " + e.getMessage());
         }
     }
 
-    private boolean isVerboseMode(String[] inputs) {
-        return inputs[inputs.length - 1].equals("-v");
-    }
-
-    public static void printHelp() {
-        final String FILE_PATH = "files/Engineering Glossary List.txt";
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
-            System.out.println(content);
+    public void errorDump(String filename) {
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.write("Error log (if applicable):\n");
+            // You can add logic to write error information here
+            System.out.println("Error dump saved to " + filename);
         } catch (IOException e) {
-            errorDump.logError("Error reading file: " + FILE_PATH + ": \n" + e.getMessage());
+            System.err.println("Error during error dump: " + e.getMessage());
         }
     }
-
 }
