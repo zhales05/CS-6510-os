@@ -57,7 +57,7 @@ public class Cpu implements Hardware {
     }
 
     public void run() {
-        logger.print(kernelMode ? "Kernel mode" : "User mode");
+        logger.print(isKernelMode() ? "Kernel mode" : "User mode");
 
         while (true) {
             int curr = memory.getByte();
