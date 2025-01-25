@@ -3,7 +3,7 @@ package vm;
 import java.io.*;
 import java.util.*;
 
-public class Main {
+public class OS {
     private static VirtualMachine vm = new VirtualMachine();
 
     public static void main(String[] args) {
@@ -33,6 +33,9 @@ public class Main {
                     case "errordump":
                         handleErrorDumpCommand(command);
                         break;
+                    case "exit":
+                        System.out.println("Exiting MYVM. Goodbye!");
+                        return;
                     default:
                         System.out.println("Unknown command: " + command[0]);
                 }
@@ -44,7 +47,12 @@ public class Main {
         if (command.length != 3 || !command[1].equals("-v")) {
             System.out.println("Usage: load -v <filename>");
         } else {
-            loadProgram(command[2]);
+            try {
+                vm.load(command[2]);
+                System.out.println("Program loaded successfully.");
+            } catch (IOException e) {
+                System.out.println("Error loading program: " + e.getMessage());
+            }
         }
     }
 
@@ -52,7 +60,12 @@ public class Main {
         if (command.length != 3 || !command[1].equals("-v")) {
             System.out.println("Usage: run -v <filename>");
         } else {
-            runProgram(command[2]);
+            try {
+                vm.run();
+                System.out.println("Program executed successfully.");
+            } catch (Exception e) {
+                System.out.println("Error during execution: " + e.getMessage());
+            }
         }
     }
 
@@ -70,13 +83,5 @@ public class Main {
         } else {
             vm.errorDump(command[2]);
         }
-    }
-
-    private static void loadProgram(String filename) {
-        // Implement the logic to load the program
-    }
-
-    private static void runProgram(String filename) {
-        // Implement the logic to run the program
     }
 }
