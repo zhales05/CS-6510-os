@@ -4,7 +4,7 @@ RESULT: .WORD 0        ; Define memory to store the result (initially 0)
 CHAR1: .BYTE 'A'       ; Define a memory location with value 'A'
 SPACE:  .SPACE 10      ; Define 100 bytes of space
 
-        MVI R1 10 ; Load the address of DATA1 into R1
-        MVI R2 11    ; Load the value of 11 into R1
-        ADD R3 R1 R2 ; Add R1 and R2, store the result in R3
+        MVI R1 1 ; Load the value of 1 into R1
+        MVI R2 2    ; Load the value of 2 into R1
+        ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
         SUB R4 R1 R2 ; Subtract R2 from R1, store the result in R4

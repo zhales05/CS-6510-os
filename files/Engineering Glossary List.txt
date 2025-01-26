@@ -2,13 +2,14 @@
 
 Project			Virtual Machine Operating System
 Document Number	UVU-CS-VMOS-2017
-Author
+Author          Stephen Hales, Conner Fogg
 Revision		00
 Approved by		Jingpeng Tang
 Status			Draft
 
 GENERAL INFORMATION
 Shell is not case sensitive.
+-v command can only be at the end of the input command.
 
 COMMANDS
 load file.osx optional: -v
@@ -21,7 +22,7 @@ errordump
     - dumps error messages
 coredump
     - dumps memory contents
-redo
+redo optional: -v
     - re-executes the last command
 clearmem optional: -v
     - clears the memory
@@ -33,3 +34,4 @@ exit optional: -v
 DEFINITIONS
 
 1. SWI
+    0 - prints the value of the register 0
