@@ -1,9 +1,11 @@
 package vm;
 
 
+import os.OperatingSystem;
+
 public class Main {
     public static void main(String[] args) {
-        VirtualMachine vm = new VirtualMachine();
-        vm.startShell();
+        OperatingSystem os = new OperatingSystem();
+        os.startShell();
     }
 }

@@ -1,15 +1,10 @@
 package vm.hardware;
 
-import os.util.ErrorDump;
-import os.util.VerboseModeLogger;
+import os.util.Logging;
 
-public class Cpu implements Hardware {
+public class Cpu implements Hardware, Logging {
     private static Cpu instance;
-
-    private final VerboseModeLogger logger = VerboseModeLogger.getInstance();
-    private final ErrorDump errorDump = ErrorDump.getInstance();
     private final Memory memory = Memory.getInstance();
-
     private boolean kernelMode = false;
 
     private final int[] registers = new int[12];
@@ -57,7 +52,7 @@ public class Cpu implements Hardware {
     }
 
     public void run() {
-        logger.print(isKernelMode() ? "Kernel mode" : "User mode");
+        log(isKernelMode() ? "Kernel mode" : "User mode");
 
         while (true) {
             int curr = memory.getByte();
@@ -71,10 +66,10 @@ public class Cpu implements Hardware {
                     addToPC(2);
                     registers[resultR] = registers[val1R] + registers[val2R];
 
-                    logger.print("ADD");
-                    logger.print("Register: " + val1R + " Value: " + registers[val1R]);
-                    logger.print("Register: " + val2R + " Value: " + registers[val2R]);
-                    logger.print(registers[val1R] + " + " + registers[val2R] + " = " + registers[resultR]);
+                    log("ADD");
+                    log("Register: " + val1R + " Value: " + registers[val1R]);
+                    log("Register: " + val2R + " Value: " + registers[val2R]);
+                    log(registers[val1R] + " + " + registers[val2R] + " = " + registers[resultR]);
                     break;
                 case SUB:
                     int subR = memory.getByte();
@@ -84,10 +79,10 @@ public class Cpu implements Hardware {
                     addToPC(2);
                     registers[subR] = registers[sub1R] - registers[sub2R];
 
-                    logger.print("SUB");
-                    logger.print("Register: " + sub1R + " Value: " + registers[sub1R]);
-                    logger.print("Register: " + sub2R + " Value: " + registers[sub2R]);
-                    logger.print(registers[sub1R] + " - " + registers[sub2R] + " = " + registers[subR]);
+                    log("SUB");
+                    log("Register: " + sub1R + " Value: " + registers[sub1R]);
+                    log("Register: " + sub2R + " Value: " + registers[sub2R]);
+                    log(registers[sub1R] + " - " + registers[sub2R] + " = " + registers[subR]);
                     break;
                 case MUL:
                     int mulR = memory.getByte();
@@ -97,10 +92,10 @@ public class Cpu implements Hardware {
                     addToPC(2);
                     registers[mulR] = registers[mul1R] * registers[mul2R];
 
-                    logger.print("MUL");
-                    logger.print("Register: " + mul1R + " Value: " + registers[mul1R]);
-                    logger.print("Register: " + mul2R + " Value: " + registers[mul2R]);
-                    logger.print(registers[mul1R] + " * " + registers[mul2R] + " = " + registers[mulR]);
+                    log("MUL");
+                    log("Register: " + mul1R + " Value: " + registers[mul1R]);
+                    log("Register: " + mul2R + " Value: " + registers[mul2R]);
+                    log(registers[mul1R] + " * " + registers[mul2R] + " = " + registers[mulR]);
                     break;
                 case DIV:
                     int divR = memory.getByte();
@@ -110,48 +105,48 @@ public class Cpu implements Hardware {
                     addToPC(2);
                     registers[divR] = registers[div1R] / registers[div2R];
 
-                    logger.print("DIV");
-                    logger.print("Register: " + div1R + " Value: " + registers[div1R]);
-                    logger.print("Register: " + div2R + " Value: " + registers[div2R]);
-                    logger.print(registers[div1R] + " / " + registers[div2R] + " = " + registers[divR]);
+                    log("DIV");
+                    log("Register: " + div1R + " Value: " + registers[div1R]);
+                    log("Register: " + div2R + " Value: " + registers[div2R]);
+                    log(registers[div1R] + " / " + registers[div2R] + " = " + registers[divR]);
                     break;
                 case SWI:
                     swi();
-                    logger.print("SWI");
+                    log("SWI");
                     break;
                 case MVI:
                     int r = memory.getByte();
                     int val = memory.getInt();
                     registers[r] = val;
 
-                    logger.print("MVI");
-                    logger.print("Register: " + r + " Value: " + val);
+                    log("MVI");
+                    log("Register: " + r + " Value: " + val);
                     break;
                 case MOV:
                     int dest = memory.getByte();
                     int src = memory.getByte();
                     registers[dest] = registers[src];
                     addToPC(3);
-                    logger.print("MOV");
-                    logger.print("Register: " + src + " Value: " + registers[src]);
-                    logger.print("Register: " + dest + " Value: " + registers[dest]);
+                    log("MOV");
+                    log("Register: " + src + " Value: " + registers[src]);
+                    log("Register: " + dest + " Value: " + registers[dest]);
                     break;
                 case STR:
                     int destR = memory.getByte();
                     int srcR = memory.getByte();
                     memory.setInt((byte) registers[srcR], registers[destR]);
                     addToPC(3);
-                    logger.print("STR");
-                    logger.print("Register: " + srcR + " Value: " + registers[srcR]);
-                    logger.print("Register: " + destR + " Value: " + registers[destR]);
+                    log("STR");
+                    log("Register: " + srcR + " Value: " + registers[srcR]);
+                    log("Register: " + destR + " Value: " + registers[destR]);
                     break;
 
                 case END:
-                    logger.print("Program ended");
+                    log("Program ended");
                     return;
                 default:
-                    logger.print("Invalid instruction");
-                    errorDump.logError("Invalid instruction");
+                    log("Invalid instruction");
+                    logError("Invalid instruction");
                     return;
             }
         }
@@ -159,6 +154,6 @@ public class Cpu implements Hardware {
 
     private void swi() {
         //future implementation of switch statement will go here
-        logger.print("Not implemented");
+        log("Not implemented");
     }
 }
