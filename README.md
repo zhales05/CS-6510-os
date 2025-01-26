@@ -15,8 +15,7 @@ If it is your first time running then do the following:
 * scroll down and allow osx_mac to be run
 
 Now run:
-./osx_mac test.asm osx_mac
-
+./osx_mac test.asm <loading_address>
 
 
 # Basic Commands
@@ -24,5 +23,17 @@ load files/basic_assemble.osx
 load files/add.osx
 
 
+# Test Cases
+## test_1.asm
+```
+Adds two numbers: 1 and 2. They should end up in register 0 as 3.
+It additionally subtracts 2 -1 and stores the result in register 4. We should see 1 in register 4.
+It also calls SWI 0 to print the value of register 0 and register 4.
+```
 
+## test_2.asm
+```
+This test case is intended to test the error logging functionality.
+This file itself is not wrong but it has a loading addess greater than the maximum capacity of the memory.
+``` 
 

@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-public class Memory implements Hardware, Logging {
+public class Memory implements Logging {
     private static final int TOTAL_SIZE = 100000;
     private static Memory instance;
 
@@ -126,10 +126,10 @@ public class Memory implements Hardware, Logging {
     public String coreDump() {
         StringBuilder sb = new StringBuilder();
         sb.append("Core Dump:\n");
-        for (int i = codeStart; i < index; i++) {
+        for (int i = codeStart; i < index-1; i++) {
             sb.append(memory[i]);
             sb.append(" ");
-            if ((i - cpu.getProgramCounter() + 1) % 6 == 0) {
+            if ((i - codeStart + 1) % 6 == 0) {
                 sb.append("\n");
             }
         }
