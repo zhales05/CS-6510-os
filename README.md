@@ -2,8 +2,7 @@
 Operating System for CS-6510 Operating System Design
 
 # Instructions
-Compile with javax Main.java  
-Run with java Main
+Using the terminal, load the osx file into memory and then run the program.
 
 # Assemble
 Create valid assembly code file like test.asm

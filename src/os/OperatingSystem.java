@@ -1,5 +1,6 @@
-package vm;
+package os;
 
+import os.util.Logging;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
 import os.util.ErrorDump;
@@ -11,9 +12,9 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class VirtualMachine {
-    static VerboseModeLogger logger = VerboseModeLogger.getInstance();
-    static ErrorDump errorDump = ErrorDump.getInstance();
+public class OperatingSystem implements Logging {
+    private static final Memory memory = Memory.getInstance();
+    private static final Cpu cpu = Cpu.getInstance();
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -29,31 +30,31 @@ public class VirtualMachine {
                     .toArray(String[]::new);
 
             if (inputs.length == 0) {
-                errorDump.logError("No input provided");
+                logError("No input provided");
                 continue;
             }
 
             if (inputs[0].equals("redo")) {
                 if (previousCommand == null) {
                     System.out.println("No previous command to redo");
-                    errorDump.logError("No previous command to redo");
+                    logError("No previous command to redo");
                     continue;
                 }
 
-                logger.print("Redo: " + Arrays.toString(previousCommand));
+                log("Redo: " + Arrays.toString(previousCommand));
                 inputs = previousCommand;
             }
 
-            logger.setVerboseMode(isVerboseMode(inputs));
+            VerboseModeLogger.getInstance().setVerboseMode(isVerboseMode(inputs));
 
             switch (inputs[0]) {
                 case "load":
-                    logger.print("Starting load");
-                    Memory.getInstance().load(readProgram(inputs[1]));
+                    log("Starting load");
+                    memory.load(readProgram(inputs[1]));
                     break;
                 case "run":
-                    logger.print("Starting run");
-                    Cpu.getInstance().run();
+                    log("Starting run");
+                    cpu.run();
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";
@@ -62,21 +63,21 @@ public class VirtualMachine {
                     prompt = "VM-> ";
                     break;
                 case "errordump":
-                    errorDump.printLogs();
+                    ErrorDump.getInstance().printLogs();
                     break;
                 case "coredump":
-                    System.out.println(Memory.getInstance().coreDump());
+                    System.out.println(memory.coreDump());
                     break;
                 case "clearmem":
-                    logger.print("Clearing memory");
-                    Memory.getInstance().clear();
+                    log("Clearing memory");
+                    memory.clear();
                     break;
                 case "help":
-                    logger.print("Need some help huh");
+                    log("Need some help huh");
                     printHelp();
                     break;
                 case "exit":
-                    logger.print("Exiting VM");
+                    log("Exiting VM");
                     scanner.close();
                     return;
                 default:
@@ -95,7 +96,7 @@ public class VirtualMachine {
         try {
             return Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
-            errorDump.logError("Error reading file: " + filePath + ": \n" + e.getMessage());
+            logError("Error reading file: " + filePath + ": \n" + e.getMessage());
             return null;
         }
     }
@@ -104,13 +105,13 @@ public class VirtualMachine {
         return inputs[inputs.length - 1].equals("-v");
     }
 
-    public static void printHelp() {
+    private void printHelp() {
         final String FILE_PATH = "files/Engineering Glossary List.txt";
         try {
             String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             System.out.println(content);
         } catch (IOException e) {
-            errorDump.logError("Error reading file: " + FILE_PATH + ": \n" + e.getMessage());
+            logError("Error reading file: " + FILE_PATH + ": \n" + e.getMessage());
         }
     }
 

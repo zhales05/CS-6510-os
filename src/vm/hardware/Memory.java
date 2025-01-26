@@ -1,18 +1,16 @@
 package vm.hardware;
 
-import os.util.ErrorDump;
-import os.util.VerboseModeLogger;
+import os.util.Logging;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-public class Memory implements Hardware {
+public class Memory implements Hardware, Logging {
     private static final int TOTAL_SIZE = 100000;
     private static Memory instance;
 
     private static final Cpu cpu = Cpu.getInstance();
-    private static final VerboseModeLogger logger = VerboseModeLogger.getInstance();
 
     private final byte[] memory = new byte[TOTAL_SIZE];
     private int index = 0;
@@ -76,42 +74,42 @@ public class Memory implements Hardware {
 
         //program size is first int in the program header
         int programSize = bb.getInt();
-        logger.print("Program size: " + programSize);
+        log("Program size: " + programSize);
 
         //program counter(pc) is second int in the program header
         cpu.setProgramCounter(bb.getInt());
 
         //index is third int in the program header
         index += bb.getInt();
-        logger.print("Index: " + index);
+        log("Index: " + index);
 
         //pc needs to be adjusted for index
         cpu.addToPC(index);
-        logger.print("PC: " + cpu.getProgramCounter());
+        log("PC: " + cpu.getProgramCounter());
 
         // Temporary fix for milestone 1
         codeStart = cpu.getProgramCounter();
 
         if (programSize + index > TOTAL_SIZE) {
-            ErrorDump.getInstance().logError("Program size exceeds memory capacity");
+            logError("Program size exceeds memory capacity");
             return;
         }
 
-        logger.print("Copying program to memory");
+        log("Copying program to memory");
         System.arraycopy(program, 12, memory, index, programSize);
         index += programSize;
         memory[index++] = (byte) Cpu.END;
-        logger.print(coreDump());
+        log(coreDump());
     }
 
     private boolean validateLoad(byte[] program) {
         if(program == null) {
-            ErrorDump.getInstance().logError("Program is null");
+            logError("Program is null");
             return false;
         }
 
         if(program.length < 12) {
-            ErrorDump.getInstance().logError("Program size is less than 12 bytes");
+            logError("Program size is less than 12 bytes");
             return false;
         }
 
@@ -122,7 +120,7 @@ public class Memory implements Hardware {
         Arrays.fill(memory, (byte) 0);
         cpu.setProgramCounter(0);
         index = 0;
-        logger.print("Memory cleared");
+        log("Memory cleared");
     }
 
     public String coreDump() {
