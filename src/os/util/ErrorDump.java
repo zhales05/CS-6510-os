@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ErrorDump {
     private static ErrorDump instance;
+
     VerboseModeLogger logger = VerboseModeLogger.getInstance();
 
     private final List<String> logs = new ArrayList<>();
