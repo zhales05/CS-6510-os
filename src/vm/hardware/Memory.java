@@ -148,4 +148,7 @@ public class Memory implements Logging {
         return coreDump(pcb.getCodeStart(), pcb.getCodeStart() + pcb.getProgramSize());
     }
 
+    public String coreDump() {
+        return coreDump(0, index);
+    }
 }
