@@ -10,11 +10,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
+    private Map<String, ProcessControlBlock> pcbs = new HashMap<>();
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -56,6 +59,11 @@ public class OperatingSystem implements Logging {
                     log("Starting run");
                     cpu.run();
                     break;
+                case "execute":
+                    log("Starting execute");
+                    //add some error checks here for input
+                    execute(inputs[1]);
+                    break;
                 case "myvm":
                     prompt = "MYVM-> ";
                     break;
@@ -66,7 +74,9 @@ public class OperatingSystem implements Logging {
                     ErrorDump.getInstance().printLogs();
                     break;
                 case "coredump":
-                    System.out.println(memory.coreDump());
+                    //add some error checks here for input
+                    //also if no input just coredump the entire memory I think
+                    System.out.println(memory.coreDump(pcbs.get(inputs[1])));
                     break;
                 case "clearmem":
                     log("Clearing memory");
@@ -98,6 +108,25 @@ public class OperatingSystem implements Logging {
         } catch (IOException e) {
             logError("Error reading file: " + filePath + ": \n" + e.getMessage());
             return null;
+        }
+    }
+
+    private void execute(String filePath) {
+        ProcessControlBlock pcb = pcbs.get(filePath);
+
+        //pcb doesn't exist, let's load it into memory
+        if(pcb == null) {
+            byte[] program = readProgram(filePath);
+            if (program == null) {
+                return;
+            }
+            pcb = memory.load(program);
+        }
+
+        //memory.load will return null if there is an error with load so we need to check again
+        if(pcb != null) {
+            pcbs.put(filePath, pcb);
+            cpu.run(/*put pcb here*/);
         }
     }
 

@@ -1,5 +1,6 @@
 package vm.hardware;
 
+import os.ProcessControlBlock;
 import os.util.Logging;
 
 import java.nio.ByteBuffer;
@@ -14,8 +15,7 @@ public class Memory implements Logging {
 
     private final byte[] memory = new byte[TOTAL_SIZE];
     private int index = 0;
-
-    private int codeStart = 0;
+    private int totalProgramsLoaded = 0;
 
     private Memory() {
     }
@@ -64,42 +64,49 @@ public class Memory implements Logging {
     }
 
 
-    public void load(byte[] program) {
+    public ProcessControlBlock load(byte[] program) {
         if(!validateLoad(program)){
-            return;
+            return null;
         }
 
         ByteBuffer bb = ByteBuffer.wrap(program);
         bb.order(ByteOrder.LITTLE_ENDIAN);
+        ProcessControlBlock pcb = new ProcessControlBlock(totalProgramsLoaded++);
 
         //program size is first int in the program header
         int programSize = bb.getInt();
+        pcb.setProgramSize(programSize);
         log("Program size: " + programSize);
 
         //program counter(pc) is second int in the program header
-        cpu.setProgramCounter(bb.getInt());
+        int programCounter = bb.getInt();
 
-        //index is third int in the program header
-        index += bb.getInt();
+        //offset is third int in the program header
+        // index is the curr open position in memory
+        // we add the offset to the index to find where to load the program
+        int offset = bb.getInt();
+
+        //check if program size exceeds memory capacity
+        if (programSize + + offset + index > TOTAL_SIZE) {
+            logError("Program size exceeds memory capacity");
+            return null;
+        }
+
+        index += offset;
         log("Index: " + index);
 
         //pc needs to be adjusted for index
-        cpu.addToPC(index);
-        log("PC: " + cpu.getProgramCounter());
+        pcb.setPc(programCounter + index);
+        log("PC: " + pcb.getPc());
 
-        // Temporary fix for milestone 1
-        codeStart = cpu.getProgramCounter();
-
-        if (programSize + index > TOTAL_SIZE) {
-            logError("Program size exceeds memory capacity");
-            return;
-        }
+        pcb.setCodeStart(pcb.getPc());
 
         log("Copying program to memory");
         System.arraycopy(program, 12, memory, index, programSize);
         index += programSize;
         memory[index++] = (byte) Cpu.END;
-        log(coreDump());
+        log(coreDump(pcb));
+        return pcb;
     }
 
     private boolean validateLoad(byte[] program) {
@@ -123,17 +130,22 @@ public class Memory implements Logging {
         log("Memory cleared");
     }
 
-    public String coreDump() {
+    public String coreDump(int start, int end) {
         StringBuilder sb = new StringBuilder();
         sb.append("Core Dump:\n");
-        for (int i = codeStart; i < index-1; i++) {
+        for (int i = start; i < end; i++) {
             sb.append(memory[i]);
             sb.append(" ");
-            if ((i - codeStart + 1) % 6 == 0) {
+            if ((i - start + 1) % 6 == 0) {
                 sb.append("\n");
             }
         }
 
         return sb.toString();
     }
+
+    public String coreDump(ProcessControlBlock pcb) {
+        return coreDump(pcb.getCodeStart(), pcb.getCodeStart() + pcb.getProgramSize());
+    }
+
 }
