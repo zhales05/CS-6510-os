@@ -17,7 +17,7 @@ import java.util.Scanner;
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
-    private Map<String, ProcessControlBlock> pcbs = new HashMap<>();
+    private final Map<String, ProcessControlBlock> pcbs = new HashMap<>();
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -57,7 +57,7 @@ public class OperatingSystem implements Logging {
                     break;
                 case "run":
                     log("Starting run");
-                    cpu.run();
+                    cpu.run(pcbs.get(inputs[1]));
                     break;
                 case "execute":
                     log("Starting execute");
@@ -126,7 +126,7 @@ public class OperatingSystem implements Logging {
         //memory.load will return null if there is an error with load so we need to check again
         if(pcb != null) {
             pcbs.put(filePath, pcb);
-            cpu.run(/*put pcb here*/);
+            cpu.run(pcb);
         }
     }
 

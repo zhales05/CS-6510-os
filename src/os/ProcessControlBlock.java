@@ -4,7 +4,10 @@ public class ProcessControlBlock {
     private int pid;
     private ProcessStatus status;
     private int programSize;
-    private int pc;
+
+
+    private int[] registers = new int[12];
+
 
     public int getPid() {
         return pid;
@@ -31,11 +34,19 @@ public class ProcessControlBlock {
     }
 
     public int getPc() {
-        return pc;
+        return registers[11];
     }
 
     public void setPc(int pc) {
-        this.pc = pc;
+        registers[11] = pc;
+    }
+
+    public void setRegisters(int[] registers) {
+        System.arraycopy(registers, 0, this.registers, 0, registers.length);
+    }
+
+    public int[] getRegisters() {
+        return registers;
     }
 
     public String getFilePath() {

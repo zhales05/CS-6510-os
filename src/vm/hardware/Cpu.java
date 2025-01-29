@@ -1,5 +1,6 @@
 package vm.hardware;
 
+import os.ProcessControlBlock;
 import os.util.Logging;
 
 public class Cpu implements Logging {
@@ -71,8 +72,15 @@ public class Cpu implements Logging {
         return false;
     }
 
-    public void run() {
-        log(isKernelMode() ? "Kernel mode" : "User mode");
+    private void loadRegistersFromPcb(ProcessControlBlock pcb) {
+        for(int i = 0; i < registers.length; i++){
+            registers[i] = pcb.getRegisters()[i];
+        }
+    }
+
+
+    public void run(ProcessControlBlock pcb) {
+        loadRegistersFromPcb(pcb);
 
         while (true) {
             int curr = memory.getByte();
@@ -204,6 +212,7 @@ public class Cpu implements Logging {
                     break;
 
                 case END:
+                    pcb.setRegisters(registers);
                     log("Program ended");
                     return;
 
