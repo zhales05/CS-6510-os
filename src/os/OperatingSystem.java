@@ -106,7 +106,7 @@ public class OperatingSystem implements Logging {
         try {
             return Files.readAllBytes(Paths.get(filePath));
         } catch (IOException e) {
-            logError("Error reading file: " + filePath + ": \n" + e.getMessage());
+            logError("Error reading file: " + ": " + e.getMessage());
             return null;
         }
     }
@@ -125,7 +125,7 @@ public class OperatingSystem implements Logging {
 
         //memory.load will return null if there is an error with load so we need to check again
         if(pcb != null) {
-            pcbs.put(filePath, pcb);
+            pcbs.putIfAbsent(filePath, pcb);
             cpu.run(pcb);
         }
     }
@@ -140,7 +140,7 @@ public class OperatingSystem implements Logging {
             String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
             System.out.println(content);
         } catch (IOException e) {
-            logError("Error reading file: " + FILE_PATH + ": \n" + e.getMessage());
+            logError("Error reading file: " + ": " + e.getMessage());
         }
     }
 

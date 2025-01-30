@@ -73,9 +73,11 @@ public class Cpu implements Logging {
     }
 
     private void loadRegistersFromPcb(ProcessControlBlock pcb) {
-        for(int i = 0; i < registers.length; i++){
+        for(int i = 0; i < registers.length-1; i++){
             registers[i] = pcb.getRegisters()[i];
         }
+
+        registers[11] = pcb.getCodeStart();
     }
 
 
@@ -118,10 +120,10 @@ public class Cpu implements Logging {
                         return;
                     }
 
-                    registers[subR] = registers[sub1R] - registers[sub2R];
-
                     log("Register: " + sub1R + " Value: " + registers[sub1R]);
                     log("Register: " + sub2R + " Value: " + registers[sub2R]);
+
+                    registers[subR] = registers[sub1R] - registers[sub2R];
                     log(registers[sub1R] + " - " + registers[sub2R] + " = " + registers[subR]);
                     break;
                 case MUL:

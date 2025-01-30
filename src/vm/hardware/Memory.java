@@ -75,7 +75,6 @@ public class Memory implements Logging {
 
         //program size is first int in the program header
         int programSize = bb.getInt();
-        pcb.setProgramSize(programSize);
         log("Program size: " + programSize);
 
         //program counter(pc) is second int in the program header
@@ -99,7 +98,11 @@ public class Memory implements Logging {
         pcb.setPc(programCounter + index);
         log("PC: " + pcb.getPc());
 
+        //loading up PCB for future use
+        pcb.setProgramStart(index);
         pcb.setCodeStart(pcb.getPc());
+        pcb.setPc(pcb.getPc());
+        pcb.setProgramSize(programSize);
 
         log("Copying program to memory");
         System.arraycopy(program, 12, memory, index, programSize);

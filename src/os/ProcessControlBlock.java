@@ -4,10 +4,24 @@ public class ProcessControlBlock {
     private int pid;
     private ProcessStatus status;
     private int programSize;
+    private int programStart;
+    private int codeStart;
+    private String filePath;
 
+    private final int[] registers = new int[12];
 
-    private int[] registers = new int[12];
+    public ProcessControlBlock(int pid) {
+        this.pid = pid;
+        this.status = ProcessStatus.NEW;
+    }
 
+    public int getProgramStart() {
+        return programStart;
+    }
+
+    public void setProgramStart(int programStart) {
+        this.programStart = programStart;
+    }
 
     public int getPid() {
         return pid;
@@ -41,12 +55,12 @@ public class ProcessControlBlock {
         registers[11] = pc;
     }
 
-    public void setRegisters(int[] registers) {
-        System.arraycopy(registers, 0, this.registers, 0, registers.length);
-    }
-
     public int[] getRegisters() {
         return registers;
+    }
+
+    public void setRegisters(int[] registers) {
+        System.arraycopy(registers, 0, this.registers, 0, registers.length);
     }
 
     public String getFilePath() {
@@ -56,16 +70,6 @@ public class ProcessControlBlock {
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
-
-    private int codeStart;
-    private String filePath;
-
-
-    public ProcessControlBlock(int pid) {
-        this.pid = pid;
-        this.status = ProcessStatus.NEW;
-    }
-
 
     public int getCodeStart() {
         return codeStart;
