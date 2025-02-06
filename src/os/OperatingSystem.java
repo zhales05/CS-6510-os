@@ -47,7 +47,12 @@ public class OperatingSystem implements Logging {
                 inputs = previousCommand;
             }
 
-            VerboseModeLogger.getInstance().setVerboseMode(isVerboseMode(inputs));
+            if(isVerboseMode(inputs)) {
+                VerboseModeLogger.getInstance().setVerboseMode(true);
+
+                //need to get rid of the -v flag input - reminder in our program it can only be at the very end
+                inputs = Arrays.copyOf(inputs, inputs.length - 1);
+            }
 
             switch (inputs[0]) {
                 case "load":
@@ -61,7 +66,7 @@ public class OperatingSystem implements Logging {
                 case "execute":
                     log("Starting execute");
                     //add some error checks here for input
-                    execute(inputs);
+                    schedule(inputs);
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";
@@ -110,26 +115,33 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    private void execute(String filePath) {
+    ProcessControlBlock prepareForReadyQueue(String filePath) {
         ProcessControlBlock pcb = pcbs.get(filePath);
 
         //pcb doesn't exist, let's load it into memory
         if(pcb == null) {
             byte[] program = readProgram(filePath);
             if (program == null) {
-                return;
+                return null;
             }
             pcb = memory.load(program);
         }
 
-        //memory.load will return null if there is an error with load so we need to check again
-        if(pcb != null) {
-            pcbs.putIfAbsent(filePath, pcb);
-            cpu.run(pcb);
-        }
+        return pcb;
     }
 
-    private void execute(String[] inputs) {
+    ProcessControlBlock runProcess(ProcessControlBlock pcb) {
+        //memory.load will return null if there is an error with load so we need to check again
+        if(pcb != null) {
+            pcbs.putIfAbsent(pcb.getFilePath(), pcb);
+            cpu.run(pcb);
+        }
+
+        return pcb;
+    }
+
+
+    private void schedule(String[] inputs) {
         Scheduler scheduler = Scheduler.getInstance();
         for(int i = 1; i < inputs.length - 1; i++) {
             //ignoring clock for now
@@ -137,6 +149,7 @@ public class OperatingSystem implements Logging {
                 scheduler.addJob(inputs[i]);
             }
         }
+        scheduler.processJobs(this);
     }
 
 

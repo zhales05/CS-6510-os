@@ -1,6 +1,8 @@
 package os;
 
-public class ProcessControlBlock {
+import os.util.Logging;
+
+public class ProcessControlBlock implements Logging {
     private int pid;
     private ProcessStatus status;
     private int programSize;
@@ -37,6 +39,7 @@ public class ProcessControlBlock {
 
     public void setStatus(ProcessStatus status) {
         this.status = status;
+        log("Process " + pid + " is now " + status);
     }
 
     public int getProgramSize() {

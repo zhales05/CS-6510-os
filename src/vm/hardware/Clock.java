@@ -19,8 +19,8 @@ public class Clock {
         return time;
     }
 
-    public int incrementTime() {
-        return time++;
+    public void tick() {
+         time++;
     }
 
 }
