@@ -9,15 +9,14 @@ import os.util.VerboseModeLogger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private final Map<String, ProcessControlBlock> pcbs = new HashMap<>();
+
+
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -62,7 +61,7 @@ public class OperatingSystem implements Logging {
                 case "execute":
                     log("Starting execute");
                     //add some error checks here for input
-                    execute(inputs[1]);
+                    execute(inputs);
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";
@@ -129,6 +128,18 @@ public class OperatingSystem implements Logging {
             cpu.run(pcb);
         }
     }
+
+    private void execute(String[] inputs) {
+        Scheduler scheduler = Scheduler.getInstance();
+        for(int i = 1; i < inputs.length - 1; i++) {
+            //ignoring clock for now
+            if(i % 2 == 1) {
+                scheduler.addJob(inputs[i]);
+            }
+        }
+    }
+
+
 
     private boolean isVerboseMode(String[] inputs) {
         return inputs[inputs.length - 1].equals("-v");
