@@ -168,4 +168,9 @@ public class OperatingSystem implements Logging {
         }
     }
 
+    public void addToReadyQueue(ProcessControlBlock pcb) {
+        Scheduler.getInstance().addToReadyQueue(pcb);
+    }
+    
+
 }
