@@ -1,5 +1,8 @@
 package os;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import os.util.Logging;
 
 public class ProcessControlBlock implements Logging {
@@ -81,4 +84,28 @@ public class ProcessControlBlock implements Logging {
     public void setCodeStart(int codeStart) {
         this.codeStart = codeStart;
     }
+
+    private List<Integer> childPIDs = new ArrayList<>();
+    private int parentPid = -1;
+
+    public boolean hasChildren() {
+        return !childPIDs.isEmpty();
+    }
+
+    public void addChild(int pid) {
+        childPIDs.add(pid);
+    }
+
+    public int getParentPid() {
+        return parentPid;
+    }
+
+    public void setParentPid(int pid) {
+        this.parentPid = pid;
+    }
+
+    public void setReturnValue(int value) {
+        registers[0] = value; // Assume R0 is used for return values
+    }
+    
 }
