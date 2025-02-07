@@ -1,6 +1,8 @@
 package vm.hardware;
 
 import os.ProcessControlBlock;
+import os.ProcessStatus;
+import os.Scheduler;
 import os.util.Logging;
 
 public class Cpu implements Logging {
@@ -216,6 +218,7 @@ public class Cpu implements Logging {
                 case END:
                     pcb.setRegisters(registers);
                     log("Program ended");
+                    pcb.setStatus(ProcessStatus.TERMINATED);
                     return;
 
                 default:
@@ -223,6 +226,7 @@ public class Cpu implements Logging {
                     logError("Invalid instruction");
                     return;
             }
+            Clock.getInstance().tick();
         }
     }
 

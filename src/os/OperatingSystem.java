@@ -9,15 +9,14 @@ import os.util.VerboseModeLogger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private final Map<String, ProcessControlBlock> pcbs = new HashMap<>();
+
+
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -48,7 +47,12 @@ public class OperatingSystem implements Logging {
                 inputs = previousCommand;
             }
 
-            VerboseModeLogger.getInstance().setVerboseMode(isVerboseMode(inputs));
+            if(isVerboseMode(inputs)) {
+                VerboseModeLogger.getInstance().setVerboseMode(true);
+
+                //need to get rid of the -v flag input - reminder in our program it can only be at the very end
+                inputs = Arrays.copyOf(inputs, inputs.length - 1);
+            }
 
             switch (inputs[0]) {
                 case "load":
@@ -62,7 +66,7 @@ public class OperatingSystem implements Logging {
                 case "execute":
                     log("Starting execute");
                     //add some error checks here for input
-                    execute(inputs[1]);
+                    schedule(inputs);
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";
@@ -111,24 +115,44 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    private void execute(String filePath) {
+    ProcessControlBlock prepareForReadyQueue(String filePath) {
         ProcessControlBlock pcb = pcbs.get(filePath);
 
         //pcb doesn't exist, let's load it into memory
         if(pcb == null) {
             byte[] program = readProgram(filePath);
             if (program == null) {
-                return;
+                return null;
             }
             pcb = memory.load(program);
         }
 
+        return pcb;
+    }
+
+    ProcessControlBlock runProcess(ProcessControlBlock pcb) {
         //memory.load will return null if there is an error with load so we need to check again
         if(pcb != null) {
-            pcbs.putIfAbsent(filePath, pcb);
+            pcbs.putIfAbsent(pcb.getFilePath(), pcb);
             cpu.run(pcb);
         }
+
+        return pcb;
     }
+
+
+    private void schedule(String[] inputs) {
+        Scheduler scheduler = Scheduler.getInstance();
+        for(int i = 1; i < inputs.length - 1; i++) {
+            //ignoring clock for now
+            if(i % 2 == 1) {
+                scheduler.addJob(inputs[i]);
+            }
+        }
+        scheduler.processJobs(this);
+    }
+
+
 
     private boolean isVerboseMode(String[] inputs) {
         return inputs[inputs.length - 1].equals("-v");
