@@ -29,7 +29,7 @@ public class Scheduler implements Logging {
         return jobQueue.poll();
     }
 
-    private void addToReadyQueue(ProcessControlBlock pcb) {
+    public void addToReadyQueue(ProcessControlBlock pcb) {
         log("Adding process " + pcb.getPid() + " to ready queue");
         readyQueue.add(pcb);
     }
@@ -56,5 +56,10 @@ public class Scheduler implements Logging {
         }
     }
 
+    public void blockProcess(ProcessControlBlock pcb) {
+        pcb.setStatus(ProcessStatus.WAITING);
+        log("Process " + pcb.getPid() + " is now blocked.");
+    }
+    
 
 }
