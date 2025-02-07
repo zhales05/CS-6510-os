@@ -63,6 +63,15 @@ public class Memory implements Logging {
         return bb.getInt();
     }
 
+    public int getIntAtAddress(int address) {
+        if (address < 0 || address + 4 > memory.length) {
+            logError("Invalid memory access at " + address);
+            return 0;
+        }
+        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, address, address + 4));
+        bb.order(ByteOrder.LITTLE_ENDIAN);
+        return bb.getInt();
+    }
 
     public ProcessControlBlock load(byte[] program) {
         if(!validateLoad(program)){
