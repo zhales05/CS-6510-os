@@ -48,14 +48,6 @@ public class OperatingSystem implements Logging {
             VerboseModeLogger.getInstance().setVerboseMode(isVerboseMode(inputs));
 
             switch (inputs[0]) {
-                case "load":
-                    log("Starting load");
-                    memory.load(readProgram(inputs[1]));
-                    break;
-                case "run":
-                    log("Starting run");
-                    cpu.run();
-                    break;
                 case "myvm":
                     prompt = "MYVM-> ";
                     break;
