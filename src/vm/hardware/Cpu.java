@@ -1,8 +1,8 @@
 package vm.hardware;
 
+import os.OperatingSystem;
 import os.ProcessControlBlock;
 import os.ProcessStatus;
-import os.Scheduler;
 import os.util.Logging;
 
 public class Cpu implements Logging {
@@ -83,7 +83,7 @@ public class Cpu implements Logging {
     }
 
 
-    public void run(ProcessControlBlock pcb) {
+    public void run(ProcessControlBlock pcb, OperatingSystem os) {
         loadRegistersFromPcb(pcb);
 
         while (true) {
@@ -168,7 +168,12 @@ public class Cpu implements Logging {
                     break;
                 case SWI:
                     log("SWI");
-                    swi();
+                    if (swi(os)){
+                        pcb.setRegisters(registers);
+                        log("Parent program waiting for child");
+                        pcb.setStatus(ProcessStatus.READY);
+                        return;
+                    }
                     break;
                 case MVI:
                     log("MVI");
@@ -218,7 +223,7 @@ public class Cpu implements Logging {
                 case END:
                     pcb.setRegisters(registers);
                     log("Program ended");
-                    pcb.setStatus(ProcessStatus.TERMINATED);
+                    os.terminateProcess(pcb);
                     return;
 
                 default:
@@ -230,7 +235,8 @@ public class Cpu implements Logging {
         }
     }
 
-    private void swi() {
+    //returning if the program needs to be paused or not
+    private boolean swi(OperatingSystem os) {
         int c = memory.getInt();
         setKernelMode(true);
         switch(c){
@@ -239,10 +245,24 @@ public class Cpu implements Logging {
                 System.out.println("Register 0: " + registers[0]);
                 addToPC(1);
                 break;
+            case 1:
+                log("Printing register 1");
+                System.out.println("Register 1: " + registers[1]);
+                addToPC(1);
+                break;
+            case 2:
+                log("vfork");
+                startChildProcess(os);
+                return true;
             default:
                 logError("Invalid SWI call");
                 break;
         }
         setKernelMode(false);
+        return false;
+    }
+
+    private void startChildProcess(OperatingSystem os) {
+       os.startChildProcess();
     }
 }

@@ -4,21 +4,15 @@ import os.util.Logging;
 
 import java.util.LinkedList;
 
-public class Scheduler implements Logging {
+ class Scheduler implements Logging {
     private final LinkedList<String> jobQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> readyQueue = new LinkedList<>();
+    private final LinkedList<ProcessControlBlock> terminatedQueue = new LinkedList<>();
 
-    private static Scheduler instance;
+    private OperatingSystem parentOs;
 
-    private Scheduler() {
-    }
-
-    public static Scheduler getInstance() {
-        if (instance == null) {
-            instance = new Scheduler();
-        }
-
-        return instance;
+    public Scheduler(OperatingSystem parentOs) {
+        this.parentOs = parentOs;
     }
 
     public void addJob(String fileName) {
@@ -38,7 +32,7 @@ public class Scheduler implements Logging {
         return readyQueue.poll();
     }
 
-    public void processJobs(OperatingSystem parentOs) {
+    public void processJobs() {
         while (!jobQueue.isEmpty()) {
             //load
             ProcessControlBlock pcb = parentOs.prepareForReadyQueue(getJob());
@@ -56,5 +50,21 @@ public class Scheduler implements Logging {
         }
     }
 
+
+
+    public void addToTerminatedQueue(ProcessControlBlock pcb) {
+        log("Adding process " + pcb.getPid() + " to terminated queue");
+        pcb.setStatus(ProcessStatus.TERMINATED);
+        terminatedQueue.add(pcb);
+        //this will run the next process in the ready queue. No big deal if there isn't one
+        parentOs.runProcess(getFromReadyQueue());
+    }
+
+    public void startChildProcess(){
+        //TODO pass in asm and have it become a OSX
+        ProcessControlBlock pcb = parentOs.prepareForReadyQueue("files/child.osx");
+        //skipping ready queue going straight to running
+        parentOs.runProcess(pcb);
+    }
 
 }

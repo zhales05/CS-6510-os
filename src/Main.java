@@ -1,6 +1,3 @@
-package vm;
-
-
 import os.OperatingSystem;
 
 public class Main {
