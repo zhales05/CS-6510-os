@@ -4,7 +4,7 @@ import os.util.Logging;
 
 import java.util.LinkedList;
 
- class Scheduler implements Logging {
+class Scheduler implements Logging {
     private final LinkedList<String> jobQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> readyQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> terminatedQueue = new LinkedList<>();
@@ -38,7 +38,7 @@ import java.util.LinkedList;
             ProcessControlBlock pcb = parentOs.prepareForReadyQueue(getJob());
 
             //checking if error with load
-            if(pcb == null) {
+            if (pcb == null) {
                 continue;
             }
             //put in ready queue
@@ -51,20 +51,18 @@ import java.util.LinkedList;
     }
 
 
-
     public void addToTerminatedQueue(ProcessControlBlock pcb) {
         log("Adding process " + pcb.getPid() + " to terminated queue");
         pcb.setStatus(ProcessStatus.TERMINATED);
         terminatedQueue.add(pcb);
-        //this will run the next process in the ready queue. No big deal if there isn't one
-        parentOs.runProcess(getFromReadyQueue());
     }
 
-    public void startChildProcess(){
+    public Integer startChildProcess() {
         //TODO pass in asm and have it become a OSX
         ProcessControlBlock pcb = parentOs.prepareForReadyQueue("files/child.osx");
         //skipping ready queue going straight to running
         parentOs.runProcess(pcb);
+        return pcb.getPid();
     }
 
 }

@@ -121,7 +121,7 @@ public class OperatingSystem implements Logging {
         return pcb;
     }
 
-    ProcessControlBlock runProcess(ProcessControlBlock pcb) {
+    public ProcessControlBlock runProcess(ProcessControlBlock pcb) {
         //if null ready queue is empty so just return.
         if (pcb != null) {
             pcbs.putIfAbsent(pcb.getFilePath(), pcb);
@@ -133,6 +133,11 @@ public class OperatingSystem implements Logging {
 
 
     private void schedule(String[] inputs) {
+        if(inputs.length < 3){
+            logError("Not enough inputs provided");
+            return;
+        }
+
         for (int i = 1; i < inputs.length - 1; i++) {
             //ignoring clock for now
             if (i % 2 == 1) {
@@ -157,8 +162,8 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    public void startChildProcess() {
-        scheduler.startChildProcess();
+    public Integer startChildProcess() {
+       return scheduler.startChildProcess();
     }
 
     public void terminateProcess(ProcessControlBlock pcb) {

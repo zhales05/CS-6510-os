@@ -57,7 +57,7 @@ public class Cpu implements Logging {
 
     private boolean validateRegister(int r) {
         boolean valid = r >= 0 && r < registers.length;
-        if(!valid){
+        if (!valid) {
             logError("Invalid register: " + r);
         }
 
@@ -65,8 +65,8 @@ public class Cpu implements Logging {
     }
 
     private boolean isNotValidRegisters(int... rs) {
-        for(int r : rs){
-            if(!validateRegister(r)){
+        for (int r : rs) {
+            if (!validateRegister(r)) {
                 return true;
             }
         }
@@ -75,11 +75,7 @@ public class Cpu implements Logging {
     }
 
     private void loadRegistersFromPcb(ProcessControlBlock pcb) {
-        for(int i = 0; i < registers.length-1; i++){
-            registers[i] = pcb.getRegisters()[i];
-        }
-
-        registers[11] = pcb.getCodeStart();
+        System.arraycopy(pcb.getRegisters(), 0, registers, 0, registers.length);
     }
 
 
@@ -89,7 +85,6 @@ public class Cpu implements Logging {
         while (true) {
             int curr = memory.getByte();
             switch (curr) {
-
                 case ADD:
                     log("ADD");
 
@@ -99,7 +94,7 @@ public class Cpu implements Logging {
 
                     addToPC(2);
 
-                    if(isNotValidRegisters(resultR, val1R, val2R)){
+                    if (isNotValidRegisters(resultR, val1R, val2R)) {
                         return;
                     }
 
@@ -118,7 +113,7 @@ public class Cpu implements Logging {
 
                     addToPC(2);
 
-                    if(isNotValidRegisters(subR, sub1R, sub2R)){
+                    if (isNotValidRegisters(subR, sub1R, sub2R)) {
                         return;
                     }
 
@@ -130,63 +125,52 @@ public class Cpu implements Logging {
                     break;
                 case MUL:
                     log("MUL");
-
                     int mulR = memory.getByte();
                     int mul1R = memory.getByte();
                     int mul2R = memory.getByte();
 
                     addToPC(2);
 
-                    if(isNotValidRegisters(mulR, mul1R, mul2R)){
+                    if (isNotValidRegisters(mulR, mul1R, mul2R)) {
                         return;
                     }
 
                     registers[mulR] = registers[mul1R] * registers[mul2R];
-
                     log("Register: " + mul1R + " Value: " + registers[mul1R]);
                     log("Register: " + mul2R + " Value: " + registers[mul2R]);
                     log(registers[mul1R] + " * " + registers[mul2R] + " = " + registers[mulR]);
                     break;
                 case DIV:
                     log("DIV");
-
                     int divR = memory.getByte();
                     int div1R = memory.getByte();
                     int div2R = memory.getByte();
 
                     addToPC(2);
 
-                    if(isNotValidRegisters(divR, div1R, div2R)){
+                    if (isNotValidRegisters(divR, div1R, div2R)) {
                         return;
                     }
 
                     registers[divR] = registers[div1R] / registers[div2R];
-
                     log("Register: " + div1R + " Value: " + registers[div1R]);
                     log("Register: " + div2R + " Value: " + registers[div2R]);
                     log(registers[div1R] + " / " + registers[div2R] + " = " + registers[divR]);
                     break;
                 case SWI:
                     log("SWI");
-                    if (swi(os)){
-                        pcb.setRegisters(registers);
-                        log("Parent program waiting for child");
-                        pcb.setStatus(ProcessStatus.READY);
-                        return;
-                    }
+                    swi(os, pcb);
                     break;
                 case MVI:
                     log("MVI");
-
                     int r = memory.getByte();
                     int val = memory.getInt();
 
-                    if(isNotValidRegisters(r)){
+                    if (isNotValidRegisters(r)) {
                         return;
                     }
 
                     registers[r] = val;
-
                     log("Register: " + r + " Value: " + val);
                     break;
                 case MOV:
@@ -196,7 +180,7 @@ public class Cpu implements Logging {
                     int src = memory.getByte();
                     addToPC(3);
 
-                    if(isNotValidRegisters(dest, src)){
+                    if (isNotValidRegisters(dest, src)) {
                         return;
                     }
 
@@ -211,7 +195,7 @@ public class Cpu implements Logging {
                     int srcR = memory.getByte();
                     addToPC(3);
 
-                    if(isNotValidRegisters(destR, srcR)){
+                    if (isNotValidRegisters(destR, srcR)) {
                         return;
                     }
 
@@ -222,12 +206,10 @@ public class Cpu implements Logging {
 
                 case END:
                     pcb.setRegisters(registers);
-                    log("Program ended");
                     os.terminateProcess(pcb);
                     return;
 
                 default:
-                    log("Invalid instruction");
                     logError("Invalid instruction");
                     return;
             }
@@ -235,34 +217,37 @@ public class Cpu implements Logging {
         }
     }
 
-    //returning if the program needs to be paused or not
-    private boolean swi(OperatingSystem os) {
+    private void swi(OperatingSystem os, ProcessControlBlock pcb) {
         int c = memory.getInt();
         setKernelMode(true);
-        switch(c){
+        addToPC(1);
+        switch (c) {
             case 0:
                 log("Printing register 0");
                 System.out.println("Register 0: " + registers[0]);
-                addToPC(1);
                 break;
             case 1:
                 log("Printing register 1");
                 System.out.println("Register 1: " + registers[1]);
-                addToPC(1);
                 break;
             case 2:
                 log("vfork");
-                startChildProcess(os);
-                return true;
+                startChildProcess(os, pcb);
+                break;
             default:
                 logError("Invalid SWI call");
                 break;
         }
         setKernelMode(false);
-        return false;
+        return;
     }
 
-    private void startChildProcess(OperatingSystem os) {
-       os.startChildProcess();
+    private void startChildProcess(OperatingSystem os, ProcessControlBlock parent) {
+        parent.setRegisters(registers);
+        log("Starting child process");
+        parent.addChildPID(os.startChildProcess());
+        log("Back to parent");
+        loadRegistersFromPcb(parent);
+       // os.runProcess(parent);
     }
 }
