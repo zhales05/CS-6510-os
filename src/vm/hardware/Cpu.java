@@ -2,8 +2,10 @@ package vm.hardware;
 
 import os.OperatingSystem;
 import os.ProcessControlBlock;
-import os.ProcessStatus;
 import os.util.Logging;
+
+import java.util.Random;
+
 
 public class Cpu implements Logging {
     private static Cpu instance;
@@ -234,12 +236,18 @@ public class Cpu implements Logging {
                 log("vfork");
                 startChildProcess(os, pcb);
                 break;
+            case 3:
+                log("wait");
+                Random random = new Random();
+                int randomTicks = random.nextInt(20) + 1;
+                log("Waiting for " + randomTicks + " ticks");
+                Clock.getInstance().tick(randomTicks);
+                break;
             default:
                 logError("Invalid SWI call");
                 break;
         }
         setKernelMode(false);
-        return;
     }
 
     private void startChildProcess(OperatingSystem os, ProcessControlBlock parent) {
@@ -248,6 +256,5 @@ public class Cpu implements Logging {
         parent.addChildPID(os.startChildProcess());
         log("Back to parent");
         loadRegistersFromPcb(parent);
-       // os.runProcess(parent);
     }
 }

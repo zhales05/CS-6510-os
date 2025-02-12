@@ -23,4 +23,8 @@ public class Clock {
          time++;
     }
 
+    public void tick(int ticks) {
+        time += ticks;
+    }
+
 }
