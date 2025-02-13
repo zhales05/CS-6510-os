@@ -15,8 +15,7 @@ public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private final Map<String, ProcessControlBlock> pcbs = new HashMap<>();
-
-
+    Scheduler scheduler = new Scheduler(this);
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -47,22 +46,14 @@ public class OperatingSystem implements Logging {
                 inputs = previousCommand;
             }
 
-            if(isVerboseMode(inputs)) {
+            if (isVerboseMode(inputs)) {
                 VerboseModeLogger.getInstance().setVerboseMode(true);
 
-                //need to get rid of the -v flag input - reminder in our program it can only be at the very end
+                //getting rid of the -v flag input - reminder in our program it can only be at the very end
                 inputs = Arrays.copyOf(inputs, inputs.length - 1);
             }
 
             switch (inputs[0]) {
-                case "load":
-                    log("Starting load");
-                    memory.load(readProgram(inputs[1]));
-                    break;
-                case "run":
-                    log("Starting run");
-                    cpu.run(pcbs.get(inputs[1]));
-                    break;
                 case "execute":
                     log("Starting execute");
                     //add some error checks here for input
@@ -119,7 +110,7 @@ public class OperatingSystem implements Logging {
         ProcessControlBlock pcb = pcbs.get(filePath);
 
         //pcb doesn't exist, let's load it into memory
-        if(pcb == null) {
+        if (pcb == null) {
             byte[] program = readProgram(filePath);
             if (program == null) {
                 return null;
@@ -130,11 +121,11 @@ public class OperatingSystem implements Logging {
         return pcb;
     }
 
-    ProcessControlBlock runProcess(ProcessControlBlock pcb) {
-        //memory.load will return null if there is an error with load so we need to check again
-        if(pcb != null) {
+    public ProcessControlBlock runProcess(ProcessControlBlock pcb) {
+        //if null ready queue is empty so just return.
+        if (pcb != null) {
             pcbs.putIfAbsent(pcb.getFilePath(), pcb);
-            cpu.run(pcb);
+            cpu.run(pcb, this);
         }
 
         return pcb;
@@ -142,16 +133,19 @@ public class OperatingSystem implements Logging {
 
 
     private void schedule(String[] inputs) {
-        Scheduler scheduler = Scheduler.getInstance();
-        for(int i = 1; i < inputs.length - 1; i++) {
+        if(inputs.length < 3){
+            logError("Not enough inputs provided");
+            return;
+        }
+
+        for (int i = 1; i < inputs.length - 1; i++) {
             //ignoring clock for now
-            if(i % 2 == 1) {
+            if (i % 2 == 1) {
                 scheduler.addJob(inputs[i]);
             }
         }
-        scheduler.processJobs(this);
+        scheduler.processJobs();
     }
-
 
 
     private boolean isVerboseMode(String[] inputs) {
@@ -166,6 +160,14 @@ public class OperatingSystem implements Logging {
         } catch (IOException e) {
             logError("Error reading file: " + ": " + e.getMessage());
         }
+    }
+
+    public Integer startChildProcess() {
+       return scheduler.startChildProcess();
+    }
+
+    public void terminateProcess(ProcessControlBlock pcb) {
+        scheduler.addToTerminatedQueue(pcb);
     }
 
 }

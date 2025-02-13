@@ -36,4 +36,9 @@ It also calls SWI 0 to print the value of register 0 and register 4.
 This test case is intended to test the error logging functionality.
 This file itself is not wrong but it has a loading addess greater than the maximum capacity of the memory.
 ``` 
+## vfork.osx
+```
+This test case is intended to test the vfork functionality.
+Loading at index 5000 for now
+```
 

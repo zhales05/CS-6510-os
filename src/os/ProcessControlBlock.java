@@ -2,14 +2,17 @@ package os;
 
 import os.util.Logging;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProcessControlBlock implements Logging {
-    private int pid;
+    private final int pid;
     private ProcessStatus status;
     private int programSize;
     private int programStart;
     private int codeStart;
     private String filePath;
-
+    private final List<Integer> childPIDs = new ArrayList<>();
     private final int[] registers = new int[12];
 
     public ProcessControlBlock(int pid) {
@@ -27,10 +30,6 @@ public class ProcessControlBlock implements Logging {
 
     public int getPid() {
         return pid;
-    }
-
-    public void setPid(int pid) {
-        this.pid = pid;
     }
 
     public ProcessStatus getStatus() {
@@ -80,5 +79,13 @@ public class ProcessControlBlock implements Logging {
 
     public void setCodeStart(int codeStart) {
         this.codeStart = codeStart;
+    }
+
+    public List<Integer> getChildPIDs() {
+        return childPIDs;
+    }
+
+    public void addChildPID(Integer childPID) {
+        childPIDs.add(childPID);
     }
 }
