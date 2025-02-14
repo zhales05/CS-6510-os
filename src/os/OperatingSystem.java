@@ -16,7 +16,7 @@ import java.util.*;
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
-    private final Map<String, ProcessControlBlock> pcbs = new HashMap<>();
+    private final Map<String, ProcessControlBlock> activePcbs = new HashMap<>();
     Scheduler scheduler = new Scheduler(this);
 
     public void startShell() {
@@ -89,9 +89,12 @@ public class OperatingSystem implements Logging {
                     ErrorDump.getInstance().printLogs();
                     break;
                 case "coredump":
-                    //add some error checks here for input
-                    //also if no input just coredump the entire memory I think
-                    System.out.println(memory.coreDump(pcbs.get(inputs[1])));
+                    if(inputs.length == 1){
+                        System.out.println(memory.coreDump());
+                        break;
+                    }
+
+                    System.out.println(memory.coreDump(activePcbs.get(inputs[1])));
                     break;
                 case "clearmem":
                     log("Clearing memory");
@@ -127,24 +130,30 @@ public class OperatingSystem implements Logging {
     }
 
     ProcessControlBlock prepareForReadyQueue(String filePath) {
-        ProcessControlBlock pcb = pcbs.get(filePath);
+        ProcessControlBlock pcb = activePcbs.get(filePath);
 
-        //pcb doesn't exist, let's load it into memory
+        //pcb doesn't exist or is terminated, let's load it into memory
         if (pcb == null) {
             byte[] program = readProgram(filePath);
             if (program == null) {
                 return null;
             }
             pcb = memory.load(program);
+            pcb.setFilePath(filePath);
         }
 
         return pcb;
     }
 
+    void removeProcess(ProcessControlBlock pcb) {
+        Memory.getInstance().clear(pcb);
+        activePcbs.remove(pcb.getFilePath());
+    }
+
     public ProcessControlBlock runProcess(ProcessControlBlock pcb) {
         //if null ready queue is empty so just return.
         if (pcb != null) {
-            pcbs.putIfAbsent(pcb.getFilePath(), pcb);
+            activePcbs.putIfAbsent(pcb.getFilePath(), pcb);
             cpu.run(pcb, this);
         }
 

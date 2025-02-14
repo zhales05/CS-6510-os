@@ -1,13 +1,18 @@
 package os;
 
 import os.util.Logging;
+import vm.hardware.Memory;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 class Scheduler implements Logging {
     private final LinkedList<String> jobQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> readyQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> terminatedQueue = new LinkedList<>();
+    private final Map<String, ProcessControlBlock> activePcbs = new HashMap<>();
+
 
     private OperatingSystem parentOs;
 
@@ -55,6 +60,8 @@ class Scheduler implements Logging {
         log("Adding process " + pcb.getPid() + " to terminated queue");
         pcb.setStatus(ProcessStatus.TERMINATED);
         terminatedQueue.add(pcb);
+        //might need to do this somewhere else later but this should clean it all up for now
+        parentOs.removeProcess(pcb);
     }
 
     public Integer startChildProcess() {

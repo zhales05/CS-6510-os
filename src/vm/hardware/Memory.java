@@ -72,7 +72,7 @@ public class Memory implements Logging {
         ByteBuffer bb = ByteBuffer.wrap(program);
         bb.order(ByteOrder.LITTLE_ENDIAN);
         ProcessControlBlock pcb = new ProcessControlBlock(totalProgramsLoaded++);
-
+        log("Loading program " + pcb.getPid());
         //program size is first int in the program header
         int programSize = bb.getInt();
         log("Program size: " + programSize);
@@ -80,34 +80,29 @@ public class Memory implements Logging {
         //program counter(pc) is second int in the program header
         int programCounter = bb.getInt();
 
-        //offset is third int in the program header
-        // index is the curr open position in memory
-        // we add the offset to the index to find where to load the program
-        int offset = bb.getInt();
+        //loader address is third int in the program header
+        int loaderAddress = bb.getInt();
 
         //check if program size exceeds memory capacity
-        if (programSize + + offset + index > TOTAL_SIZE) {
+        if (programSize + loaderAddress > TOTAL_SIZE) {
             logError("Program size exceeds memory capacity");
             return null;
         }
 
-        index += offset;
-        log("Index: " + index);
-
-        //pc needs to be adjusted for index
-        pcb.setPc(programCounter + index);
+        //pc needs to be adjusted for loader address
+        pcb.setPc(programCounter + loaderAddress);
         log("PC: " + pcb.getPc());
 
         //loading up PCB for future use
-        pcb.setProgramStart(index);
+        pcb.setProgramStart(loaderAddress);
         pcb.setCodeStart(pcb.getPc());
         pcb.setPc(pcb.getPc());
         pcb.setProgramSize(programSize);
 
         log("Copying program to memory");
-        System.arraycopy(program, 12, memory, index, programSize);
-        index += programSize;
-        memory[index++] = (byte) Cpu.END;
+        System.arraycopy(program, 12, memory, loaderAddress, programSize);
+        index = Math.max(index, loaderAddress + programSize);
+        memory[loaderAddress + programSize] = (byte) Cpu.END;
         log(coreDump(pcb));
         return pcb;
     }
@@ -131,6 +126,11 @@ public class Memory implements Logging {
         cpu.setProgramCounter(0);
         index = 0;
         log("Memory cleared");
+    }
+
+    public void clear(ProcessControlBlock pcb){
+        Arrays.fill(memory, pcb.getProgramStart(), pcb.getProgramStart() + pcb.getProgramSize(), (byte) 0);
+        log("Memory cleared for process " + pcb.getPid());
     }
 
     public String coreDump(int start, int end) {
