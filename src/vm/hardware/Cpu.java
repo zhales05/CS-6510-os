@@ -2,6 +2,7 @@ package vm.hardware;
 
 import os.OperatingSystem;
 import os.ProcessControlBlock;
+import os.ProcessStatus;
 import os.util.Logging;
 
 import java.util.Random;
@@ -83,6 +84,7 @@ public class Cpu implements Logging {
 
     public void run(ProcessControlBlock pcb, OperatingSystem os) {
         loadRegistersFromPcb(pcb);
+        pcb.setStatus(ProcessStatus.RUNNING);
 
         while (true) {
             int curr = memory.getByte();

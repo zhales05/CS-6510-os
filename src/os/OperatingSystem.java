@@ -6,7 +6,9 @@ import vm.hardware.Memory;
 import os.util.ErrorDump;
 import os.util.VerboseModeLogger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -64,6 +66,24 @@ public class OperatingSystem implements Logging {
                     break;
                 case "vm":
                     prompt = "VM-> ";
+                    break;
+                case "osx":
+                    try {
+                        ProcessBuilder processBuilder = new ProcessBuilder("./files/osx_mac", inputs[1], inputs[2]);
+                        processBuilder.redirectErrorStream(true);
+                        Process process = processBuilder.start();
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            System.out.println(line);
+                        }
+
+                        int exitCode = process.waitFor();
+                        System.out.println("Exited with code: " + exitCode);
+                    } catch (Exception e) {
+                        logError("Error running osx: " + e.getMessage());
+                    }
                     break;
                 case "errordump":
                     ErrorDump.getInstance().printLogs();
