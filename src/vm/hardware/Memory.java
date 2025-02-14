@@ -6,16 +6,17 @@ import os.util.Logging;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Memory implements Logging {
     private static final int TOTAL_SIZE = 100000;
     private static Memory instance;
 
     private static final Cpu cpu = Cpu.getInstance();
+    private static final Clock clock = Clock.getInstance();
 
     private final byte[] memory = new byte[TOTAL_SIZE];
     private int index = 0;
-    private int totalProgramsLoaded = 0;
 
     private Memory() {
     }
@@ -64,14 +65,13 @@ public class Memory implements Logging {
     }
 
 
-    public ProcessControlBlock load(byte[] program) {
+    public ProcessControlBlock load(byte[] program, ProcessControlBlock pcb) {
         if(!validateLoad(program)){
             return null;
         }
 
         ByteBuffer bb = ByteBuffer.wrap(program);
         bb.order(ByteOrder.LITTLE_ENDIAN);
-        ProcessControlBlock pcb = new ProcessControlBlock(totalProgramsLoaded++);
         log("Loading program " + pcb.getPid());
         //program size is first int in the program header
         int programSize = bb.getInt();
@@ -104,6 +104,7 @@ public class Memory implements Logging {
         index = Math.max(index, loaderAddress + programSize);
         memory[loaderAddress + programSize] = (byte) Cpu.END;
         log(coreDump(pcb));
+        clock.tick(1);
         return pcb;
     }
 

@@ -1,6 +1,7 @@
 package os;
 
 import os.util.Logging;
+import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
 import os.util.ErrorDump;
@@ -16,14 +17,15 @@ import java.util.*;
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
-    private final Map<String, ProcessControlBlock> activePcbs = new HashMap<>();
-    Scheduler scheduler = new Scheduler(this);
+    private static final Clock clock = Clock.getInstance();
+    private final Scheduler scheduler = new Scheduler(this);
 
     public void startShell() {
         String prompt = "VM-> ";
         Scanner scanner = new Scanner(System.in);
         String[] previousCommand = null;
         boolean rerunMode = false;
+        clock.addObserver(scheduler);
 
         while (true) {
             System.out.print(prompt);
@@ -89,12 +91,12 @@ public class OperatingSystem implements Logging {
                     ErrorDump.getInstance().printLogs();
                     break;
                 case "coredump":
-                    if(inputs.length == 1){
+                    if (inputs.length == 1) {
                         System.out.println(memory.coreDump());
                         break;
                     }
 
-                    System.out.println(memory.coreDump(activePcbs.get(inputs[1])));
+                    System.out.println(memory.coreDump(scheduler.getProcess(inputs[1])));
                     break;
                 case "clearmem":
                     log("Clearing memory");
@@ -129,31 +131,28 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    ProcessControlBlock prepareForReadyQueue(String filePath) {
-        ProcessControlBlock pcb = activePcbs.get(filePath);
-
+    ProcessControlBlock prepareForReadyQueue(ProcessControlBlock pcb) {
         //pcb doesn't exist or is terminated, let's load it into memory
-        if (pcb == null) {
-            byte[] program = readProgram(filePath);
-            if (program == null) {
-                return null;
-            }
-            pcb = memory.load(program);
-            pcb.setFilePath(filePath);
+        if (pcb == null || pcb.getFilePath() == null) {
+            logError("Process doesn't exist");
+            return null;
         }
 
+        byte[] program = readProgram(pcb.getFilePath());
+        if (program == null) {
+            return null;
+        }
+        pcb = memory.load(program, pcb);
         return pcb;
     }
 
     void removeProcess(ProcessControlBlock pcb) {
         Memory.getInstance().clear(pcb);
-        activePcbs.remove(pcb.getFilePath());
     }
 
     public ProcessControlBlock runProcess(ProcessControlBlock pcb) {
         //if null ready queue is empty so just return.
         if (pcb != null) {
-            activePcbs.putIfAbsent(pcb.getFilePath(), pcb);
             cpu.run(pcb, this);
         }
 
@@ -162,16 +161,19 @@ public class OperatingSystem implements Logging {
 
 
     private void schedule(String[] inputs) {
-        if(inputs.length < 3){
+        if (inputs.length < 3) {
             logError("Not enough inputs provided");
             return;
         }
-
-        for (int i = 1; i < inputs.length - 1; i++) {
-            //ignoring clock for now
-            if (i % 2 == 1) {
-                scheduler.addJob(inputs[i]);
+        //grabbing filename and clock starting time
+        for (int i = 1; i < inputs.length; i += 2) {
+            if (i + 1 >= inputs.length) {
+                logError("Not enough inputs provided, you likely forgot to add the starting clock time");
+                return;
             }
+
+            ProcessControlBlock pcb = new ProcessControlBlock(scheduler.getNewPid(), inputs[i], Integer.parseInt(inputs[i + 1]));
+            scheduler.addToJobQueue(pcb);
         }
         scheduler.processJobs();
     }
@@ -192,7 +194,7 @@ public class OperatingSystem implements Logging {
     }
 
     public Integer startChildProcess() {
-       return scheduler.startChildProcess();
+        return scheduler.startChildProcess();
     }
 
     public void terminateProcess(ProcessControlBlock pcb) {
