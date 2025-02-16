@@ -70,22 +70,8 @@ public class OperatingSystem implements Logging {
                     prompt = "VM-> ";
                     break;
                 case "osx":
-                    try {
-                        ProcessBuilder processBuilder = new ProcessBuilder("./files/osx_mac", inputs[1], inputs[2]);
-                        processBuilder.redirectErrorStream(true);
-                        Process process = processBuilder.start();
-
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            System.out.println(line);
-                        }
-
-                        int exitCode = process.waitFor();
-                        System.out.println("Exited with code: " + exitCode);
-                    } catch (Exception e) {
-                        logError("Error running osx: " + e.getMessage());
-                    }
+                    //if working on windows machine, use false, otherwise use true
+                    assembleFile(inputs[1], inputs[2], true);
                     break;
                 case "errordump":
                     ErrorDump.getInstance().printLogs();
@@ -120,6 +106,33 @@ public class OperatingSystem implements Logging {
             }
         }
     }
+
+    private boolean assembleFile(String filePath, String loaderAddress, boolean mac){
+        final String macPath = "files/osx_mac";
+        final String windowsPath = "files/osx.exe";
+
+        String path = mac ? macPath : windowsPath;
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(path, filePath, loaderAddress);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            int exitCode = process.waitFor();
+            log("Assembled with code: " + exitCode);
+            return exitCode == 0;
+        } catch (Exception e) {
+            logError("Error running osx: " + e.getMessage());
+        }
+
+        return false;
+    }
+
 
 
     private byte[] readProgram(String filePath) {
