@@ -1,6 +1,8 @@
 package vm.hardware;
 
-public class Clock {
+import util.Subject;
+
+public class Clock extends Subject {
     private static Clock instance;
     private int time;
 
@@ -9,7 +11,7 @@ public class Clock {
     }
 
     public static synchronized Clock getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Clock();
         }
         return instance;
@@ -20,11 +22,12 @@ public class Clock {
     }
 
     public void tick() {
-         time++;
+        tick(1);
     }
 
     public void tick(int ticks) {
         time += ticks;
+        notifyObservers(getTime());
     }
 
 }
