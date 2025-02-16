@@ -35,3 +35,10 @@ DEFINITIONS
 
 1. SWI
     0 - prints the value of the register 0
+
+2. SWI
+    1 - prints the value of the register 1
+
+3. SWI
+    2 - vfork. This command combines fork, exec, and wait into one command.
+    The child process will run child.asm.

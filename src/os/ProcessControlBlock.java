@@ -11,13 +11,16 @@ public class ProcessControlBlock implements Logging {
     private int programSize;
     private int programStart;
     private int codeStart;
-    private String filePath;
-    private final List<Integer> childPIDs = new ArrayList<>();
+    private final int clockStartTime;
+    private final String filePath;
+    private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
 
-    public ProcessControlBlock(int pid) {
+    public ProcessControlBlock(int pid, String filePath, int clockStartTime) {
         this.pid = pid;
         this.status = ProcessStatus.NEW;
+        this.filePath = filePath;
+        this.clockStartTime = clockStartTime;
     }
 
     public int getProgramStart() {
@@ -57,6 +60,10 @@ public class ProcessControlBlock implements Logging {
         registers[11] = pc;
     }
 
+    public int getClockStartTime() {
+        return clockStartTime;
+    }
+
     public int[] getRegisters() {
         return registers;
     }
@@ -69,9 +76,6 @@ public class ProcessControlBlock implements Logging {
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
 
     public int getCodeStart() {
         return codeStart;
@@ -81,11 +85,9 @@ public class ProcessControlBlock implements Logging {
         this.codeStart = codeStart;
     }
 
-    public List<Integer> getChildPIDs() {
-        return childPIDs;
+    public void addChild(ProcessControlBlock pcb) {
+        log("Adding child " + pcb.getPid() + " to " + pid);
+        children.add(pcb);
     }
 
-    public void addChildPID(Integer childPID) {
-        childPIDs.add(childPID);
-    }
 }
