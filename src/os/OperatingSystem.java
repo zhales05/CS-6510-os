@@ -206,8 +206,8 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    public Integer startChildProcess() {
-        return scheduler.startChildProcess();
+    public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
+        return scheduler.startChildProcess(parent);
     }
 
     public void terminateProcess(ProcessControlBlock pcb) {

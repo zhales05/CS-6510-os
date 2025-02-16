@@ -13,7 +13,7 @@ public class ProcessControlBlock implements Logging {
     private int codeStart;
     private final int clockStartTime;
     private String filePath;
-    private final List<Integer> childPIDs = new ArrayList<>();
+    private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
 
     public ProcessControlBlock(int pid, String filePath, int clockStartTime) {
@@ -88,11 +88,9 @@ public class ProcessControlBlock implements Logging {
         this.codeStart = codeStart;
     }
 
-    public List<Integer> getChildPIDs() {
-        return childPIDs;
+    public void addChild(ProcessControlBlock pcb) {
+        log("Adding child " + pcb.getPid() + " to " + pid);
+        children.add(pcb);
     }
 
-    public void addChildPID(Integer childPID) {
-        childPIDs.add(childPID);
-    }
 }

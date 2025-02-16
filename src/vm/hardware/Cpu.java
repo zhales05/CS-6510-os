@@ -255,8 +255,10 @@ public class Cpu implements Logging {
     private void startChildProcess(OperatingSystem os, ProcessControlBlock parent) {
         parent.setRegisters(registers);
         log("Starting child process");
-        parent.addChildPID(os.startChildProcess());
+        ProcessControlBlock child = os.startChildProcess(parent);
+        parent.addChild(child);
         log("Back to parent");
+        parent.setStatus(ProcessStatus.RUNNING);
         loadRegistersFromPcb(parent);
     }
 }

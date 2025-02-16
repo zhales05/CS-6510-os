@@ -12,6 +12,7 @@ class Scheduler implements Logging, Observer {
     private static final Clock clock = Clock.getInstance();
     private final LinkedList<ProcessControlBlock> jobQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> readyQueue = new LinkedList<>();
+    private final LinkedList<ProcessControlBlock> ioQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> terminatedQueue = new LinkedList<>();
 
     private final Map<String, ProcessControlBlock> processMap = new HashMap<>();
@@ -25,6 +26,12 @@ class Scheduler implements Logging, Observer {
     public void addToJobQueue(ProcessControlBlock pcb) {
         jobQueue.add(pcb);
         processMap.put(pcb.getFilePath(), pcb);
+    }
+
+    public void addToIOQueue(ProcessControlBlock pcb) {
+        log("Adding process " + pcb.getPid() + " to IO queue");
+        pcb.setStatus(ProcessStatus.WAITING);
+        ioQueue.add(pcb);
     }
 
     public ProcessControlBlock getProcess(String filePath) {
@@ -44,6 +51,7 @@ class Scheduler implements Logging, Observer {
         pcb.setStatus(ProcessStatus.READY);
         readyQueue.add(pcb);
     }
+
 
     private ProcessControlBlock getFromReadyQueue() {
         return readyQueue.poll();
@@ -82,16 +90,22 @@ class Scheduler implements Logging, Observer {
         parentOs.removeProcess(pcb);
     }
 
-    public int getNumTotalProcesses() {
-        return jobQueue.size() + readyQueue.size() + terminatedQueue.size();
+    private ProcessControlBlock getFromIoQueue() {
+        return ioQueue.poll();
     }
 
-    public Integer startChildProcess() {
+    public int getNumTotalProcesses() {
+        return jobQueue.size() + readyQueue.size() + terminatedQueue.size() + ioQueue.size();
+    }
+
+    public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
+        addToIOQueue(parent);
         ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0);
         pcb = parentOs.prepareForReadyQueue(pcb);
         //skipping ready queue going straight to running
         parentOs.runProcess(pcb);
-        return pcb.getPid();
+        getFromIoQueue(); //removing parent from io queue
+        return pcb;
     }
 
     @Override
