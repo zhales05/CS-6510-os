@@ -12,7 +12,7 @@ public class ProcessControlBlock implements Logging {
     private int programStart;
     private int codeStart;
     private final int clockStartTime;
-    private String filePath;
+    private final String filePath;
     private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
 
@@ -76,9 +76,6 @@ public class ProcessControlBlock implements Logging {
         return filePath;
     }
 
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
 
     public int getCodeStart() {
         return codeStart;

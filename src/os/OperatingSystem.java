@@ -70,6 +70,10 @@ public class OperatingSystem implements Logging {
                     prompt = "VM-> ";
                     break;
                 case "osx":
+                    if(inputs.length < 3) {
+                        logError("Not enough inputs provided");
+                        break;
+                    }
                     //if working on windows machine, use false, otherwise use true
                     assembleFile(inputs[1], inputs[2], true);
                     break;

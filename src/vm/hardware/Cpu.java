@@ -214,7 +214,7 @@ public class Cpu implements Logging {
                     return;
 
                 default:
-                    logError("Invalid instruction");
+                    logError("Process: " + pcb.getPid() + " Invalid instruction");
                     return;
             }
             Clock.getInstance().tick();
@@ -246,7 +246,7 @@ public class Cpu implements Logging {
                 Clock.getInstance().tick(randomTicks);
                 break;
             default:
-                logError("Invalid SWI call");
+                logError("Process: " + pcb.getPid() + "Invalid SWI call");
                 break;
         }
         setKernelMode(false);

@@ -6,7 +6,6 @@ import os.util.Logging;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Random;
 
 public class Memory implements Logging {
     private static final int TOTAL_SIZE = 100000;
@@ -66,7 +65,7 @@ public class Memory implements Logging {
 
 
     public ProcessControlBlock load(byte[] program, ProcessControlBlock pcb) {
-        if(!validateLoad(program)){
+        if(!validateLoad(program, pcb)){
             return null;
         }
 
@@ -85,7 +84,7 @@ public class Memory implements Logging {
 
         //check if program size exceeds memory capacity
         if (programSize + loaderAddress > TOTAL_SIZE) {
-            logError("Program size exceeds memory capacity");
+            logError("Process: " + pcb.getPid() + "Program size exceeds memory capacity");
             return null;
         }
 
@@ -108,14 +107,14 @@ public class Memory implements Logging {
         return pcb;
     }
 
-    private boolean validateLoad(byte[] program) {
+    private boolean validateLoad(byte[] program, ProcessControlBlock pcb) {
         if(program == null) {
-            logError("Program is null");
+            logError("Process: " + pcb.getPid() + " | " + "Program is null");
             return false;
         }
 
         if(program.length < 12) {
-            logError("Program size is less than 12 bytes");
+            logError("Process: " + pcb.getPid() + " | " + "Program size is less than 12 bytes");
             return false;
         }
 
