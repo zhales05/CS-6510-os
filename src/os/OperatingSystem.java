@@ -10,12 +10,36 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
+    private static final String ASSEMBLER_PATH = "files/osx.exe"; // This is windows path, change it to mac OS
     private final Map<String, ProcessControlBlock> pcbs = new HashMap<>();
     Scheduler scheduler = new Scheduler(this);
+
+    public boolean assembleFile(String asmFilePath) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(ASSEMBLER_PATH, asmFilePath);
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace(); // Could remove
+            return false;
+        }
+    }
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -76,6 +100,18 @@ public class OperatingSystem implements Logging {
                 case "clearmem":
                     log("Clearing memory");
                     memory.clear();
+                    break;
+                case "assemble":
+                    if (inputs.length < 2) {
+                        System.out.println("Usage: assemble <asm_file>");
+                        break;
+                    }
+                    String asmFilePath = inputs[1];
+                    if (assembleFile(asmFilePath)) {
+                        System.out.println("Assembly successful: " + asmFilePath.replace(".asm", ".osx"));
+                    } else {
+                        System.out.println("Assembly failed.");
+                    }
                     break;
                 case "help":
                     log("Need some help huh");
