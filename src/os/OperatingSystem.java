@@ -18,7 +18,8 @@ public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
-    private final Scheduler scheduler = new Scheduler(this);
+    //this will eventually be instaniated based on the input from the user
+    private final Scheduler scheduler = new Scheduler(this, new FIFOReadyQueue());
 
     public void startShell() {
         String prompt = "VM-> ";

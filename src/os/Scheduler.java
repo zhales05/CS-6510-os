@@ -11,16 +11,17 @@ import java.util.Map;
 class Scheduler implements Logging, Observer {
     private static final Clock clock = Clock.getInstance();
     private final LinkedList<ProcessControlBlock> jobQueue = new LinkedList<>();
-    private final LinkedList<ProcessControlBlock> readyQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> ioQueue = new LinkedList<>();
     private final LinkedList<ProcessControlBlock> terminatedQueue = new LinkedList<>();
 
     private final Map<String, ProcessControlBlock> processMap = new HashMap<>();
+    private final IReadyQueue readyQueue;
 
     private final OperatingSystem parentOs;
 
-    public Scheduler(OperatingSystem parentOs) {
+    public Scheduler(OperatingSystem parentOs, IReadyQueue readyQueue) {
         this.parentOs = parentOs;
+        this.readyQueue = readyQueue;
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -47,14 +48,12 @@ class Scheduler implements Logging, Observer {
     }
 
     private void addToReadyQueue(ProcessControlBlock pcb) {
-        log("Adding process " + pcb.getPid() + " to ready queue");
-        pcb.setStatus(ProcessStatus.READY);
-        readyQueue.add(pcb);
+       readyQueue.addProcess(pcb);
     }
 
 
     private ProcessControlBlock getFromReadyQueue() {
-        return readyQueue.poll();
+        return readyQueue.getNextProcess();
     }
 
     public void processJobs() {
@@ -87,7 +86,7 @@ class Scheduler implements Logging, Observer {
         pcb.setStatus(ProcessStatus.TERMINATED);
         terminatedQueue.add(pcb);
         //might need to do this somewhere else later but this should clean it all up for now
-        parentOs.removeProcess(pcb);
+        //parentOs.removeProcess(pcb);
     }
 
     private ProcessControlBlock getFromIoQueue() {

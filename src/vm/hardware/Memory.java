@@ -129,8 +129,8 @@ public class Memory implements Logging {
     }
 
     public void clear(ProcessControlBlock pcb){
-        Arrays.fill(memory, pcb.getProgramStart(), pcb.getProgramStart() + pcb.getProgramSize(), (byte) 0);
-        log("Memory cleared for process " + pcb.getPid());
+        Arrays.fill(memory, pcb.getProgramStart(), pcb.getProgramStart() + pcb.getProgramSize() + 1, (byte) 0);
+       // log("Memory cleared for process " + pcb.getPid());
     }
 
     public String coreDump(int start, int end) {
