@@ -68,15 +68,16 @@ class Scheduler implements Logging, Observer {
                 }
                 //put in ready queue
                 addToReadyQueue(pcb);
-                // right now we are just going to run as soon as we add to ready queue.
-                // this will change in the future
-                parentOs.runProcess(getFromReadyQueue());
             } else {
                 //put back in job queue
                 jobQueue.add(pcb);
                 //ticking clock se we don't get stuck with a process that never starts
                 clock.tick();
             }
+        }
+
+        while (!readyQueue.isEmpty()) {
+            parentOs.runProcess(getFromReadyQueue());
         }
     }
 
@@ -94,7 +95,8 @@ class Scheduler implements Logging, Observer {
     }
 
     public int getNumTotalProcesses() {
-        return jobQueue.size() + readyQueue.size() + terminatedQueue.size() + ioQueue.size();
+        return jobQueue.size() + readyQueue.
+                size() + terminatedQueue.size() + ioQueue.size();
     }
 
     public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
