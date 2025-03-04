@@ -31,7 +31,7 @@ class Scheduler implements Logging, Observer {
 
     public void addToIOQueue(ProcessControlBlock pcb) {
         log("Adding process " + pcb.getPid() + " to IO queue");
-        pcb.setStatus(ProcessStatus.WAITING);
+        pcb.setStatus(ProcessStatus.WAITING, clock.getTime());
         ioQueue.add(pcb);
     }
 
@@ -48,7 +48,8 @@ class Scheduler implements Logging, Observer {
     }
 
     private void addToReadyQueue(ProcessControlBlock pcb) {
-       readyQueue.addProcess(pcb);
+        pcb.setStatus(ProcessStatus.READY, Clock.getInstance().getTime());
+        readyQueue.addProcess(pcb);
     }
 
 
@@ -59,7 +60,7 @@ class Scheduler implements Logging, Observer {
     public void processJobs() {
         while (!jobQueue.isEmpty()) {
             ProcessControlBlock pcb = getJob();
-            if (pcb.getClockStartTime() <= clock.getTime()) {
+            if (pcb.getStartAfter() <= clock.getTime()) {
                 //load
                 pcb = parentOs.prepareForReadyQueue(pcb);
                 //checking if error with load
@@ -84,7 +85,7 @@ class Scheduler implements Logging, Observer {
 
     public void addToTerminatedQueue(ProcessControlBlock pcb) {
         log("Adding process " + pcb.getPid() + " to terminated queue");
-        pcb.setStatus(ProcessStatus.TERMINATED);
+        pcb.setStatus(ProcessStatus.TERMINATED, clock.getTime());
         terminatedQueue.add(pcb);
         //might need to do this somewhere else later but this should clean it all up for now
         //parentOs.removeProcess(pcb);
@@ -101,7 +102,7 @@ class Scheduler implements Logging, Observer {
 
     public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
         addToIOQueue(parent);
-        ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0);
+        ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0, clock.getTime());
         pcb = parentOs.prepareForReadyQueue(pcb);
         //skipping ready queue going straight to running
         parentOs.runProcess(pcb);

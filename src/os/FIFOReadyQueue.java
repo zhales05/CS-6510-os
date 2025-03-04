@@ -1,5 +1,7 @@
 package os;
 
+import vm.hardware.Clock;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -8,7 +10,6 @@ public class FIFOReadyQueue implements IReadyQueue {
 
     @Override
     public void addProcess(ProcessControlBlock pcb) {
-        pcb.setStatus(ProcessStatus.READY);
         log("Adding process " + pcb.getPid() + " to ready queue");
         queue.add(pcb);
     }

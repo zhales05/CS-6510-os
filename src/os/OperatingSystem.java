@@ -190,7 +190,7 @@ public class OperatingSystem implements Logging {
                 return;
             }
 
-            ProcessControlBlock pcb = new ProcessControlBlock(scheduler.getNewPid(), inputs[i], Integer.parseInt(inputs[i + 1]));
+            ProcessControlBlock pcb = new ProcessControlBlock(scheduler.getNewPid(), inputs[i], Integer.parseInt(inputs[i + 1]), clock.getTime());
             scheduler.addToJobQueue(pcb);
         }
         scheduler.processJobs();

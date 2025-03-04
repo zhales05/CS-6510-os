@@ -84,7 +84,7 @@ public class Cpu implements Logging {
 
     public void run(ProcessControlBlock pcb, OperatingSystem os) {
         loadRegistersFromPcb(pcb);
-        pcb.setStatus(ProcessStatus.RUNNING);
+        pcb.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
 
         while (true) {
             int curr = memory.getByte();
@@ -258,7 +258,7 @@ public class Cpu implements Logging {
         ProcessControlBlock child = os.startChildProcess(parent);
         parent.addChild(child);
         log("Back to parent");
-        parent.setStatus(ProcessStatus.RUNNING);
+        parent.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
         loadRegistersFromPcb(parent);
     }
 }
