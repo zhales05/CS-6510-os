@@ -1,4 +1,6 @@
-package os;
+package os.queues;
+
+import os.ProcessControlBlock;
 
 import java.util.LinkedList;
 import java.util.Queue;

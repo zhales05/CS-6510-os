@@ -1,5 +1,6 @@
-package os;
+package os.queues;
 
+import os.ProcessControlBlock;
 import os.util.Logging;
 
 public interface IReadyQueue extends Logging {

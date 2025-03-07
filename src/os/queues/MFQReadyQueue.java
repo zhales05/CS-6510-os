@@ -1,4 +1,6 @@
-package os;
+package os.queues;
+
+import os.ProcessControlBlock;
 
 public class MFQReadyQueue implements IReadyQueue{
     private final int quantum1;

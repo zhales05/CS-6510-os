@@ -1,5 +1,7 @@
 package os;
 
+import os.queues.FCFSReadyQueue;
+import os.queues.IReadyQueue;
 import os.util.Logging;
 import os.util.MetricsTracker;
 import util.Observer;
