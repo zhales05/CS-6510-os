@@ -6,6 +6,7 @@ import java.util.Queue;
 public class RRReadyQueue implements IReadyQueue{
     Queue<ProcessControlBlock> queue = new LinkedList<>();
     private final int quantum;
+    private int quantumCounter = 0;
 
     public RRReadyQueue(int quantum) {
         this.quantum = quantum;
@@ -30,4 +31,26 @@ public class RRReadyQueue implements IReadyQueue{
     public int size() {
         return queue.size();
     }
+
+    @Override
+    public boolean incrementQuantumCounter() {
+        quantumCounter++;
+        if(quantumCounter == quantum){
+            quantumCounter = 0;
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int getQuantum() {
+        return quantum;
+    }
+
+    @Override
+    public int getQuantumCounter() {
+        return quantumCounter;
+    }
+
 }

@@ -18,8 +18,9 @@ public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
-    //this will eventually be instaniated based on the input from the user
-    private final Scheduler scheduler = new Scheduler(this, new FIFOReadyQueue());
+    //this will eventually be instantiated based on the input from the user
+    //this scheduler will eventually need to be able to update the scheduling algorithm
+    private final Scheduler scheduler = new Scheduler(this);
 
     public void startShell() {
         String prompt = "VM-> ";
@@ -93,6 +94,9 @@ public class OperatingSystem implements Logging {
                     log("Clearing memory");
                     memory.clear();
                     break;
+                case "setsched":
+                    setSchedule(inputs);
+                    break;
                 case "help":
                     log("Need some help huh");
                     printHelp();
@@ -109,6 +113,26 @@ public class OperatingSystem implements Logging {
             if (!rerunMode) {
                 previousCommand = inputs;
             }
+        }
+    }
+
+    //Making the express decision that the quantum values come after the scheduling algorithm
+    private void setSchedule(String[] inputs) {
+        //TODO: add error checking for inputs
+        //TODO: make enums/variables for the scheduling algorithms
+        switch (inputs[1]) {
+            case "fcfs":
+                scheduler.setReadyQueue(new FCFSReadyQueue());
+                break;
+            case "rr":
+                scheduler.setReadyQueue(new RRReadyQueue(Integer.parseInt(inputs[2])));
+                break;
+            case "mfq":
+                scheduler.setReadyQueue(new MFQReadyQueue(Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3])));
+                break;
+            default:
+                logError("Unknown scheduling algorithm");
+                break;
         }
     }
 
@@ -177,7 +201,6 @@ public class OperatingSystem implements Logging {
         return pcb;
     }
 
-
     private void schedule(String[] inputs) {
         if (inputs.length < 3) {
             logError("Not enough inputs provided");
@@ -218,5 +241,7 @@ public class OperatingSystem implements Logging {
     public void terminateProcess(ProcessControlBlock pcb) {
         scheduler.addToTerminatedQueue(pcb);
     }
+
+
 
 }

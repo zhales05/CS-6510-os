@@ -1,11 +1,9 @@
 package os;
 
-import vm.hardware.Clock;
-
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class FIFOReadyQueue implements IReadyQueue {
+public class FCFSReadyQueue implements IReadyQueue {
     Queue<ProcessControlBlock> queue = new LinkedList<>();
 
     @Override
@@ -27,5 +25,22 @@ public class FIFOReadyQueue implements IReadyQueue {
     @Override
     public int size() {
         return queue.size();
+    }
+
+    @Override
+    public boolean incrementQuantumCounter() {
+        //no action needed fifo baby
+        return false;
+    }
+
+    @Override
+    public int getQuantum() {
+        //FIFO no quantum
+        return -1;
+    }
+
+    @Override
+    public int getQuantumCounter() {
+        return -1;
     }
 }

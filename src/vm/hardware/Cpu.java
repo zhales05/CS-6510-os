@@ -81,7 +81,6 @@ public class Cpu implements Logging {
         System.arraycopy(pcb.getRegisters(), 0, registers, 0, registers.length);
     }
 
-
     public void run(ProcessControlBlock pcb, OperatingSystem os) {
         loadRegistersFromPcb(pcb);
         pcb.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());

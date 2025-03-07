@@ -11,4 +11,15 @@ public interface IReadyQueue extends Logging {
     boolean isEmpty();          // Check if the queue is empty
 
     int size();
+
+    /**
+     * Increment the quantum counter
+     *
+     * @return true if the quantum counter has reached the quantum limit
+     */
+    boolean incrementQuantumCounter();
+
+    int getQuantum();
+
+    int getQuantumCounter();
 }
