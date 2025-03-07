@@ -7,15 +7,12 @@ import os.util.Logging;
 import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
-import os.util.ErrorDump;
-import os.util.VerboseModeLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
 
 /**
  * The OperatingSystem class is a facade between the hardware and the os software
@@ -106,17 +103,11 @@ public class OperatingSystem implements Logging {
         return pcb;
     }
 
-    void removeProcess(ProcessControlBlock pcb) {
-        Memory.getInstance().clear(pcb);
-    }
-
-    public ProcessControlBlock runProcess(ProcessControlBlock pcb) {
-        //if null ready queue is empty so just return.
+    public void runProcess(ProcessControlBlock pcb) {
+        //if null ready queue is empty just return.
         if (pcb != null) {
             cpu.run(pcb, this);
         }
-
-        return pcb;
     }
 
      boolean isVerboseMode(String[] inputs) {
@@ -170,6 +161,12 @@ public class OperatingSystem implements Logging {
         scheduler.addToTerminatedQueue(pcb);
     }
 
+    void transitionProcess(ProcessControlBlock next) {
+        cpu.transition(next);
+    }
 
+    public void addToIOQueue(ProcessControlBlock pcb) {
+        scheduler.addToIOQueue(pcb);
+    }
 
 }

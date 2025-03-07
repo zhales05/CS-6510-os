@@ -13,6 +13,7 @@ public class Cpu implements Logging {
     private final Memory memory = Memory.getInstance();
     private boolean kernelMode = false;
 
+    private ProcessControlBlock currentPcb;
     private final int[] registers = new int[12];
 
     static final int MOV = 1;
@@ -79,11 +80,12 @@ public class Cpu implements Logging {
 
     private void loadRegistersFromPcb(ProcessControlBlock pcb) {
         System.arraycopy(pcb.getRegisters(), 0, registers, 0, registers.length);
+        currentPcb = pcb;
+        currentPcb.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
     }
 
     public void run(ProcessControlBlock pcb, OperatingSystem os) {
         loadRegistersFromPcb(pcb);
-        pcb.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
 
         while (true) {
             int curr = memory.getByte();
@@ -208,12 +210,12 @@ public class Cpu implements Logging {
                     break;
 
                 case END:
-                    pcb.setRegisters(registers);
-                    os.terminateProcess(pcb);
+                    currentPcb.setRegisters(registers);
+                    os.terminateProcess(currentPcb);
                     return;
 
                 default:
-                    logError("Process: " + pcb.getPid() + " Invalid instruction");
+                    logError("Process: " + currentPcb.getPid() + " Invalid instruction");
                     return;
             }
             Clock.getInstance().tick();
@@ -244,6 +246,10 @@ public class Cpu implements Logging {
                 log("Waiting for " + randomTicks + " ticks");
                 Clock.getInstance().tick(randomTicks);
                 break;
+            case 4:
+                log("io");
+                os.addToIOQueue(pcb);
+                break;
             default:
                 logError("Process: " + pcb.getPid() + "Invalid SWI call");
                 break;
@@ -259,5 +265,10 @@ public class Cpu implements Logging {
         log("Back to parent");
         parent.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
         loadRegistersFromPcb(parent);
+    }
+
+    public void transition(ProcessControlBlock next) {
+        currentPcb.setRegisters(registers);
+        loadRegistersFromPcb(next);
     }
 }

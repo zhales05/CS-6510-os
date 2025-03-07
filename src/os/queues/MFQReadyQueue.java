@@ -46,4 +46,9 @@ public class MFQReadyQueue implements IReadyQueue{
     public int getQuantumCounter() {
         return 0;
     }
+
+    @Override
+    public void resetQuantumCounter() {
+        //counter will go to zero
+    }
 }

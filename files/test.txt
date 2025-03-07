@@ -4,6 +4,6 @@ execute files/sub.osx 2 -v
 
 execute files/vfork.osx 2 -v
 
-execute files/add.osx 5 files/add.osx 6 -v
+execute files/scpu1.osx 1 files/scpu2.osx 1 -v
 
 execute files/add.osx 5 files/add.osx 10 files/sub.osx 20 files/sub.osx 30 files/vfork.osx 60 -v
