@@ -11,16 +11,23 @@ public class ProcessControlBlock implements Logging {
     private int programSize;
     private int programStart;
     private int codeStart;
-    private final int clockStartTime;
+    private final int startAfter;
     private final String filePath;
     private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
 
-    public ProcessControlBlock(int pid, String filePath, int clockStartTime) {
+    //metrics
+    private int arrivalTime;
+    private int completionTime;
+    private final List<int[]> executionTimes = new ArrayList<>();
+
+
+    public ProcessControlBlock(int pid, String filePath, int startAfter, int arrivalTime) {
         this.pid = pid;
         this.status = ProcessStatus.NEW;
         this.filePath = filePath;
-        this.clockStartTime = clockStartTime;
+        this.startAfter = startAfter;
+        this.arrivalTime = arrivalTime;
     }
 
     public int getProgramStart() {
@@ -39,9 +46,10 @@ public class ProcessControlBlock implements Logging {
         return status;
     }
 
-    public void setStatus(ProcessStatus status) {
+    public void setStatus(ProcessStatus status, int time) {
         this.status = status;
         log("Process " + pid + " is now " + status);
+        completionTime = time;
     }
 
     public int getProgramSize() {
@@ -60,8 +68,8 @@ public class ProcessControlBlock implements Logging {
         registers[11] = pc;
     }
 
-    public int getClockStartTime() {
-        return clockStartTime;
+    public int getStartAfter() {
+        return startAfter;
     }
 
     public int[] getRegisters() {
