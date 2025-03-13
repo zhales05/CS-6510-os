@@ -5,14 +5,26 @@ import os.ProcessControlBlock;
 public class MFQReadyQueue implements IReadyQueue{
     private final int quantum1;
     private final int quantum2;
+    private int quantumCounter;
+
+    private final RRReadyQueue rrReadyQueue1;
+    private final RRReadyQueue rrReadyQueue2;
+    private final FCFSReadyQueue fcfsReadyQueue;
 
     public MFQReadyQueue(int quantum1, int quantum2) {
         this.quantum1 = quantum1;
         this.quantum2 = quantum2;
+
+        rrReadyQueue1 = new RRReadyQueue(quantum1);
+        rrReadyQueue2 = new RRReadyQueue(quantum2);
+        fcfsReadyQueue = new FCFSReadyQueue();
+
+        quantumCounter = 0;
     }
 
     @Override
     public void addProcess(ProcessControlBlock pcb) {
+    //evaluate what queue to add process to
 
     }
 

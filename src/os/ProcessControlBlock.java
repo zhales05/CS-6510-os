@@ -20,7 +20,7 @@ public class ProcessControlBlock implements Logging {
     private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
 
-    //metrics
+    //process specific metrics
     private final List<ProcessExecutionTime> timeLine = new ArrayList<>();
     private int arrivalTime;
     private int completionTime;
@@ -206,6 +206,31 @@ public class ProcessControlBlock implements Logging {
                 .append("Response Time: ").append(responseTime).append("\n");
 
         log(sb.toString());
+    }
+
+
+    public int getTurnAroundTime() {
+        return turnAroundTime;
+    }
+
+    public void setTurnAroundTime(int turnAroundTime) {
+        this.turnAroundTime = turnAroundTime;
+    }
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public Integer getResponseTime() {
+        return responseTime;
+    }
+
+    public void setResponseTime(Integer responseTime) {
+        this.responseTime = responseTime;
     }
 
 }

@@ -9,9 +9,7 @@ import os.util.MetricsTracker;
 import util.Observer;
 import vm.hardware.Clock;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The Scheduler class is responsible for managing the queues and telling the OS when to run/swap processes.
@@ -30,7 +28,7 @@ class Scheduler implements Logging, Observer {
     private final OperatingSystem parentOs;
 
     //metrics here for now
-    private MetricsTracker metrics = new MetricsTracker();
+    List<MetricsTracker> metrics = new ArrayList<>();
     private Integer clockStartTime;
 
     private Scheduler(OperatingSystem parentOs, IReadyQueue readyQueue) {
@@ -63,8 +61,8 @@ class Scheduler implements Logging, Observer {
     }
 
     private void addToReadyQueue(ProcessControlBlock pcb) {
-        pcb.setStatus(ProcessStatus.READY, readyQueue.getQueueId());
         readyQueue.addProcess(pcb);
+        pcb.setStatus(ProcessStatus.READY, readyQueue.getQueueId());
     }
 
     public void addToTerminatedQueue(ProcessControlBlock pcb) {
@@ -99,6 +97,9 @@ class Scheduler implements Logging, Observer {
     }
 
     public void processJobs() {
+        MetricsTracker metricsTracker = new MetricsTracker();
+        metrics.add(metricsTracker);
+
         while (!jobQueue.isEmpty()) {
             ProcessControlBlock pcb = getJob();
             if (pcb.getStartAfter() <= clock.getTime()) {
@@ -135,7 +136,7 @@ class Scheduler implements Logging, Observer {
         clockStartTime = null;
 
         //print metrics here for now
-        log(metrics.toString());
+        metricsTracker.calculateMetrics(terminatedQueue);
     }
 
 
@@ -199,4 +200,5 @@ class Scheduler implements Logging, Observer {
         log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
         this.readyQueue = readyQueue;
     }
+
 }
