@@ -37,11 +37,7 @@ public class RRReadyQueue implements IReadyQueue{
     @Override
     public boolean incrementQuantumCounter() {
         quantumCounter++;
-        if(quantumCounter == quantum){
-            return true;
-        }
-
-        return false;
+        return quantumCounter == quantum;
     }
 
     @Override
@@ -57,6 +53,11 @@ public class RRReadyQueue implements IReadyQueue{
     @Override
     public void resetQuantumCounter() {
         quantumCounter = 0;
+    }
+
+    @Override
+    public QueueIds getQueueId() {
+        return QueueIds.RR_QUEUE;
     }
 
 }

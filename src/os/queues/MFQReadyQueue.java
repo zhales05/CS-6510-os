@@ -51,4 +51,10 @@ public class MFQReadyQueue implements IReadyQueue{
     public void resetQuantumCounter() {
         //counter will go to zero
     }
+
+    @Override
+    public QueueIds getQueueId() {
+        //return 1,2,3 based on the queue
+        return QueueIds.MFQ_QUEUE_1;
+    }
 }

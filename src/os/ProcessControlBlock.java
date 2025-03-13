@@ -1,6 +1,9 @@
 package os;
 
+import os.queues.QueueIds;
 import os.util.Logging;
+import os.util.ProcessExecutionTime;
+import vm.hardware.Clock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,14 +20,15 @@ public class ProcessControlBlock implements Logging {
     private final int[] registers = new int[12];
 
     //metrics
-    private int arrivalTime;
-    private int completionTime;
-    private final List<int[]> executionTimes = new ArrayList<>();
+    //arrival to ready queue should the timeline track this?
+    private final int arrivalTime;
+    private final List<ProcessExecutionTime> timeLine = new ArrayList<>();
 
+    //if we currently have a start time and no end time we store it here
+    private ProcessExecutionTime currentTime;
 
     public ProcessControlBlock(int pid, String filePath, int startAfter, int arrivalTime) {
         this.pid = pid;
-        this.status = ProcessStatus.NEW;
         this.filePath = filePath;
         this.startAfter = startAfter;
         this.arrivalTime = arrivalTime;
@@ -46,10 +50,27 @@ public class ProcessControlBlock implements Logging {
         return status;
     }
 
-    public void setStatus(ProcessStatus status, int time) {
+    public void setStatus(ProcessStatus status, QueueIds queueId) {
+        processStatusChange(status, queueId);
         this.status = status;
         log("Process " + pid + " is now " + status);
-        completionTime = time;
+    }
+
+    private void processStatusChange(ProcessStatus newStatus, QueueIds queueId) {
+        if (currentTime != null) {
+            currentTime.setEnd();
+            timeLine.add(currentTime);
+            currentTime = null;
+        }
+
+        switch (newStatus) {
+            case NEW, RUNNING, WAITING, READY:
+                currentTime =  new ProcessExecutionTime(queueId);
+                break;
+            case TERMINATED:
+                printTimeline();
+                break;
+        }
     }
 
     public int getProgramSize() {
@@ -96,6 +117,40 @@ public class ProcessControlBlock implements Logging {
     public void addChild(ProcessControlBlock pcb) {
         log("Adding child " + pcb.getPid() + " to " + pid);
         children.add(pcb);
+    }
+
+    public void printTimeline() {
+        StringBuilder sb = new StringBuilder("Process Timeline:\n");
+        for (ProcessExecutionTime pet : timeLine) {
+            sb.append("Queue: ").append(pet.getQueueId())
+                    .append(", Start: ").append(pet.getStart())
+                    .append(", End: ").append(pet.getEnd())
+                    .append(", Execution Time: ").append(pet.getExecutionTime())
+                    .append(" units\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    public void printdTimeline() {
+        StringBuilder sb = new StringBuilder("Process Gantt Chart:\n");
+        sb.append("Time: ");
+        for (int i = 0; i <= Clock.getInstance().getTime(); i++) {
+            sb.append(String.format("%4d", i));
+        }
+        sb.append("\n");
+
+        for (ProcessExecutionTime pet : timeLine) {
+            sb.append("Queue ").append(pet.getQueueId()).append(": ");
+            for (int i = 0; i <= Clock.getInstance().getTime(); i++) {
+                if (i >= pet.getStart() && i < pet.getEnd()) {
+                    sb.append("####");
+                } else {
+                    sb.append("    ");
+                }
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb.toString());
     }
 
 }

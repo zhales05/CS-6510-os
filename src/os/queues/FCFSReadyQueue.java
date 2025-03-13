@@ -50,4 +50,9 @@ public class FCFSReadyQueue implements IReadyQueue {
     public void resetQuantumCounter() {
         //yawn
     }
+
+    @Override
+    public QueueIds getQueueId() {
+        return QueueIds.FCFS_QUEUE;
+    }
 }
