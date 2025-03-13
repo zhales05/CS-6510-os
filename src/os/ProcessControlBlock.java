@@ -77,6 +77,7 @@ public class ProcessControlBlock implements Logging {
             case TERMINATED:
                 completionTime = clock.getTime();
                 evaluateMetrics();
+                printfTimeline();
                 break;
         }
     }
@@ -144,7 +145,7 @@ public class ProcessControlBlock implements Logging {
 
         StringBuilder sb = new StringBuilder("Process " + pid + " Gantt Chart:\n");
         sb.append("Time:    ");
-        for (int i = timeLine.getFirst().getStart(); i < Clock.getInstance().getTime(); i++) {
+        for (int i = arrivalTime; i < completionTime; i++) {
             sb.append(String.format("%4d", i));
         }
         sb.append("\n");
@@ -180,7 +181,7 @@ public class ProcessControlBlock implements Logging {
                         running.append(String.format("%4s", ""));
                         io.append(String.format("%4s", "X"));
                         break;
-                    case RR_QUEUE:
+                    case RR_QUEUE, FCFS_QUEUE:
                         job.append(String.format("%4s", ""));
                         ready.append(String.format("%4s", "X"));
                         running.append(String.format("%4s", ""));
@@ -199,6 +200,7 @@ public class ProcessControlBlock implements Logging {
                 .append(ready).append("\n")
                 .append(running).append("\n")
                 .append(io).append("\n")
+                .append("Process ").append(pid).append(" Metrics:\n")
                 .append("Turnaround Time: ").append(turnAroundTime).append("\n")
                 .append("Waiting Time: ").append(waitingTime).append("\n")
                 .append("Response Time: ").append(responseTime).append("\n");

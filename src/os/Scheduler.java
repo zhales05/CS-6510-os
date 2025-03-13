@@ -39,7 +39,8 @@ class Scheduler implements Logging, Observer {
     }
 
     public Scheduler(OperatingSystem parentOs) {
-        this(parentOs, new RRReadyQueue(5));
+        //this(parentOs, new RRReadyQueue(5));
+        this(parentOs, new FCFSReadyQueue());
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -117,7 +118,7 @@ class Scheduler implements Logging, Observer {
                 }
             } else {
                 //put back in job queue
-                jobQueue.add(pcb);
+                addToJobQueue(pcb);
                 //ticking clock se we don't get stuck with a process that never starts
                 clock.tick();
             }
