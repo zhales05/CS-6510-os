@@ -157,7 +157,7 @@ class Scheduler implements Logging, Observer {
 
     public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
        // addToIOQueue(parent);
-        ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0, clock.getTime());
+        ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0);
         pcb = parentOs.prepareForReadyQueue(pcb);
         //skipping ready queue going straight to running
         runProcess(pcb);

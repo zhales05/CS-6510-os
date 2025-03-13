@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessControlBlock implements Logging {
+    Clock clock = Clock.getInstance();
     private final int pid;
     private ProcessStatus status;
     private int programSize;
@@ -20,18 +21,20 @@ public class ProcessControlBlock implements Logging {
     private final int[] registers = new int[12];
 
     //metrics
-    //arrival to ready queue should the timeline track this?
-    private final int arrivalTime;
     private final List<ProcessExecutionTime> timeLine = new ArrayList<>();
+    private int arrivalTime;
+    private int completionTime;
+    private int turnAroundTime;
+    private int waitingTime = 0;
+    private Integer responseTime;
 
     //if we currently have a start time and no end time we store it here
     private ProcessExecutionTime currentTime;
 
-    public ProcessControlBlock(int pid, String filePath, int startAfter, int arrivalTime) {
+    public ProcessControlBlock(int pid, String filePath, int startAfter) {
         this.pid = pid;
         this.filePath = filePath;
         this.startAfter = startAfter;
-        this.arrivalTime = arrivalTime;
     }
 
     public int getProgramStart() {
@@ -64,12 +67,16 @@ public class ProcessControlBlock implements Logging {
         }
 
         switch (newStatus) {
-            case NEW, RUNNING, WAITING, READY:
-                currentTime =  new ProcessExecutionTime(queueId);
+            case NEW:
+                arrivalTime = clock.getTime();
+                currentTime = new ProcessExecutionTime(queueId);
+                break;
+            case RUNNING, WAITING, READY:
+                currentTime = new ProcessExecutionTime(queueId);
                 break;
             case TERMINATED:
-                printTimeline();
-                printfTimeline();
+                completionTime = clock.getTime();
+                evaluateMetrics();
                 break;
         }
     }
@@ -132,7 +139,9 @@ public class ProcessControlBlock implements Logging {
         System.out.println(sb.toString());
     }
 
-    public void printTimeline() {
+    public void evaluateMetrics() {
+        turnAroundTime = completionTime - arrivalTime;
+
         StringBuilder sb = new StringBuilder("Process " + pid + " Gantt Chart:\n");
         sb.append("Time:    ");
         for (int i = timeLine.getFirst().getStart(); i < Clock.getInstance().getTime(); i++) {
@@ -143,7 +152,7 @@ public class ProcessControlBlock implements Logging {
         StringBuilder job = new StringBuilder("Job:     ");
         StringBuilder ready = new StringBuilder("Ready:   ");
         StringBuilder running = new StringBuilder("Running: ");
-        StringBuilder waiting = new StringBuilder("Waiting: ");
+        StringBuilder io = new StringBuilder("IO:      ");
 
         for (ProcessExecutionTime pet : timeLine) {
             for (int i = pet.getStart(); i < pet.getEnd(); i++) {
@@ -152,25 +161,33 @@ public class ProcessControlBlock implements Logging {
                         job.append(String.format("%4s", "X"));
                         ready.append(String.format("%4s", ""));
                         running.append(String.format("%4s", ""));
-                        waiting.append(String.format("%4s", ""));
+                        io.append(String.format("%4s", ""));
                         break;
                     case RUNNING_QUEUE:
                         job.append(String.format("%4s", ""));
                         ready.append(String.format("%4s", ""));
                         running.append(String.format("%4s", "X"));
-                        waiting.append(String.format("%4s", ""));
+                        io.append(String.format("%4s", ""));
+
+                        if (responseTime == null) {
+                            responseTime = pet.getStart() - arrivalTime;
+                        }
+
                         break;
                     case IO_QUEUE:
                         job.append(String.format("%4s", ""));
                         ready.append(String.format("%4s", ""));
                         running.append(String.format("%4s", ""));
-                        waiting.append(String.format("%4s", "X"));
+                        io.append(String.format("%4s", "X"));
                         break;
                     case RR_QUEUE:
                         job.append(String.format("%4s", ""));
                         ready.append(String.format("%4s", "X"));
                         running.append(String.format("%4s", ""));
-                        waiting.append(String.format("%4s", ""));
+                        io.append(String.format("%4s", ""));
+
+                        waitingTime++;
+
                         break;
                     case TERMINATED_QUEUE:
                         break;
@@ -181,9 +198,12 @@ public class ProcessControlBlock implements Logging {
         sb.append(job).append("\n")
                 .append(ready).append("\n")
                 .append(running).append("\n")
-                .append(waiting).append("\n");
+                .append(io).append("\n")
+                .append("Turnaround Time: ").append(turnAroundTime).append("\n")
+                .append("Waiting Time: ").append(waitingTime).append("\n")
+                .append("Response Time: ").append(responseTime).append("\n");
 
-        System.out.println(sb.toString());
+        log(sb.toString());
     }
 
 }
