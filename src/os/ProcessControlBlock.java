@@ -69,6 +69,7 @@ public class ProcessControlBlock implements Logging {
                 break;
             case TERMINATED:
                 printTimeline();
+                printfTimeline();
                 break;
         }
     }
@@ -119,7 +120,7 @@ public class ProcessControlBlock implements Logging {
         children.add(pcb);
     }
 
-    public void printTimeline() {
+    public void printfTimeline() {
         StringBuilder sb = new StringBuilder("Process Timeline:\n");
         for (ProcessExecutionTime pet : timeLine) {
             sb.append("Queue: ").append(pet.getQueueId())
@@ -131,25 +132,57 @@ public class ProcessControlBlock implements Logging {
         System.out.println(sb.toString());
     }
 
-    public void printdTimeline() {
+    public void printTimeline() {
         StringBuilder sb = new StringBuilder("Process Gantt Chart:\n");
-        sb.append("Time: ");
-        for (int i = 0; i <= Clock.getInstance().getTime(); i++) {
+        sb.append("Time:    ");
+        for (int i = timeLine.getFirst().getStart(); i < Clock.getInstance().getTime(); i++) {
             sb.append(String.format("%4d", i));
         }
         sb.append("\n");
 
+        StringBuilder job = new StringBuilder("Job:     ");
+        StringBuilder ready = new StringBuilder("Ready:   ");
+        StringBuilder running = new StringBuilder("Running: ");
+        StringBuilder waiting = new StringBuilder("Waiting: ");
+
         for (ProcessExecutionTime pet : timeLine) {
-            sb.append("Queue ").append(pet.getQueueId()).append(": ");
-            for (int i = 0; i <= Clock.getInstance().getTime(); i++) {
-                if (i >= pet.getStart() && i < pet.getEnd()) {
-                    sb.append("####");
-                } else {
-                    sb.append("    ");
+            for (int i = pet.getStart(); i < pet.getEnd(); i++) {
+                switch (pet.getQueueId()) {
+                    case JOB_QUEUE:
+                        job.append(String.format("%4s", "X"));
+                        ready.append(String.format("%4s", ""));
+                        running.append(String.format("%4s", ""));
+                        waiting.append(String.format("%4s", ""));
+                        break;
+                    case RUNNING_QUEUE:
+                        job.append(String.format("%4s", ""));
+                        ready.append(String.format("%4s", ""));
+                        running.append(String.format("%4s", "X"));
+                        waiting.append(String.format("%4s", ""));
+                        break;
+                    case IO_QUEUE:
+                        job.append(String.format("%4s", ""));
+                        ready.append(String.format("%4s", ""));
+                        running.append(String.format("%4s", ""));
+                        waiting.append(String.format("%4s", "X"));
+                        break;
+                    case RR_QUEUE:
+                        job.append(String.format("%4s", ""));
+                        ready.append(String.format("%4s", "X"));
+                        running.append(String.format("%4s", ""));
+                        waiting.append(String.format("%4s", ""));
+                        break;
+                    case TERMINATED_QUEUE:
+                        break;
                 }
             }
-            sb.append("\n");
         }
+
+        sb.append(job).append("\n")
+                .append(ready).append("\n")
+                .append(running).append("\n")
+                .append(waiting).append("\n");
+
         System.out.println(sb.toString());
     }
 
