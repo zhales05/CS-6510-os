@@ -133,7 +133,7 @@ public class ProcessControlBlock implements Logging {
     }
 
     public void printTimeline() {
-        StringBuilder sb = new StringBuilder("Process Gantt Chart:\n");
+        StringBuilder sb = new StringBuilder("Process " + pid + " Gantt Chart:\n");
         sb.append("Time:    ");
         for (int i = timeLine.getFirst().getStart(); i < Clock.getInstance().getTime(); i++) {
             sb.append(String.format("%4d", i));
