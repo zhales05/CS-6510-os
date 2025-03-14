@@ -89,6 +89,12 @@ public class Cpu implements Logging {
 
         while (true) {
             int curr = memory.getByte();
+
+            if(idle){
+                //if the cpu has been set to idle it has been stopped and we need to bail
+                return;
+            }
+
             switch (curr) {
                 case ADD:
                     log("ADD");
@@ -216,7 +222,7 @@ public class Cpu implements Logging {
                     return;
 
                 default:
-                    logError("Process: " + currentPcb.getPid() + " Invalid instruction");
+                    logError("Process " + currentPcb.getPid() + ": Invalid instruction " + curr);
                     return;
             }
             Clock.getInstance().tick();
@@ -249,7 +255,7 @@ public class Cpu implements Logging {
                 break;
             case 4:
                 log("io");
-                os.addToIOQueue(pcb);
+                os.addToIOQueue(currentPcb);
                 break;
             default:
                 logError("Process: " + pcb.getPid() + "Invalid SWI call");
@@ -274,5 +280,10 @@ public class Cpu implements Logging {
 
     public boolean isIdle() {
         return idle;
+    }
+
+    public void stopProcess() {
+        currentPcb.setRegisters(registers);
+        idle = true;
     }
 }

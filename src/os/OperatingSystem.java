@@ -167,4 +167,7 @@ public class OperatingSystem implements Logging {
         scheduler.addToIOQueue(pcb);
     }
 
+    public void stopProcess() {
+        cpu.stopProcess();
+    }
 }

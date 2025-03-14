@@ -55,7 +55,7 @@ public class ProcessControlBlock implements Logging {
             case RUNNING:
                 currentTime = new ProcessExecutionBurst(queueId);
 
-                if(currentCPUBursts.size() > CPU_BURST_TOTAL) {
+                if (currentCPUBursts.size() > CPU_BURST_TOTAL) {
                     currentCPUBursts.clear();
                 }
                 currentCPUBursts.add(currentTime);
@@ -118,6 +118,7 @@ public class ProcessControlBlock implements Logging {
         boolean usedMFQ1 = false;
         boolean usedMFQ2 = false;
         boolean usedMFQ3 = false;
+        boolean usedReady = false;
 
         for (ProcessExecutionBurst pet : timeLine) {
             for (int i = pet.getStart(); i < pet.getEnd(); i++) {
@@ -164,6 +165,7 @@ public class ProcessControlBlock implements Logging {
                         mfq2.append(String.format("%4s", ""));
                         mfq3.append(String.format("%4s", ""));
                         waitingTime++;
+                        usedReady = true;
                         break;
                     case MFQ_QUEUE_1:
                         job.append(String.format("%4s", ""));
@@ -205,10 +207,12 @@ public class ProcessControlBlock implements Logging {
         }
 
         sb.append(job).append("\n")
-                .append(ready).append("\n")
                 .append(running).append("\n")
                 .append(io).append("\n");
 
+        if (usedReady) {
+            sb.append(ready).append("\n");
+        }
         if (usedMFQ1) {
             sb.append(mfq1).append("\n");
         }
@@ -229,7 +233,7 @@ public class ProcessControlBlock implements Logging {
 
 
     public Double getBurstCompletionPercentage() {
-        if(currentCPUBursts.size() != CPU_BURST_TOTAL) {
+        if (currentCPUBursts.size() != CPU_BURST_TOTAL) {
             return null;
         }
         int total = 0;
@@ -244,7 +248,7 @@ public class ProcessControlBlock implements Logging {
         return (double) completed / total;
     }
 
-    public QueueId getLastReadyQueue(){
+    public QueueId getLastReadyQueue() {
         for (int i = timeLine.size() - 1; i >= 0; i--) {
             ProcessExecutionBurst burst = timeLine.get(i);
             if (QueueId.READY_QUEUES.contains(burst.getQueueId())) {
