@@ -1,16 +1,15 @@
 package os;
 
-import os.queues.FCFSReadyQueue;
+import os.queues.IOQueue;
 import os.queues.IReadyQueue;
-import os.queues.RRReadyQueue;
+import os.queues.MFQReadyQueue;
+import os.queues.QueueId;
 import os.util.Logging;
 import os.util.MetricsTracker;
 import util.Observer;
 import vm.hardware.Clock;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The Scheduler class is responsible for managing the queues and telling the OS when to run/swap processes.
@@ -19,7 +18,7 @@ import java.util.Map;
 class Scheduler implements Logging, Observer {
     private static final Clock clock = Clock.getInstance();
     private final LinkedList<ProcessControlBlock> jobQueue = new LinkedList<>();
-    private final LinkedList<ProcessControlBlock> ioQueue = new LinkedList<>();
+    private final IOQueue ioQueue = new IOQueue();
     private final LinkedList<ProcessControlBlock> terminatedQueue = new LinkedList<>();
     private ProcessControlBlock currentProcess;
 
@@ -29,8 +28,7 @@ class Scheduler implements Logging, Observer {
     private final OperatingSystem parentOs;
 
     //metrics here for now
-    private MetricsTracker metrics = new MetricsTracker();
-    private Integer clockStartTime;
+    List<MetricsTracker> metrics = new ArrayList<>();
 
     private Scheduler(OperatingSystem parentOs, IReadyQueue readyQueue) {
         this.parentOs = parentOs;
@@ -38,25 +36,46 @@ class Scheduler implements Logging, Observer {
     }
 
     public Scheduler(OperatingSystem parentOs) {
-        this(parentOs, new RRReadyQueue(5));
+        //this(parentOs, new RRReadyQueue(5));
+        //this(parentOs, new FCFSReadyQueue());
+        this(parentOs, new MFQReadyQueue(5, 10));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
         jobQueue.add(pcb);
+        pcb.setStatus(ProcessStatus.NEW, QueueId.JOB_QUEUE);
         processMap.put(pcb.getFilePath(), pcb);
+    }
+
+    private void pushToBackOfJobQueue(ProcessControlBlock pcb) {
+        jobQueue.add(pcb);
     }
 
     /**
      * This method is responsible for adding a process to the IO queue
      * this process will have been running every single time
+     *
      * @param pcb the process to add to the IO queue
      */
     public void addToIOQueue(ProcessControlBlock pcb) {
-        log("Adding process " + pcb.getPid() + " to IO queue");
-        pcb.setStatus(ProcessStatus.WAITING, clock.getTime());
         ioQueue.add(pcb);
-
         transitionProcess();
+    }
+
+    //moved status change to ready queue
+    private void addToReadyQueue(ProcessControlBlock pcb) {
+        readyQueue.addProcess(pcb);
+    }
+
+    public void addToTerminatedQueue(ProcessControlBlock pcb) {
+        log("Adding process " + pcb.getPid() + " to terminated queue");
+        pcb.setStatus(ProcessStatus.TERMINATED, QueueId.TERMINATED_QUEUE);
+
+        if (pcb.equals(currentProcess)) {
+            currentProcess = null;
+        }
+
+        terminatedQueue.add(pcb);
     }
 
     public ProcessControlBlock getProcess(String filePath) {
@@ -71,11 +90,6 @@ class Scheduler implements Logging, Observer {
         return jobQueue.poll();
     }
 
-    private void addToReadyQueue(ProcessControlBlock pcb) {
-        pcb.setStatus(ProcessStatus.READY, Clock.getInstance().getTime());
-        readyQueue.addProcess(pcb);
-    }
-
 
     private ProcessControlBlock getFromReadyQueue() {
         currentProcess = readyQueue.getNextProcess();
@@ -83,58 +97,50 @@ class Scheduler implements Logging, Observer {
     }
 
     public void processJobs() {
+        MetricsTracker metricsTracker = new MetricsTracker();
+        metrics.add(metricsTracker);
+
         while (!jobQueue.isEmpty()) {
             ProcessControlBlock pcb = getJob();
             if (pcb.getStartAfter() <= clock.getTime()) {
-                //load
-                pcb = parentOs.prepareForReadyQueue(pcb);
+                pcb = parentOs.loadIntoMemory(pcb);
                 //checking if error with load
                 if (pcb == null) {
                     continue;
                 }
-                //put in ready queue
+
                 addToReadyQueue(pcb);
 
-                //if I move a pcb into the ready queue we need to log the clock start time
-                // however if the clock start time is not null it has already been set
-                if (clockStartTime == null) {
-                    clockStartTime = clock.getTime();
-                }
             } else {
                 //put back in job queue
-                jobQueue.add(pcb);
+                pushToBackOfJobQueue(pcb);
                 //ticking clock se we don't get stuck with a process that never starts
                 clock.tick();
             }
         }
 
-        while (!readyQueue.isEmpty()) {
-            readyQueue.resetQuantumCounter();
-            parentOs.runProcess(getFromReadyQueue());
-        }
-
-        //finalize metrics
-        metrics.addThroughput(readyQueue.getQuantum(), terminatedQueue.size(), clockStartTime, clock.getTime());
-
-        //reset clock start time so we can do it all again
-        clockStartTime = null;
+        runThroughReadyQueue();
 
         //print metrics here for now
-        log(metrics.toString());
+        metricsTracker.calculateMetrics(terminatedQueue);
     }
 
+    private void runThroughReadyQueue() {
+        while (!readyQueue.isEmpty() || !ioQueue.isEmpty()) {
+            ProcessControlBlock pcb = getFromReadyQueue();
+            if(pcb == null){
+                clock.tick();
+                continue;
+            }
 
-    public void addToTerminatedQueue(ProcessControlBlock pcb) {
-        log("Adding process " + pcb.getPid() + " to terminated queue");
-        pcb.setStatus(ProcessStatus.TERMINATED, clock.getTime());
-
-        if(pcb.equals(currentProcess)) {
-            currentProcess = null;
+            runProcess(pcb);
         }
+    }
 
-        terminatedQueue.add(pcb);
-        //might need to do this somewhere else later but this should clean it all up for now
-        //parentOs.removeProcess(pcb);
+    private void runProcess(ProcessControlBlock pcb) {
+        pcb.setStatus(ProcessStatus.RUNNING, QueueId.RUNNING_QUEUE);
+        readyQueue.resetQuantumCounter();
+        parentOs.runProcess(pcb);
     }
 
     private ProcessControlBlock getFromIoQueue() {
@@ -147,20 +153,23 @@ class Scheduler implements Logging, Observer {
     }
 
     public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
-       // addToIOQueue(parent);
-        ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0, clock.getTime());
-        pcb = parentOs.prepareForReadyQueue(pcb);
-        //skipping ready queue going straight to running
-        parentOs.runProcess(pcb);
-       // getFromIoQueue(); //removing parent from io queue
+        ProcessControlBlock pcb = new ProcessControlBlock(getNewPid(), "files/child.osx", 0);
+        pcb = parentOs.loadIntoMemory(pcb);
+        runProcess(pcb);
         return pcb;
     }
 
     @Override
     public void clockTicked(int time) {
+        while (ioQueue.isReadyToLeave()) {
+            ProcessControlBlock pcb = getFromIoQueue();
+            addToReadyQueue(pcb);
+        }
+
         if (currentProcess != null && readyQueue.incrementQuantumCounter()) {
             log("Quantum expired");
-            //putting the current process back in the ready queue
+            //putting the current process back in the ready queue because it's a quantum
+            addToReadyQueue(currentProcess);
             transitionProcess();
         }
     }
@@ -170,22 +179,26 @@ class Scheduler implements Logging, Observer {
      * this is only used if the there is a current process running
      */
     private void transitionProcess() {
+        readyQueue.resetQuantumCounter();
         if (currentProcess != null) {
-            addToReadyQueue(currentProcess);
             //setting the new current process
             currentProcess = getFromReadyQueue();
-            readyQueue.resetQuantumCounter();
             //running the new current process
-            parentOs.transitionProcess(currentProcess);
-        } else {
-            logError("Tried to transition with no active running process");
+            if (currentProcess != null) {
+                currentProcess.setStatus(ProcessStatus.RUNNING, QueueId.RUNNING_QUEUE);
+                parentOs.transitionProcess(currentProcess);
+            } else {
+                //nothing in ready queue, probably stuck in IO
+                parentOs.stopProcess();
+                clock.tick();
+            }
         }
+        //if current process == null then we're probably waiting on io and the clock ticked
     }
 
     public void setReadyQueue(IReadyQueue readyQueue) {
         log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
         this.readyQueue = readyQueue;
     }
-
 
 }

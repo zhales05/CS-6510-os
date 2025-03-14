@@ -1,6 +1,7 @@
 package os.queues;
 
 import os.ProcessControlBlock;
+import os.ProcessStatus;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -17,6 +18,7 @@ public class RRReadyQueue implements IReadyQueue{
     @Override
     public void addProcess(ProcessControlBlock pcb) {
         queue.add(pcb);
+        pcb.setStatus(ProcessStatus.READY, getQueueId());
     }
 
     @Override
@@ -37,11 +39,7 @@ public class RRReadyQueue implements IReadyQueue{
     @Override
     public boolean incrementQuantumCounter() {
         quantumCounter++;
-        if(quantumCounter == quantum){
-            return true;
-        }
-
-        return false;
+        return quantumCounter == quantum;
     }
 
     @Override
@@ -57,6 +55,16 @@ public class RRReadyQueue implements IReadyQueue{
     @Override
     public void resetQuantumCounter() {
         quantumCounter = 0;
+    }
+
+    @Override
+    public QueueId getQueueId() {
+        return QueueId.RR_QUEUE;
+    }
+
+    @Override
+    public String toString() {
+        return "RRReadyQueue " + quantum;
     }
 
 }

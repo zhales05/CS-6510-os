@@ -1,6 +1,7 @@
 package os.queues;
 
 import os.ProcessControlBlock;
+import os.ProcessStatus;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -10,8 +11,8 @@ public class FCFSReadyQueue implements IReadyQueue {
 
     @Override
     public void addProcess(ProcessControlBlock pcb) {
-        log("Adding process " + pcb.getPid() + " to ready queue");
         queue.add(pcb);
+        pcb.setStatus(ProcessStatus.READY, getQueueId());
     }
 
     @Override
@@ -49,5 +50,10 @@ public class FCFSReadyQueue implements IReadyQueue {
     @Override
     public void resetQuantumCounter() {
         //yawn
+    }
+
+    @Override
+    public QueueId getQueueId() {
+        return QueueId.FCFS_QUEUE;
     }
 }

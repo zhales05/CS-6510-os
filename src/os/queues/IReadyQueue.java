@@ -25,4 +25,6 @@ public interface IReadyQueue extends Logging {
     int getQuantumCounter();
 
     void resetQuantumCounter();
+
+    QueueId getQueueId();
 }

@@ -2,7 +2,6 @@ package vm.hardware;
 
 import os.OperatingSystem;
 import os.ProcessControlBlock;
-import os.ProcessStatus;
 import os.util.Logging;
 
 import java.util.Random;
@@ -11,6 +10,7 @@ import java.util.Random;
 public class Cpu implements Logging {
     private static Cpu instance;
     private final Memory memory = Memory.getInstance();
+    private boolean idle = true;
     private boolean kernelMode = false;
 
     private ProcessControlBlock currentPcb;
@@ -81,14 +81,20 @@ public class Cpu implements Logging {
     private void loadRegistersFromPcb(ProcessControlBlock pcb) {
         System.arraycopy(pcb.getRegisters(), 0, registers, 0, registers.length);
         currentPcb = pcb;
-        currentPcb.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
     }
 
     public void run(ProcessControlBlock pcb, OperatingSystem os) {
         loadRegistersFromPcb(pcb);
+        idle = false;
 
         while (true) {
             int curr = memory.getByte();
+
+            if(idle){
+                //if the cpu has been set to idle it has been stopped and we need to bail
+                return;
+            }
+
             switch (curr) {
                 case ADD:
                     log("ADD");
@@ -212,10 +218,11 @@ public class Cpu implements Logging {
                 case END:
                     currentPcb.setRegisters(registers);
                     os.terminateProcess(currentPcb);
+                    idle = true;
                     return;
 
                 default:
-                    logError("Process: " + currentPcb.getPid() + " Invalid instruction");
+                    logError("Process " + currentPcb.getPid() + ": Invalid instruction " + curr);
                     return;
             }
             Clock.getInstance().tick();
@@ -248,7 +255,7 @@ public class Cpu implements Logging {
                 break;
             case 4:
                 log("io");
-                os.addToIOQueue(pcb);
+                os.addToIOQueue(currentPcb);
                 break;
             default:
                 logError("Process: " + pcb.getPid() + "Invalid SWI call");
@@ -263,12 +270,20 @@ public class Cpu implements Logging {
         ProcessControlBlock child = os.startChildProcess(parent);
         parent.addChild(child);
         log("Back to parent");
-        parent.setStatus(ProcessStatus.RUNNING, Clock.getInstance().getTime());
         loadRegistersFromPcb(parent);
     }
 
     public void transition(ProcessControlBlock next) {
         currentPcb.setRegisters(registers);
         loadRegistersFromPcb(next);
+    }
+
+    public boolean isIdle() {
+        return idle;
+    }
+
+    public void stopProcess() {
+        currentPcb.setRegisters(registers);
+        idle = true;
     }
 }
