@@ -4,7 +4,7 @@ import os.ProcessControlBlock;
 import os.ProcessStatus;
 
 public class MFQReadyQueue implements IReadyQueue {
-    private static final int TOTAL_QUANTUMS = 1;
+    private static final int TOTAL_QUANTUMS = 5;
     private static final double TOTAL_BURST_PERCENTAGE = 0.8;
 
     private final MFQReadyQueue1 rrReadyQueue1;

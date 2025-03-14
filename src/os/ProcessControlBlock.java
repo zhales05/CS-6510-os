@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessControlBlock implements Logging {
+    private static final int CPU_BURST_TOTAL = 5;
     Clock clock = Clock.getInstance();
     private final int pid;
     private ProcessStatus status;
@@ -27,6 +28,7 @@ public class ProcessControlBlock implements Logging {
     private int turnAroundTime;
     private int waitingTime = 0;
     private Integer responseTime;
+
 
     List<ProcessExecutionBurst> currentCPUBursts = new ArrayList<>();
     //if we currently have a start time and no end time we store it here
@@ -53,10 +55,7 @@ public class ProcessControlBlock implements Logging {
             case RUNNING:
                 currentTime = new ProcessExecutionBurst(queueId);
 
-                //clear if over 5 entries. Time to start a new round
-                //5 may need to be changed as we make the queue
-                //TODO: make this a variable or something
-                if(currentCPUBursts.size() > 1) {
+                if(currentCPUBursts.size() > CPU_BURST_TOTAL) {
                     currentCPUBursts.clear();
                 }
                 currentCPUBursts.add(currentTime);
@@ -175,6 +174,7 @@ public class ProcessControlBlock implements Logging {
                         mfq2.append(String.format("%4s", ""));
                         mfq3.append(String.format("%4s", ""));
                         usedMFQ1 = true;
+                        waitingTime++;
                         break;
                     case MFQ_QUEUE_2:
                         job.append(String.format("%4s", ""));
@@ -185,6 +185,7 @@ public class ProcessControlBlock implements Logging {
                         mfq2.append(String.format("%4s", "X"));
                         mfq3.append(String.format("%4s", ""));
                         usedMFQ2 = true;
+                        waitingTime++;
                         break;
                     case MFQ_QUEUE_3:
                         job.append(String.format("%4s", ""));
@@ -195,6 +196,7 @@ public class ProcessControlBlock implements Logging {
                         mfq2.append(String.format("%4s", ""));
                         mfq3.append(String.format("%4s", "X"));
                         usedMFQ3 = true;
+                        waitingTime++;
                         break;
                     case TERMINATED_QUEUE:
                         break;
@@ -227,8 +229,7 @@ public class ProcessControlBlock implements Logging {
 
 
     public Double getBurstCompletionPercentage() {
-        //TODO needs to make a variable for number of active bursts we are evaluating
-        if(currentCPUBursts.size() != 1) {
+        if(currentCPUBursts.size() != CPU_BURST_TOTAL) {
             return null;
         }
         int total = 0;
