@@ -51,7 +51,7 @@ public class OperatingSystem implements Logging {
         }
     }
 
-     boolean assembleFile(String filePath, String loaderAddress, boolean mac){
+     void assembleFile(String filePath, String loaderAddress, boolean mac){
         final String macPath = "files/osx_mac";
         final String windowsPath = "files/osx.exe";
 
@@ -69,13 +69,11 @@ public class OperatingSystem implements Logging {
 
             int exitCode = process.waitFor();
             log("Assembled with code: " + exitCode);
-            return exitCode == 0;
         } catch (Exception e) {
             logError("Error running osx: " + e.getMessage());
         }
 
-        return false;
-    }
+     }
 
 
 
@@ -88,7 +86,7 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    ProcessControlBlock prepareForReadyQueue(ProcessControlBlock pcb) {
+    ProcessControlBlock loadIntoMemory(ProcessControlBlock pcb) {
         //pcb doesn't exist or is terminated, let's load it into memory
         if (pcb == null || pcb.getFilePath() == null) {
             logError("Process doesn't exist");

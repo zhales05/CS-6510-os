@@ -5,21 +5,4 @@ ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
 SWI 4 ; io
 ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
 ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
 SWI 4 ; io
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-SWI 4 ; io
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-SWI 4 ; io
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-SWI 4 ; io
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0
-ADD R0 R1 R2 ; Add R1 and R2, store the result in R0

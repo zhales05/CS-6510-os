@@ -1,16 +1,18 @@
 package os.util;
 
-import os.queues.QueueIds;
+import os.queues.QueueId;
 import vm.hardware.Clock;
 
-public class ProcessExecutionTime {
+public class ProcessExecutionBurst {
     private static final Clock clock = Clock.getInstance();
 
     private final int start;
     private Integer end;
-    private final QueueIds queueId;
+    private final QueueId queueId;
 
-    public ProcessExecutionTime(QueueIds queueId) {
+    private boolean burstFinished = false;
+
+    public ProcessExecutionBurst(QueueId queueId) {
         this.queueId = queueId;
         start = clock.getTime();
     }
@@ -27,7 +29,7 @@ public class ProcessExecutionTime {
         return end - start;
     }
 
-    public QueueIds getQueueId() {
+    public QueueId getQueueId() {
         return queueId;
     }
 
@@ -41,5 +43,13 @@ public class ProcessExecutionTime {
 
     public void setEnd() {
         this.end = clock.getTime();
+    }
+
+    public boolean isBurstFinished() {
+        return burstFinished;
+    }
+
+    public void setBurstFinished(boolean burstFinished) {
+        this.burstFinished = burstFinished;
     }
 }
