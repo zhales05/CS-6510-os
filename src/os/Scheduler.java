@@ -24,8 +24,9 @@ class Scheduler implements Logging, Observer {
 
     private final OperatingSystem parentOs;
 
-    //metrics here for now
-    List<MetricsTracker> metrics = new ArrayList<>();
+    // Metrics tracker
+    private MetricsTracker metricsTracker = new MetricsTracker();
+    private String currentSchedulerType = "unknown";
 
     private Scheduler(OperatingSystem parentOs, IReadyQueue readyQueue) {
         this.parentOs = parentOs;
@@ -36,6 +37,8 @@ class Scheduler implements Logging, Observer {
         //this(parentOs, new RRReadyQueue(5));
         //this(parentOs, new FCFSReadyQueue());
         this(parentOs, new MFQReadyQueue(5, 10));
+        currentSchedulerType = "mfq";
+        metricsTracker.setSchedulerInfo(currentSchedulerType, 5, 10);
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -65,14 +68,11 @@ class Scheduler implements Logging, Observer {
     }
 
     public void addToTerminatedQueue(ProcessControlBlock pcb) {
-        log("Adding process " + pcb.getPid() + " to terminated queue");
-        pcb.setStatus(ProcessStatus.TERMINATED, QueueId.TERMINATED_QUEUE);
-
-        if (pcb.equals(currentProcess)) {
-            currentProcess = null;
-        }
-
         terminatedQueue.add(pcb);
+        pcb.setStatus(ProcessStatus.TERMINATED, QueueId.TERMINATED_QUEUE);
+        pcb.evaluateMetrics();
+        
+        // CPU burst data is now collected directly in the MetricsCollector
     }
 
     public ProcessControlBlock getProcess(String filePath) {
@@ -94,9 +94,6 @@ class Scheduler implements Logging, Observer {
     }
 
     public void processJobs() {
-        MetricsTracker metricsTracker = new MetricsTracker();
-        metrics.add(metricsTracker);
-
         while (!jobQueue.isEmpty()) {
             ProcessControlBlock pcb = getJob();
             if (pcb.getStartAfter() <= clock.getTime()) {
@@ -118,7 +115,7 @@ class Scheduler implements Logging, Observer {
 
         runThroughReadyQueue();
 
-        //print metrics here for now
+        // Calculate and print metrics
         metricsTracker.calculateMetrics(terminatedQueue);
     }
 
@@ -195,8 +192,22 @@ class Scheduler implements Logging, Observer {
     }
 
     public void setReadyQueue(IReadyQueue readyQueue) {
-        log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
         this.readyQueue = readyQueue;
+        
+        // Update scheduler type for metrics
+        if (readyQueue instanceof FCFSReadyQueue) {
+            currentSchedulerType = "fcfs";
+            metricsTracker.setSchedulerInfo(currentSchedulerType, 0);
+        } else if (readyQueue instanceof RRReadyQueue) {
+            currentSchedulerType = "rr";
+            int quantum = ((RRReadyQueue) readyQueue).getQuantum();
+            metricsTracker.setSchedulerInfo(currentSchedulerType, quantum);
+        } else if (readyQueue instanceof MFQReadyQueue) {
+            currentSchedulerType = "mfq";
+            // For MFQ, we'll use default values since we don't have direct access to the quantum values
+            int quantum1 = 5; // Default value
+            int quantum2 = 10; // Default value
+            metricsTracker.setSchedulerInfo(currentSchedulerType, quantum1, quantum2);
+        }
     }
-
 }
