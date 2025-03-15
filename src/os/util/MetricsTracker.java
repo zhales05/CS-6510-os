@@ -81,7 +81,7 @@ public class MetricsTracker implements Logging {
         // Automatically write metrics to file
         String filename = schedulerType + "_q" + quantum;
         if (quantum2 > 0) {
-            filename += "_q2_" + quantum2;
+            filename += "_q_" + quantum2;
         }
         outputToFile(filename);
     }
