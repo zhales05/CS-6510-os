@@ -5,6 +5,9 @@ import os.ProcessControlBlock;
 import os.util.Logging;
 
 import java.util.Random;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 
 
 public class Cpu implements Logging {
@@ -19,6 +22,10 @@ public class Cpu implements Logging {
     static final int MOV = 1;
     static final int STR = 2;
     static final int BX = 6;
+    static final int ADR = 7;
+    static final int LDR = 8;
+    static final int CMP = 9;
+    static final int BNE = 10;
     static final int ADD = 16;
     static final int SUB = 17;
     static final int MUL = 18;
@@ -213,6 +220,110 @@ public class Cpu implements Logging {
                     memory.setInt((byte) registers[srcR], registers[destR]);
                     log("Register: " + srcR + " Value: " + registers[srcR]);
                     log("Register: " + destR + " Value: " + registers[destR]);
+                    break;
+                case ADR:
+                    log("ADR");
+                    
+                    int adrDestR = memory.getByte();
+                    int adrBaseR = memory.getByte();
+                    int offset = memory.getInt();
+                    
+                    addToPC(1);
+                    
+                    if (isNotValidRegisters(adrDestR, adrBaseR)) {
+                        return;
+                    }
+                    
+                    registers[adrDestR] = registers[adrBaseR] + offset;
+                    
+                    log("Base Register: " + adrBaseR + " Value: " + registers[adrBaseR]);
+                    log("Offset: " + offset);
+                    log("Destination Register: " + adrDestR + " Value: " + registers[adrDestR]);
+                    break;
+                    
+                case LDR:
+                    log("LDR");
+                    
+                    int ldrDestR = memory.getByte();
+                    int ldrAddrR = memory.getByte();
+                    
+                    addToPC(3);
+                    
+                    if (isNotValidRegisters(ldrDestR, ldrAddrR)) {
+                        return;
+                    }
+                    
+                    // Get the memory address from the address register
+                    int memoryAddress = registers[ldrAddrR];
+                    
+                    // Create a ByteBuffer to read 4 bytes from memory at the specified address
+                    ByteBuffer bb = ByteBuffer.wrap(
+                        Arrays.copyOfRange(memory.getMemoryArray(), memoryAddress, 
+                                          memoryAddress + 4));
+                    bb.order(ByteOrder.LITTLE_ENDIAN);
+                    registers[ldrDestR] = bb.getInt();
+                    
+                    log("Address Register: " + ldrAddrR + " Address: " + memoryAddress);
+                    log("Destination Register: " + ldrDestR + " Value: " + registers[ldrDestR]);
+                    break;
+                    
+                case CMP:
+                    log("CMP");
+                    
+                    int cmpReg1 = memory.getByte();
+                    int cmpReg2 = memory.getByte();
+                    
+                    // CMP instruction adds 3 to PC after reading all parameters
+                    addToPC(3);
+                    
+                    if (isNotValidRegisters(cmpReg1, cmpReg2)) {
+                        return;
+                    }
+                    
+                    // Store comparison result in register 0 (flags register)
+                    // 0 if equal, 1 if reg1 > reg2, -1 if reg1 < reg2
+                    if (registers[cmpReg1] == registers[cmpReg2]) {
+                        registers[0] = 0;
+                    } else if (registers[cmpReg1] > registers[cmpReg2]) {
+                        registers[0] = 1;
+                    } else {
+                        registers[0] = -1;
+                    }
+                    
+                    log("Register 1: " + cmpReg1 + " Value: " + registers[cmpReg1]);
+                    log("Register 2: " + cmpReg2 + " Value: " + registers[cmpReg2]);
+                    log("Comparison Result (R0): " + registers[0]);
+                    break;
+                    
+                case BNE:
+                    log("BNE");
+                    
+                    int offset_bne = memory.getInt();
+                    
+                    // BNE instruction adds 1 to PC after reading all parameters
+                    addToPC(1);
+                    
+                    // Branch if the comparison result (in R0) is not equal (not 0)
+                    if (registers[0] != 0) {
+                        log("Branch taken, offset: " + offset_bne);
+                        // Add the offset to the program counter for the branch
+                        addToPC(offset_bne);
+                    } else {
+                        log("Branch not taken");
+                    }
+                    break;
+                    
+                case BX:
+                    log("BX");
+                    
+                    int offset_bx = memory.getInt();
+                    
+                    // BX instruction adds 1 to PC after reading all parameters
+                    addToPC(1);
+                    
+                    log("Unconditional branch, offset: " + offset_bx);
+                    // Add the offset to the program counter for the branch
+                    addToPC(offset_bx);
                     break;
 
                 case END:
