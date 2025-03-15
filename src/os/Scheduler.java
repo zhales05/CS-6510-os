@@ -1,9 +1,6 @@
 package os;
 
-import os.queues.IOQueue;
-import os.queues.IReadyQueue;
-import os.queues.MFQReadyQueue;
-import os.queues.QueueId;
+import os.queues.*;
 import os.util.Logging;
 import os.util.MetricsTracker;
 import util.Observer;
@@ -190,6 +187,7 @@ class Scheduler implements Logging, Observer {
             } else {
                 //nothing in ready queue, probably stuck in IO
                 parentOs.stopProcess();
+                currentProcess = null;
                 clock.tick();
             }
         }

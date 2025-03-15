@@ -69,13 +69,21 @@ public class MFQReadyQueue implements IReadyQueue {
     }
 
     private void incrementCurrentQueue(){
+        int count = 0;
         while(currentQueue.isEmpty()) {
             if (currentQueue == rrReadyQueue1) {
                 currentQueue = rrReadyQueue2;
+                count++;
             } else if (currentQueue == rrReadyQueue2) {
                 currentQueue = fcfsReadyQueue;
+                count++;
             } else {
                 currentQueue = rrReadyQueue1;
+                count++;
+            }
+
+            if(count > 3) {
+                break;
             }
         }
     }
