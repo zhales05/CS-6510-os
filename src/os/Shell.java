@@ -67,7 +67,7 @@ public class Shell implements Logging {
                         break;
                     }
                     //if working on windows machine, use false, otherwise use true
-                    os.assembleFile(inputs[1], inputs[2], true);
+                    os.assembleFile(inputs[1], inputs[2], false);
                     break;
                 case "errordump":
                     ErrorDump.getInstance().printLogs();
@@ -83,11 +83,20 @@ public class Shell implements Logging {
                     os.printHelp();
                     break;
                 case "exit":
-                    log("Exiting VM");
-                    scanner.close();
-                    return;
+                    log("Exiting...");
+                    System.exit(0);
+                    break;
+                case "schedule":
+                    os.schedule(inputs);
+                    break;
+                case "set":
+                    os.setSchedule(inputs);
+                    break;
+                case "dump":
+                    os.coreDump(inputs);
+                    break;
                 default:
-                    System.out.println("Unknown input -  please try again.");
+                    logError("Unknown command: " + inputs[0]);
                     break;
             }
 
@@ -96,8 +105,4 @@ public class Shell implements Logging {
             }
         }
     }
-
-
-
-
 }
