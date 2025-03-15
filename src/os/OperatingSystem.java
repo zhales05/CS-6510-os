@@ -133,13 +133,17 @@ public class OperatingSystem implements Logging {
 
 
      void printHelp() {
-        final String FILE_PATH = "files/Engineering Glossary List.txt";
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
-            System.out.println(content);
-        } catch (IOException e) {
-            logError("Error reading file: " + ": " + e.getMessage());
-        }
+        log("Available commands:");
+        log("help - Display this help message");
+        log("exit - Exit the shell");
+        log("schedule <file> <start_time> - Schedule a process to run");
+        log("set <scheduler> <quantum> - Set the scheduling algorithm");
+        log("  Supported schedulers: fcfs, rr, mfq");
+        log("  For rr: set rr <quantum>");
+        log("  For mfq: set mfq <quantum1> <quantum2>");
+        log("dump <pid> - Dump the memory of a process");
+        log("Add -v to the end of any command to enable verbose mode");
+        log("Note: Metrics are automatically saved to the 'metrics' directory");
     }
 
     public ProcessControlBlock startChildProcess(ProcessControlBlock parent) {
