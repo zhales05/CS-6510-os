@@ -154,4 +154,14 @@ public class Memory implements Logging {
     public String coreDump() {
         return coreDump(0, index);
     }
+
+    /**
+     * Returns the memory array for direct access.
+     * This method is used by the LDR instruction to read values from memory.
+     * 
+     * @return The memory array
+     */
+    public byte[] getMemoryArray() {
+        return memory;
+    }
 }
