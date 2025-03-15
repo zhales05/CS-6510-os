@@ -62,7 +62,7 @@ public class MFQReadyQueue implements IReadyQueue {
     }
 
     private void determineCurrentQueue() {
-        if (currentQuantum >= TOTAL_QUANTUMS) {
+        if (currentQuantum >= TOTAL_QUANTUMS || currentQueue.isEmpty()) {
             incrementCurrentQueue();
             currentQuantum = currentQueue == fcfsReadyQueue ? TOTAL_QUANTUMS : 0;
         }
