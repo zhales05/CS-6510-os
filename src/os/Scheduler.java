@@ -38,7 +38,7 @@ class Scheduler implements Logging, Observer {
     public Scheduler(OperatingSystem parentOs) {
         //this(parentOs, new RRReadyQueue(5));
         //this(parentOs, new FCFSReadyQueue());
-        this(parentOs, new MFQReadyQueue(1, 2));
+        this(parentOs, new MFQReadyQueue(20, 80));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -133,7 +133,7 @@ class Scheduler implements Logging, Observer {
     private void runThroughReadyQueue() {
         while (!readyQueue.isEmpty() || !ioQueue.isEmpty()) {
             ProcessControlBlock pcb = getFromReadyQueue();
-            if(pcb == null){
+            if (pcb == null) {
                 clock.tick();
                 continue;
             }
@@ -145,6 +145,9 @@ class Scheduler implements Logging, Observer {
     private void runProcess(ProcessControlBlock pcb) {
         pcb.setStatus(ProcessStatus.RUNNING, QueueId.RUNNING_QUEUE);
         readyQueue.resetQuantumCounter();
+        if (pcb.getResponseTime() == null) {
+            pcb.setResponseTime(clock.getTime() - pcb.getArrivalTime());
+        }
         parentOs.runProcess(pcb);
     }
 

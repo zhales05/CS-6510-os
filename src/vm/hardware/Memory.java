@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class Memory implements Logging {
-    private static final int TOTAL_SIZE = 1000000;
+    private static final int TOTAL_SIZE = 100000;
     private static Memory instance;
 
     private static final Cpu cpu = Cpu.getInstance();

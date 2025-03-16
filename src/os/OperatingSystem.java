@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The OperatingSystem class is a facade between the hardware and the os software
@@ -33,7 +35,7 @@ public class OperatingSystem implements Logging {
     }
 
     //Making the express decision that the quantum values come after the scheduling algorithm
-     void setSchedule(String[] inputs) {
+    void setSchedule(String[] inputs) {
         //TODO: add error checking for inputs
         //TODO: make enums/variables for the scheduling algorithms
         switch (inputs[1]) {
@@ -52,7 +54,7 @@ public class OperatingSystem implements Logging {
         }
     }
 
-     void assembleFile(String filePath, String loaderAddress, boolean mac){
+    void assembleFile(String filePath, String loaderAddress, boolean mac) {
         final String macPath = "files/osx_mac";
         final String windowsPath = "files/osx.exe";
 
@@ -74,8 +76,7 @@ public class OperatingSystem implements Logging {
             logError("Error running osx: " + e.getMessage());
         }
 
-     }
-
+    }
 
 
     private byte[] readProgram(String filePath) {
@@ -90,12 +91,12 @@ public class OperatingSystem implements Logging {
     ProcessControlBlock loadIntoMemory(ProcessControlBlock pcb) {
         //pcb doesn't exist or is terminated, let's load it into memory
         if (pcb == null || pcb.getFilePath() == null) {
-            logError("Process doesn't exist");
             return null;
         }
 
         byte[] program = readProgram(pcb.getFilePath());
         if (program == null) {
+            logError("Process doesn't exist");
             return null;
         }
         pcb = memory.load(program, pcb);
@@ -109,11 +110,11 @@ public class OperatingSystem implements Logging {
         }
     }
 
-     boolean isVerboseMode(String[] inputs) {
+    boolean isVerboseMode(String[] inputs) {
         return inputs[inputs.length - 1].equals("-v");
     }
 
-     void schedule(String[] inputs) {
+    void schedule(String[] inputs) {
         if (inputs.length < 3) {
             logError("Not enough inputs provided");
             return;
@@ -133,8 +134,7 @@ public class OperatingSystem implements Logging {
     }
 
 
-
-     void printHelp() {
+    void printHelp() {
         final String FILE_PATH = "files/Engineering Glossary List.txt";
         try {
             String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
@@ -148,7 +148,7 @@ public class OperatingSystem implements Logging {
         return scheduler.startChildProcess(parent);
     }
 
-      void coreDump(String[] inputs) {
+    void coreDump(String[] inputs) {
         if (inputs.length == 1) {
             System.out.println(memory.coreDump());
             return;
@@ -185,7 +185,7 @@ public class OperatingSystem implements Logging {
         String five = "execute files/cases/l-cpu-1.osx 1 files/cases/l-cpu-2.osx 1 files/cases/l-cpu-3.osx 1";
         String six = "execute files/cases/l-io-1.osx 1 files/cases/l-io-2.osx 1 files/cases/l-io-3.osx 1";
 
-        VerboseModeLogger.getInstance().setVerboseMode(true);
+       // VerboseModeLogger.getInstance().setVerboseMode(true);
         String[] inputs1 = one.split(" ");
         String[] inputs2 = two.split(" ");
         String[] inputs3 = three.split(" ");
@@ -193,17 +193,31 @@ public class OperatingSystem implements Logging {
         String[] inputs5 = five.split(" ");
         String[] inputs6 = six.split(" ");
 
-        scheduler.setReadyQueue(new MFQReadyQueue(1,2));
-        schedule(inputs1);
-        schedule(inputs2);
-        scheduler.setReadyQueue(new MFQReadyQueue(4,12));
-        schedule(inputs1);
-        schedule(inputs2);
+        //Quantum pairs
+        Set<int[]> quantumPairs = new HashSet<>();
+        quantumPairs.add(new int[]{1, 2});
+        quantumPairs.add(new int[]{1, 5});
+        quantumPairs.add(new int[]{2, 4});
+        quantumPairs.add(new int[]{2, 8});
+        quantumPairs.add(new int[]{4, 12});
+        quantumPairs.add(new int[]{4, 16});
+        quantumPairs.add(new int[]{8, 32});
+        quantumPairs.add(new int[]{10, 40});
+        quantumPairs.add(new int[]{15, 60});
+        quantumPairs.add(new int[]{20, 80});
+        quantumPairs.add(new int[]{20, 30});
+        quantumPairs.add(new int[]{22, 32});
 
-        // os.schedule(inputs3);
-        // os.schedule(inputs4);
-        // os.schedule(inputs5);
-        // os.schedule(inputs6);
-        charts();
+
+        for(int[] qp : quantumPairs) {
+            scheduler.setReadyQueue(new MFQReadyQueue(qp[0], qp[1]));
+            schedule(inputs1);
+            schedule(inputs2);
+            schedule(inputs3);
+            schedule(inputs4);
+            schedule(inputs5);
+            schedule(inputs6);
+        }
+      //  charts();
     }
 }

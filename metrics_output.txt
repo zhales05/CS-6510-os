@@ -1,7 +1,252 @@
 --------- System Metrics ---------
-Average Throughput: 0.013071895424836602
-Average Waiting Time: 8.5
-Average Turnaround Time: 76.5
-Average Response Time: 2.5
+Average Throughput: 0.015
+Average Waiting Time: 32.333333333333336
+Average Turnaround Time: 66.66666666666667
+Average Response Time: 9.0
+Quantum 1: 10
+Quantum 2: 40
+--------- System Metrics ---------
+Average Throughput: 0.010273972602739725
+Average Waiting Time: 12.333333333333334
+Average Turnaround Time: 97.33333333333333
+Average Response Time: 5.333333333333333
+Quantum 1: 10
+Quantum 2: 40
+--------- System Metrics ---------
+Average Throughput: 6.975122064636131E-4
+Average Waiting Time: 644.3333333333334
+Average Turnaround Time: 1433.6666666666667
+Average Response Time: 8.0
+Quantum 1: 10
+Quantum 2: 40
+--------- System Metrics ---------
+Average Throughput: 4.4483985765124553E-4
+Average Waiting Time: 261.6666666666667
+Average Turnaround Time: 2248.0
+Average Response Time: 7.0
+Quantum 1: 10
+Quantum 2: 40
+--------- System Metrics ---------
+Average Throughput: 1.6742940060274585E-4
+Average Waiting Time: 2790.3333333333335
+Average Turnaround Time: 5972.666666666667
+Average Response Time: 11.0
+Quantum 1: 10
+Quantum 2: 40
+--------- System Metrics ---------
+Average Throughput: 1.121830827911151E-4
+Average Waiting Time: 1129.6666666666667
+Average Turnaround Time: 8914.0
+Average Response Time: 6.666666666666667
+Quantum 1: 10
+Quantum 2: 40
+--------- System Metrics ---------
+Average Throughput: 0.014705882352941176
+Average Waiting Time: 29.0
+Average Turnaround Time: 68.0
+Average Response Time: 4.0
 Quantum 1: 1
 Quantum 2: 2
+--------- System Metrics ---------
+Average Throughput: 0.009933774834437087
+Average Waiting Time: 17.666666666666668
+Average Turnaround Time: 100.66666666666667
+Average Response Time: 4.0
+Quantum 1: 1
+Quantum 2: 2
+--------- System Metrics ---------
+Average Throughput: 0.02857142857142857
+Average Waiting Time: 1.0
+Average Turnaround Time: 35.0
+Average Response Time: 1.0
+Quantum 1: 20
+Quantum 2: 80
+--------- System Metrics ---------
+Average Throughput: 0.043478260869565216
+Average Waiting Time: 0.0
+Average Turnaround Time: 23.0
+Average Response Time: 1.0
+Quantum 1: 20
+Quantum 2: 80
+--------- System Metrics ---------
+Average Throughput: 0.043478260869565216
+Average Waiting Time: 0.0
+Average Turnaround Time: 23.0
+Average Response Time: 1.0
+Quantum 1: 20
+Quantum 2: 80
+--------- System Metrics ---------
+Average Throughput: 0.0013531799729364006
+Average Waiting Time: 4.0
+Average Turnaround Time: 739.0
+Average Response Time: 1.0
+Quantum 1: 20
+Quantum 2: 80
+--------- System Metrics ---------
+Average Throughput: 0.014285714285714285
+Average Waiting Time: 32.333333333333336
+Average Turnaround Time: 70.0
+Average Response Time: 8.333333333333334
+Quantum 1: 8
+Quantum 2: 32
+--------- System Metrics ---------
+Average Throughput: 0.010344827586206896
+Average Waiting Time: 11.333333333333334
+Average Turnaround Time: 96.66666666666667
+Average Response Time: 5.333333333333333
+Quantum 1: 8
+Quantum 2: 32
+--------- System Metrics ---------
+Average Throughput: 7.00770847932726E-4
+Average Waiting Time: 641.0
+Average Turnaround Time: 1427.0
+Average Response Time: 8.0
+Quantum 1: 8
+Quantum 2: 32
+--------- System Metrics ---------
+Average Throughput: 4.4176115446915035E-4
+Average Waiting Time: 287.3333333333333
+Average Turnaround Time: 2263.6666666666665
+Average Response Time: 7.0
+Quantum 1: 8
+Quantum 2: 32
+--------- System Metrics ---------
+Average Throughput: 1.6818971800190615E-4
+Average Waiting Time: 2780.3333333333335
+Average Turnaround Time: 5945.666666666667
+Average Response Time: 10.333333333333334
+Quantum 1: 8
+Quantum 2: 32
+--------- System Metrics ---------
+Average Throughput: 1.125112511251125E-4
+Average Waiting Time: 1157.3333333333333
+Average Turnaround Time: 8888.0
+Average Response Time: 6.666666666666667
+Quantum 1: 8
+Quantum 2: 32
+--------- System Metrics ---------
+Average Throughput: 0.014705882352941176
+Average Waiting Time: 31.666666666666668
+Average Turnaround Time: 68.0
+Average Response Time: 7.0
+Quantum 1: 4
+Quantum 2: 12
+--------- System Metrics ---------
+Average Throughput: 0.010101010101010102
+Average Waiting Time: 15.0
+Average Turnaround Time: 99.0
+Average Response Time: 5.333333333333333
+Quantum 1: 4
+Quantum 2: 12
+--------- System Metrics ---------
+Average Throughput: 0.015
+Average Waiting Time: 28.333333333333332
+Average Turnaround Time: 66.66666666666667
+Average Response Time: 10.666666666666666
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.010526315789473684
+Average Waiting Time: 14.333333333333334
+Average Turnaround Time: 95.0
+Average Response Time: 5.333333333333333
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 6.922011998154131E-4
+Average Waiting Time: 649.3333333333334
+Average Turnaround Time: 1444.6666666666667
+Average Response Time: 8.0
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 4.3674479545785413E-4
+Average Waiting Time: 282.3333333333333
+Average Turnaround Time: 2289.6666666666665
+Average Response Time: 7.0
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 1.6746678575415875E-4
+Average Waiting Time: 2776.0
+Average Turnaround Time: 5971.333333333333
+Average Response Time: 11.333333333333334
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 1.1268028846153847E-4
+Average Waiting Time: 1105.3333333333333
+Average Turnaround Time: 8874.666666666666
+Average Response Time: 6.666666666666667
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.014563106796116505
+Average Waiting Time: 26.333333333333332
+Average Turnaround Time: 68.66666666666667
+Average Response Time: 12.333333333333334
+Quantum 1: 20
+Quantum 2: 80
+--------- System Metrics ---------
+Average Throughput: 0.010135135135135136
+Average Waiting Time: 12.333333333333334
+Average Turnaround Time: 98.66666666666667
+Average Response Time: 5.333333333333333
+Quantum 1: 20
+Quantum 2: 80
+--------- System Metrics ---------
+Average Throughput: 0.015706806282722512
+Average Waiting Time: 29.666666666666668
+Average Turnaround Time: 63.666666666666664
+Average Response Time: 22.333333333333332
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.010238907849829351
+Average Waiting Time: 14.333333333333334
+Average Turnaround Time: 97.66666666666667
+Average Response Time: 5.333333333333333
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.014925373134328358
+Average Waiting Time: 32.0
+Average Turnaround Time: 67.0
+Average Response Time: 10.666666666666666
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.010135135135135136
+Average Waiting Time: 11.333333333333334
+Average Turnaround Time: 98.66666666666667
+Average Response Time: 5.333333333333333
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.015706806282722512
+Average Waiting Time: 28.333333333333332
+Average Turnaround Time: 63.666666666666664
+Average Response Time: 12.0
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.01098901098901099
+Average Waiting Time: 14.333333333333334
+Average Turnaround Time: 91.0
+Average Response Time: 32.333333333333336
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.015228426395939087
+Average Waiting Time: 27.333333333333332
+Average Turnaround Time: 65.66666666666667
+Average Response Time: 12.0
+Quantum 1: 15
+Quantum 2: 60
+--------- System Metrics ---------
+Average Throughput: 0.010067114093959731
+Average Waiting Time: 14.333333333333334
+Average Turnaround Time: 99.33333333333333
+Average Response Time: 34.333333333333336
+Quantum 1: 15
+Quantum 2: 60

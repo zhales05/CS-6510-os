@@ -94,7 +94,7 @@ public class ProcessControlBlock implements Logging {
                     .append(", Execution Time: ").append(pet.getExecutionTime())
                     .append(" units\n");
         }
-        System.out.println(sb.toString());
+        log(sb.toString());
     }
 
     public void evaluateMetrics() {
@@ -143,6 +143,8 @@ public class ProcessControlBlock implements Logging {
                         mfq3.append(String.format("%4s", ""));
 
                         if (responseTime == null) {
+                            responseTime = pet.getStart() - arrivalTime;
+                            log("Response time set to: " + responseTime);
                             responseTime = pet.getStart() - arrivalTime;
                         }
 
@@ -343,5 +345,9 @@ public class ProcessControlBlock implements Logging {
 
     public void setCodeStart(int codeStart) {
         this.codeStart = codeStart;
+    }
+
+    public int getArrivalTime() {
+        return arrivalTime;
     }
 }

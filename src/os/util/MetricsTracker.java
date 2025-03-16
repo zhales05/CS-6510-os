@@ -10,7 +10,7 @@ public class MetricsTracker implements Logging {
     private double throughput;
     private double waitingTime;
     private double turnAroundTime;
-    private double responseTime;
+    private Double responseTime;
     private int quantum1;
     private int quantum2;
 
@@ -44,7 +44,7 @@ public class MetricsTracker implements Logging {
         log("Quantum 2: " + quantum2);
 
 
-        try (FileWriter writer = new FileWriter("metrics_output.txt", false)) {
+        try (FileWriter writer = new FileWriter("metrics_output.txt", true)) {
             writer.write("--------- System Metrics ---------\n");
             writer.write("Average Throughput: " + throughput + "\n");
             writer.write("Average Waiting Time: " + waitingTime + "\n");
@@ -74,8 +74,12 @@ public class MetricsTracker implements Logging {
         return turnAroundTime;
     }
 
-    public double getResponseTime() {
+    public Double getResponseTime() {
         return responseTime;
+    }
+
+    public void setResponseTime(double responseTime) {
+        this.responseTime = responseTime;
     }
 
     public int getQuantum1() {
