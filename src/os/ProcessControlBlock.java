@@ -27,7 +27,7 @@ public class ProcessControlBlock implements Logging {
     private int completionTime;
     private int turnAroundTime;
     private int waitingTime = 0;
-    private Integer responseTime;
+    private int responseTime = 0;
 
 
     List<ProcessExecutionBurst> currentCPUBursts = new ArrayList<>();
@@ -142,10 +142,9 @@ public class ProcessControlBlock implements Logging {
                         mfq2.append(String.format("%4s", ""));
                         mfq3.append(String.format("%4s", ""));
 
-                        if (responseTime == null) {
+                        if (responseTime == 0) {
                             responseTime = pet.getStart() - arrivalTime;
                             log("Response time set to: " + responseTime);
-                            responseTime = pet.getStart() - arrivalTime;
                         }
 
                         break;
@@ -277,11 +276,11 @@ public class ProcessControlBlock implements Logging {
         this.waitingTime = waitingTime;
     }
 
-    public Integer getResponseTime() {
+    public int getResponseTime() {
         return responseTime;
     }
 
-    public void setResponseTime(Integer responseTime) {
+    public void setResponseTime(int responseTime) {
         this.responseTime = responseTime;
     }
 

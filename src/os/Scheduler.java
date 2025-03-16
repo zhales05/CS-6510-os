@@ -1,13 +1,11 @@
 package os;
 
 import os.queues.*;
-import os.util.Charts;
 import os.util.Logging;
 import os.util.MetricsTracker;
 import util.Observer;
 import vm.hardware.Clock;
 
-import javax.swing.*;
 import java.util.*;
 
 /**
@@ -38,7 +36,7 @@ class Scheduler implements Logging, Observer {
     public Scheduler(OperatingSystem parentOs) {
         //this(parentOs, new RRReadyQueue(5));
         //this(parentOs, new FCFSReadyQueue());
-        this(parentOs, new MFQReadyQueue(20, 80));
+        this(parentOs, new MFQReadyQueue(22, 32));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -61,10 +59,6 @@ class Scheduler implements Logging, Observer {
     public void addToIOQueue(ProcessControlBlock pcb) {
         ioQueue.add(pcb);
         transitionProcess();
-    }
-
-    public void makeChart() {
-        Charts.launchChart(metrics);
     }
 
     //moved status change to ready queue
@@ -127,7 +121,7 @@ class Scheduler implements Logging, Observer {
         runThroughReadyQueue();
 
         //print metrics here for now
-        metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum());
+        metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
     }
 
     private void runThroughReadyQueue() {
@@ -145,9 +139,6 @@ class Scheduler implements Logging, Observer {
     private void runProcess(ProcessControlBlock pcb) {
         pcb.setStatus(ProcessStatus.RUNNING, QueueId.RUNNING_QUEUE);
         readyQueue.resetQuantumCounter();
-        if (pcb.getResponseTime() == null) {
-            pcb.setResponseTime(clock.getTime() - pcb.getArrivalTime());
-        }
         parentOs.runProcess(pcb);
     }
 

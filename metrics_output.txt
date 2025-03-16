@@ -1,252 +1,1296 @@
 --------- System Metrics ---------
-Average Throughput: 0.015
-Average Waiting Time: 32.333333333333336
-Average Turnaround Time: 66.66666666666667
-Average Response Time: 9.0
-Quantum 1: 10
-Quantum 2: 40
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.01694915254237288
+Average Waiting Time: 23.666666666666668
+Average Turnaround Time: 59.0
+Average Response Time: 13
+Quantum 1: 125
+Quantum 2: 250
 --------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.009900990099009901
+Average Waiting Time: 11.333333333333334
+Average Turnaround Time: 101.0
+Average Response Time: 5
+Quantum 1: 125
+Quantum 2: 250
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.100591715976331E-4
+Average Waiting Time: 650.6666666666666
+Average Turnaround Time: 1408.3333333333333
+Average Response Time: 8
+Quantum 1: 125
+Quantum 2: 250
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.3560331058516046E-4
+Average Waiting Time: 273.6666666666667
+Average Turnaround Time: 2295.6666666666665
+Average Response Time: 7
+Quantum 1: 125
+Quantum 2: 250
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6831238779174148E-4
+Average Waiting Time: 2820.6666666666665
+Average Turnaround Time: 5941.333333333333
+Average Response Time: 11
+Quantum 1: 125
+Quantum 2: 250
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1144958763652574E-4
+Average Waiting Time: 1105.0
+Average Turnaround Time: 8972.666666666666
+Average Response Time: 6
+Quantum 1: 125
+Quantum 2: 250
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.014354066985645933
+Average Waiting Time: 33.0
+Average Turnaround Time: 69.66666666666667
+Average Response Time: 7
+Quantum 1: 5
+Quantum 2: 10
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010416666666666666
+Average Waiting Time: 14.0
+Average Turnaround Time: 96.0
+Average Response Time: 5
+Quantum 1: 5
+Quantum 2: 10
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.001166861143524E-4
+Average Waiting Time: 645.3333333333334
+Average Turnaround Time: 1428.3333333333333
+Average Response Time: 7
+Quantum 1: 5
+Quantum 2: 10
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.3782837127845885E-4
+Average Waiting Time: 272.6666666666667
+Average Turnaround Time: 2284.0
+Average Response Time: 7
+Quantum 1: 5
+Quantum 2: 10
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.675416061655311E-4
+Average Waiting Time: 2793.3333333333335
+Average Turnaround Time: 5968.666666666667
+Average Response Time: 8
+Quantum 1: 5
+Quantum 2: 10
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1180263108858495E-4
+Average Waiting Time: 1134.3333333333333
+Average Turnaround Time: 8944.333333333334
+Average Response Time: 6
+Quantum 1: 5
+Quantum 2: 10
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.016304347826086956
+Average Waiting Time: 24.666666666666668
+Average Turnaround Time: 61.333333333333336
+Average Response Time: 13
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
 Average Throughput: 0.010273972602739725
-Average Waiting Time: 12.333333333333334
+Average Waiting Time: 10.0
 Average Turnaround Time: 97.33333333333333
-Average Response Time: 5.333333333333333
-Quantum 1: 10
+Average Response Time: 5
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.055503292568204E-4
+Average Waiting Time: 628.0
+Average Turnaround Time: 1417.3333333333333
+Average Response Time: 8
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.4001173364623054E-4
+Average Waiting Time: 263.3333333333333
+Average Turnaround Time: 2272.6666666666665
+Average Response Time: 7
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.673733541620174E-4
+Average Waiting Time: 2793.3333333333335
+Average Turnaround Time: 5974.666666666667
+Average Response Time: 11
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1171936096525528E-4
+Average Waiting Time: 1157.6666666666667
+Average Turnaround Time: 8951.0
+Average Response Time: 6
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.015228426395939087
+Average Waiting Time: 33.0
+Average Turnaround Time: 65.66666666666667
+Average Response Time: 12
+Quantum 1: 20
 Quantum 2: 40
 --------- System Metrics ---------
-Average Throughput: 6.975122064636131E-4
-Average Waiting Time: 644.3333333333334
-Average Turnaround Time: 1433.6666666666667
-Average Response Time: 8.0
-Quantum 1: 10
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010869565217391304
+Average Waiting Time: 13.666666666666666
+Average Turnaround Time: 92.0
+Average Response Time: 5
+Quantum 1: 20
 Quantum 2: 40
 --------- System Metrics ---------
-Average Throughput: 4.4483985765124553E-4
-Average Waiting Time: 261.6666666666667
-Average Turnaround Time: 2248.0
-Average Response Time: 7.0
-Quantum 1: 10
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.944444444444445E-4
+Average Waiting Time: 666.0
+Average Turnaround Time: 1440.0
+Average Response Time: 8
+Quantum 1: 20
 Quantum 2: 40
 --------- System Metrics ---------
-Average Throughput: 1.6742940060274585E-4
-Average Waiting Time: 2790.3333333333335
-Average Turnaround Time: 5972.666666666667
-Average Response Time: 11.0
-Quantum 1: 10
+file: files/cases/m-io-3.osx
+Average Throughput: 4.440497335701599E-4
+Average Waiting Time: 280.0
+Average Turnaround Time: 2252.0
+Average Response Time: 7
+Quantum 1: 20
 Quantum 2: 40
 --------- System Metrics ---------
-Average Throughput: 1.121830827911151E-4
-Average Waiting Time: 1129.6666666666667
-Average Turnaround Time: 8914.0
-Average Response Time: 6.666666666666667
-Quantum 1: 10
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6710299114354148E-4
+Average Waiting Time: 2767.6666666666665
+Average Turnaround Time: 5984.333333333333
+Average Response Time: 11
+Quantum 1: 20
 Quantum 2: 40
 --------- System Metrics ---------
-Average Throughput: 0.014705882352941176
-Average Waiting Time: 29.0
-Average Turnaround Time: 68.0
-Average Response Time: 4.0
-Quantum 1: 1
-Quantum 2: 2
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1121821012827167E-4
+Average Waiting Time: 1135.6666666666667
+Average Turnaround Time: 8991.333333333334
+Average Response Time: 6
+Quantum 1: 20
+Quantum 2: 40
 --------- System Metrics ---------
-Average Throughput: 0.009933774834437087
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.017857142857142856
+Average Waiting Time: 24.0
+Average Turnaround Time: 56.0
+Average Response Time: 13
+Quantum 1: 75
+Quantum 2: 150
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010273972602739725
 Average Waiting Time: 17.666666666666668
-Average Turnaround Time: 100.66666666666667
-Average Response Time: 4.0
-Quantum 1: 1
-Quantum 2: 2
+Average Turnaround Time: 97.33333333333333
+Average Response Time: 5
+Quantum 1: 75
+Quantum 2: 150
 --------- System Metrics ---------
-Average Throughput: 0.02857142857142857
-Average Waiting Time: 1.0
-Average Turnaround Time: 35.0
-Average Response Time: 1.0
-Quantum 1: 20
-Quantum 2: 80
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.042253521126761E-4
+Average Waiting Time: 648.3333333333334
+Average Turnaround Time: 1420.0
+Average Response Time: 8
+Quantum 1: 75
+Quantum 2: 150
 --------- System Metrics ---------
-Average Throughput: 0.043478260869565216
-Average Waiting Time: 0.0
-Average Turnaround Time: 23.0
-Average Response Time: 1.0
-Quantum 1: 20
-Quantum 2: 80
+file: files/cases/m-io-3.osx
+Average Throughput: 4.3956043956043956E-4
+Average Waiting Time: 265.3333333333333
+Average Turnaround Time: 2275.0
+Average Response Time: 7
+Quantum 1: 75
+Quantum 2: 150
 --------- System Metrics ---------
-Average Throughput: 0.043478260869565216
-Average Waiting Time: 0.0
-Average Turnaround Time: 23.0
-Average Response Time: 1.0
-Quantum 1: 20
-Quantum 2: 80
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6753224995811694E-4
+Average Waiting Time: 2770.3333333333335
+Average Turnaround Time: 5969.0
+Average Response Time: 11
+Quantum 1: 75
+Quantum 2: 150
 --------- System Metrics ---------
-Average Throughput: 0.0013531799729364006
-Average Waiting Time: 4.0
-Average Turnaround Time: 739.0
-Average Response Time: 1.0
-Quantum 1: 20
-Quantum 2: 80
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1137511137511137E-4
+Average Waiting Time: 1119.0
+Average Turnaround Time: 8978.666666666666
+Average Response Time: 6
+Quantum 1: 75
+Quantum 2: 150
 --------- System Metrics ---------
-Average Throughput: 0.014285714285714285
-Average Waiting Time: 32.333333333333336
-Average Turnaround Time: 70.0
-Average Response Time: 8.333333333333334
-Quantum 1: 8
-Quantum 2: 32
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.016129032258064516
+Average Waiting Time: 21.333333333333332
+Average Turnaround Time: 62.0
+Average Response Time: 13
+Quantum 1: 50
+Quantum 2: 100
 --------- System Metrics ---------
-Average Throughput: 0.010344827586206896
-Average Waiting Time: 11.333333333333334
-Average Turnaround Time: 96.66666666666667
-Average Response Time: 5.333333333333333
-Quantum 1: 8
-Quantum 2: 32
---------- System Metrics ---------
-Average Throughput: 7.00770847932726E-4
-Average Waiting Time: 641.0
-Average Turnaround Time: 1427.0
-Average Response Time: 8.0
-Quantum 1: 8
-Quantum 2: 32
---------- System Metrics ---------
-Average Throughput: 4.4176115446915035E-4
-Average Waiting Time: 287.3333333333333
-Average Turnaround Time: 2263.6666666666665
-Average Response Time: 7.0
-Quantum 1: 8
-Quantum 2: 32
---------- System Metrics ---------
-Average Throughput: 1.6818971800190615E-4
-Average Waiting Time: 2780.3333333333335
-Average Turnaround Time: 5945.666666666667
-Average Response Time: 10.333333333333334
-Quantum 1: 8
-Quantum 2: 32
---------- System Metrics ---------
-Average Throughput: 1.125112511251125E-4
-Average Waiting Time: 1157.3333333333333
-Average Turnaround Time: 8888.0
-Average Response Time: 6.666666666666667
-Quantum 1: 8
-Quantum 2: 32
---------- System Metrics ---------
-Average Throughput: 0.014705882352941176
-Average Waiting Time: 31.666666666666668
-Average Turnaround Time: 68.0
-Average Response Time: 7.0
-Quantum 1: 4
-Quantum 2: 12
---------- System Metrics ---------
-Average Throughput: 0.010101010101010102
-Average Waiting Time: 15.0
-Average Turnaround Time: 99.0
-Average Response Time: 5.333333333333333
-Quantum 1: 4
-Quantum 2: 12
---------- System Metrics ---------
-Average Throughput: 0.015
-Average Waiting Time: 28.333333333333332
-Average Turnaround Time: 66.66666666666667
-Average Response Time: 10.666666666666666
-Quantum 1: 15
-Quantum 2: 60
---------- System Metrics ---------
+file: files/cases/s-io-3.osx
 Average Throughput: 0.010526315789473684
-Average Waiting Time: 14.333333333333334
+Average Waiting Time: 13.666666666666666
 Average Turnaround Time: 95.0
-Average Response Time: 5.333333333333333
-Quantum 1: 15
-Quantum 2: 60
+Average Response Time: 5
+Quantum 1: 50
+Quantum 2: 100
 --------- System Metrics ---------
-Average Throughput: 6.922011998154131E-4
-Average Waiting Time: 649.3333333333334
-Average Turnaround Time: 1444.6666666666667
-Average Response Time: 8.0
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.030700726505742E-4
+Average Waiting Time: 645.6666666666666
+Average Turnaround Time: 1422.3333333333333
+Average Response Time: 8
+Quantum 1: 50
+Quantum 2: 100
 --------- System Metrics ---------
-Average Throughput: 4.3674479545785413E-4
-Average Waiting Time: 282.3333333333333
-Average Turnaround Time: 2289.6666666666665
-Average Response Time: 7.0
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/m-io-3.osx
+Average Throughput: 4.450378282153983E-4
+Average Waiting Time: 276.3333333333333
+Average Turnaround Time: 2247.0
+Average Response Time: 7
+Quantum 1: 50
+Quantum 2: 100
 --------- System Metrics ---------
-Average Throughput: 1.6746678575415875E-4
-Average Waiting Time: 2776.0
-Average Turnaround Time: 5971.333333333333
-Average Response Time: 11.333333333333334
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.678885220213778E-4
+Average Waiting Time: 2782.3333333333335
+Average Turnaround Time: 5956.333333333333
+Average Response Time: 11
+Quantum 1: 50
+Quantum 2: 100
 --------- System Metrics ---------
-Average Throughput: 1.1268028846153847E-4
-Average Waiting Time: 1105.3333333333333
-Average Turnaround Time: 8874.666666666666
-Average Response Time: 6.666666666666667
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1196954428395476E-4
+Average Waiting Time: 1118.3333333333333
+Average Turnaround Time: 8931.0
+Average Response Time: 6
+Quantum 1: 50
+Quantum 2: 100
 --------- System Metrics ---------
-Average Throughput: 0.014563106796116505
-Average Waiting Time: 26.333333333333332
-Average Turnaround Time: 68.66666666666667
-Average Response Time: 12.333333333333334
-Quantum 1: 20
-Quantum 2: 80
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.01507537688442211
+Average Waiting Time: 30.0
+Average Turnaround Time: 66.33333333333333
+Average Response Time: 9
+Quantum 1: 10
+Quantum 2: 20
 --------- System Metrics ---------
-Average Throughput: 0.010135135135135136
-Average Waiting Time: 12.333333333333334
-Average Turnaround Time: 98.66666666666667
-Average Response Time: 5.333333333333333
-Quantum 1: 20
-Quantum 2: 80
+file: files/cases/s-io-3.osx
+Average Throughput: 0.011450381679389313
+Average Waiting Time: 13.0
+Average Turnaround Time: 87.33333333333333
+Average Response Time: 5
+Quantum 1: 10
+Quantum 2: 20
 --------- System Metrics ---------
-Average Throughput: 0.015706806282722512
-Average Waiting Time: 29.666666666666668
-Average Turnaround Time: 63.666666666666664
-Average Response Time: 22.333333333333332
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.04390702042733E-4
+Average Waiting Time: 627.0
+Average Turnaround Time: 1419.6666666666667
+Average Response Time: 8
+Quantum 1: 10
+Quantum 2: 20
 --------- System Metrics ---------
-Average Throughput: 0.010238907849829351
-Average Waiting Time: 14.333333333333334
-Average Turnaround Time: 97.66666666666667
-Average Response Time: 5.333333333333333
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/m-io-3.osx
+Average Throughput: 4.491017964071856E-4
+Average Waiting Time: 256.6666666666667
+Average Turnaround Time: 2226.6666666666665
+Average Response Time: 7
+Quantum 1: 10
+Quantum 2: 20
 --------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6725204883759825E-4
+Average Waiting Time: 2801.3333333333335
+Average Turnaround Time: 5979.0
+Average Response Time: 11
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1154489682097045E-4
+Average Waiting Time: 1100.0
+Average Turnaround Time: 8965.0
+Average Response Time: 6
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.01485148514851485
+Average Waiting Time: 31.666666666666668
+Average Turnaround Time: 67.33333333333333
+Average Response Time: 7
+Quantum 1: 5
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.01090909090909091
+Average Waiting Time: 15.0
+Average Turnaround Time: 91.66666666666667
+Average Response Time: 5
+Quantum 1: 5
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.999533364442371E-4
+Average Waiting Time: 666.6666666666666
+Average Turnaround Time: 1428.6666666666667
+Average Response Time: 7
+Quantum 1: 5
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.478280340349306E-4
+Average Waiting Time: 261.6666666666667
+Average Turnaround Time: 2233.0
+Average Response Time: 7
+Quantum 1: 5
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6736401673640169E-4
+Average Waiting Time: 2792.3333333333335
+Average Turnaround Time: 5975.0
+Average Response Time: 8
+Quantum 1: 5
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1108642523883582E-4
+Average Waiting Time: 1117.6666666666667
+Average Turnaround Time: 9002.0
+Average Response Time: 6
+Quantum 1: 5
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.014634146341463415
+Average Waiting Time: 31.666666666666668
+Average Turnaround Time: 68.33333333333333
+Average Response Time: 5
+Quantum 1: 2
+Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.009287925696594427
+Average Waiting Time: 15.0
+Average Turnaround Time: 107.66666666666667
+Average Response Time: 5
+Quantum 1: 2
+Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.020828457758015E-4
+Average Waiting Time: 637.6666666666666
+Average Turnaround Time: 1424.3333333333333
+Average Response Time: 5
+Quantum 1: 2
+Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.3072505384063173E-4
+Average Waiting Time: 280.0
+Average Turnaround Time: 2321.6666666666665
+Average Response Time: 5
+Quantum 1: 2
+Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6755096341803966E-4
+Average Waiting Time: 2804.3333333333335
+Average Turnaround Time: 5968.333333333333
+Average Response Time: 5
+Quantum 1: 2
+Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1214953271028037E-4
+Average Waiting Time: 1139.0
+Average Turnaround Time: 8916.666666666666
+Average Response Time: 5
+Quantum 1: 2
+Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
 Average Throughput: 0.014925373134328358
-Average Waiting Time: 32.0
+Average Waiting Time: 28.666666666666668
 Average Turnaround Time: 67.0
-Average Response Time: 10.666666666666666
-Quantum 1: 15
-Quantum 2: 60
+Average Response Time: 9
+Quantum 1: 10
+Quantum 2: 24
 --------- System Metrics ---------
-Average Throughput: 0.010135135135135136
-Average Waiting Time: 11.333333333333334
-Average Turnaround Time: 98.66666666666667
-Average Response Time: 5.333333333333333
-Quantum 1: 15
-Quantum 2: 60
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010380622837370242
+Average Waiting Time: 15.0
+Average Turnaround Time: 96.33333333333333
+Average Response Time: 5
+Quantum 1: 10
+Quantum 2: 24
 --------- System Metrics ---------
-Average Throughput: 0.015706806282722512
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.952491309385864E-4
+Average Waiting Time: 649.0
+Average Turnaround Time: 1438.3333333333333
+Average Response Time: 8
+Quantum 1: 10
+Quantum 2: 24
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.5139933794763765E-4
+Average Waiting Time: 257.0
+Average Turnaround Time: 2215.3333333333335
+Average Response Time: 7
+Quantum 1: 10
+Quantum 2: 24
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6777585146244618E-4
+Average Waiting Time: 2796.0
+Average Turnaround Time: 5960.333333333333
+Average Response Time: 11
+Quantum 1: 10
+Quantum 2: 24
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1204481792717087E-4
+Average Waiting Time: 1167.0
+Average Turnaround Time: 8925.0
+Average Response Time: 6
+Quantum 1: 10
+Quantum 2: 24
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.016574585635359115
+Average Waiting Time: 21.333333333333332
+Average Turnaround Time: 60.333333333333336
+Average Response Time: 13
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010344827586206896
+Average Waiting Time: 17.666666666666668
+Average Turnaround Time: 96.66666666666667
+Average Response Time: 5
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.942837306179125E-4
+Average Waiting Time: 632.3333333333334
+Average Turnaround Time: 1440.3333333333333
+Average Response Time: 8
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.358564579398518E-4
+Average Waiting Time: 288.6666666666667
+Average Turnaround Time: 2294.3333333333335
+Average Response Time: 7
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6796371983651532E-4
+Average Waiting Time: 2848.6666666666665
+Average Turnaround Time: 5953.666666666667
+Average Response Time: 11
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1172768239544151E-4
+Average Waiting Time: 1166.6666666666667
+Average Turnaround Time: 8950.333333333334
+Average Response Time: 6
+Quantum 1: 50
+Quantum 2: 100
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.015151515151515152
+Average Waiting Time: 25.333333333333332
+Average Turnaround Time: 66.0
+Average Response Time: 7
+Quantum 1: 4
+Quantum 2: 8
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010869565217391304
+Average Waiting Time: 12.333333333333334
+Average Turnaround Time: 92.0
+Average Response Time: 5
+Quantum 1: 4
+Quantum 2: 8
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.109004739336493E-4
+Average Waiting Time: 634.3333333333334
+Average Turnaround Time: 1406.6666666666667
+Average Response Time: 6
+Quantum 1: 4
+Quantum 2: 8
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.389815627743635E-4
+Average Waiting Time: 258.0
+Average Turnaround Time: 2278.0
+Average Response Time: 6
+Quantum 1: 4
+Quantum 2: 8
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.678885220213778E-4
+Average Waiting Time: 2755.0
+Average Turnaround Time: 5956.333333333333
+Average Response Time: 7
+Quantum 1: 4
+Quantum 2: 8
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1158638646085178E-4
+Average Waiting Time: 1132.6666666666667
+Average Turnaround Time: 8961.666666666666
+Average Response Time: 6
+Quantum 1: 4
+Quantum 2: 8
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.014423076923076924
+Average Waiting Time: 30.333333333333332
+Average Turnaround Time: 69.33333333333333
+Average Response Time: 9
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010948905109489052
+Average Waiting Time: 13.333333333333334
+Average Turnaround Time: 91.33333333333333
+Average Response Time: 5
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.955715279387897E-4
+Average Waiting Time: 637.6666666666666
+Average Turnaround Time: 1437.6666666666667
+Average Response Time: 8
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.4176115446915035E-4
+Average Waiting Time: 277.0
+Average Turnaround Time: 2263.6666666666665
+Average Response Time: 7
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6728935482072157E-4
+Average Waiting Time: 2840.6666666666665
+Average Turnaround Time: 5977.666666666667
+Average Response Time: 11
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1056239404437237E-4
+Average Waiting Time: 1115.6666666666667
+Average Turnaround Time: 9044.666666666666
+Average Response Time: 6
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.014563106796116505
 Average Waiting Time: 28.333333333333332
-Average Turnaround Time: 63.666666666666664
-Average Response Time: 12.0
-Quantum 1: 15
-Quantum 2: 60
+Average Turnaround Time: 68.66666666666667
+Average Response Time: 9
+Quantum 1: 10
+Quantum 2: 20
 --------- System Metrics ---------
-Average Throughput: 0.01098901098901099
+file: files/cases/s-io-3.osx
+Average Throughput: 0.01060070671378092
+Average Waiting Time: 19.0
+Average Turnaround Time: 94.33333333333333
+Average Response Time: 5
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.925207756232687E-4
+Average Waiting Time: 638.3333333333334
+Average Turnaround Time: 1444.0
+Average Response Time: 8
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.4682752457551384E-4
+Average Waiting Time: 268.0
+Average Turnaround Time: 2238.0
+Average Response Time: 7
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6757904144788292E-4
+Average Waiting Time: 2819.3333333333335
+Average Turnaround Time: 5967.333333333333
+Average Response Time: 11
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1160299096015773E-4
+Average Waiting Time: 1152.3333333333333
+Average Turnaround Time: 8960.333333333334
+Average Response Time: 6
+Quantum 1: 10
+Quantum 2: 20
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.018292682926829267
+Average Waiting Time: 22.666666666666668
+Average Turnaround Time: 54.666666666666664
+Average Response Time: 13
+Quantum 1: 150
+Quantum 2: 300
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010101010101010102
+Average Waiting Time: 18.0
+Average Turnaround Time: 99.0
+Average Response Time: 5
+Quantum 1: 150
+Quantum 2: 300
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.037297677691766E-4
+Average Waiting Time: 655.6666666666666
+Average Turnaround Time: 1421.0
+Average Response Time: 8
+Quantum 1: 150
+Quantum 2: 300
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.526935264825713E-4
+Average Waiting Time: 251.33333333333334
+Average Turnaround Time: 2209.0
+Average Response Time: 7
+Quantum 1: 150
+Quantum 2: 300
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6802957320488407E-4
+Average Waiting Time: 2775.6666666666665
+Average Turnaround Time: 5951.333333333333
+Average Response Time: 11
+Quantum 1: 150
+Quantum 2: 300
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.116860876363501E-4
+Average Waiting Time: 1098.6666666666667
+Average Turnaround Time: 8953.666666666666
+Average Response Time: 6
+Quantum 1: 150
+Quantum 2: 300
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.01639344262295082
+Average Waiting Time: 23.666666666666668
+Average Turnaround Time: 61.0
+Average Response Time: 13
+Quantum 1: 35
+Quantum 2: 75
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010676156583629894
+Average Waiting Time: 13.666666666666666
+Average Turnaround Time: 93.66666666666667
+Average Response Time: 5
+Quantum 1: 35
+Quantum 2: 75
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.981615080288574E-4
+Average Waiting Time: 639.6666666666666
+Average Turnaround Time: 1432.3333333333333
+Average Response Time: 8
+Quantum 1: 35
+Quantum 2: 75
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.5139933794763765E-4
+Average Waiting Time: 278.0
+Average Turnaround Time: 2215.3333333333335
+Average Response Time: 7
+Quantum 1: 35
+Quantum 2: 75
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6778523489932885E-4
+Average Waiting Time: 2809.3333333333335
+Average Turnaround Time: 5960.0
+Average Response Time: 11
+Quantum 1: 35
+Quantum 2: 75
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1192776927955825E-4
+Average Waiting Time: 1137.6666666666667
+Average Turnaround Time: 8934.333333333334
+Average Response Time: 6
+Quantum 1: 35
+Quantum 2: 75
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.015384615384615385
+Average Waiting Time: 31.0
+Average Turnaround Time: 65.0
+Average Response Time: 10
+Quantum 1: 15
+Quantum 2: 30
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.00949367088607595
+Average Waiting Time: 11.0
+Average Turnaround Time: 105.33333333333333
+Average Response Time: 5
+Quantum 1: 15
+Quantum 2: 30
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.944444444444445E-4
+Average Waiting Time: 644.3333333333334
+Average Turnaround Time: 1440.0
+Average Response Time: 8
+Quantum 1: 15
+Quantum 2: 30
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.44247001332741E-4
+Average Waiting Time: 285.0
+Average Turnaround Time: 2251.0
+Average Response Time: 7
+Quantum 1: 15
+Quantum 2: 30
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6752289479562206E-4
+Average Waiting Time: 2818.6666666666665
+Average Turnaround Time: 5969.333333333333
+Average Response Time: 11
+Quantum 1: 15
+Quantum 2: 30
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1042402826855124E-4
+Average Waiting Time: 1154.0
+Average Turnaround Time: 9056.0
+Average Response Time: 6
+Quantum 1: 15
+Quantum 2: 30
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.015873015873015872
+Average Waiting Time: 23.666666666666668
+Average Turnaround Time: 63.0
+Average Response Time: 13
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010101010101010102
 Average Waiting Time: 14.333333333333334
-Average Turnaround Time: 91.0
-Average Response Time: 32.333333333333336
-Quantum 1: 15
-Quantum 2: 60
+Average Turnaround Time: 99.0
+Average Response Time: 5
+Quantum 1: 25
+Quantum 2: 50
 --------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.968641114982578E-4
+Average Waiting Time: 647.3333333333334
+Average Turnaround Time: 1435.0
+Average Response Time: 8
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.508566275924256E-4
+Average Waiting Time: 282.3333333333333
+Average Turnaround Time: 2218.0
+Average Response Time: 7
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6728935482072157E-4
+Average Waiting Time: 2762.6666666666665
+Average Turnaround Time: 5977.666666666667
+Average Response Time: 11
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1102475852115021E-4
+Average Waiting Time: 1154.6666666666667
+Average Turnaround Time: 9007.0
+Average Response Time: 6
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.016853932584269662
+Average Waiting Time: 21.0
+Average Turnaround Time: 59.333333333333336
+Average Response Time: 13
+Quantum 1: 40
+Quantum 2: 80
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010452961672473868
+Average Waiting Time: 13.666666666666666
+Average Turnaround Time: 95.66666666666667
+Average Response Time: 5
+Quantum 1: 40
+Quantum 2: 80
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.975122064636131E-4
+Average Waiting Time: 664.3333333333334
+Average Turnaround Time: 1433.6666666666667
+Average Response Time: 8
+Quantum 1: 40
+Quantum 2: 80
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.3371403787769266E-4
+Average Waiting Time: 272.6666666666667
+Average Turnaround Time: 2305.6666666666665
+Average Response Time: 7
+Quantum 1: 40
+Quantum 2: 80
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6790731516203055E-4
+Average Waiting Time: 2809.6666666666665
+Average Turnaround Time: 5955.666666666667
+Average Response Time: 11
+Quantum 1: 40
+Quantum 2: 80
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1202808170581425E-4
+Average Waiting Time: 1145.6666666666667
+Average Turnaround Time: 8926.333333333334
+Average Response Time: 6
+Quantum 1: 40
+Quantum 2: 80
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.017543859649122806
+Average Waiting Time: 22.666666666666668
+Average Turnaround Time: 57.0
+Average Response Time: 13
+Quantum 1: 100
+Quantum 2: 200
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.011111111111111112
+Average Waiting Time: 14.0
+Average Turnaround Time: 90.0
+Average Response Time: 5
+Quantum 1: 100
+Quantum 2: 200
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.083825265643448E-4
+Average Waiting Time: 638.0
+Average Turnaround Time: 1411.6666666666667
+Average Response Time: 8
+Quantum 1: 100
+Quantum 2: 200
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.420215117135701E-4
+Average Waiting Time: 282.3333333333333
+Average Turnaround Time: 2262.3333333333335
+Average Response Time: 7
+Quantum 1: 100
+Quantum 2: 200
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6761649346295676E-4
+Average Waiting Time: 2839.6666666666665
+Average Turnaround Time: 5966.0
+Average Response Time: 11
+Quantum 1: 100
+Quantum 2: 200
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1164452383610584E-4
+Average Waiting Time: 1136.6666666666667
+Average Turnaround Time: 8957.0
+Average Response Time: 6
+Quantum 1: 100
+Quantum 2: 200
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.015625
+Average Waiting Time: 26.0
+Average Turnaround Time: 64.0
+Average Response Time: 10
+Quantum 1: 15
+Quantum 2: 36
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010676156583629894
+Average Waiting Time: 12.333333333333334
+Average Turnaround Time: 93.66666666666667
+Average Response Time: 5
+Quantum 1: 15
+Quantum 2: 36
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.952491309385864E-4
+Average Waiting Time: 650.6666666666666
+Average Turnaround Time: 1438.3333333333333
+Average Response Time: 8
+Quantum 1: 15
+Quantum 2: 36
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.4365572315882877E-4
+Average Waiting Time: 257.3333333333333
+Average Turnaround Time: 2254.0
+Average Response Time: 7
+Quantum 1: 15
+Quantum 2: 36
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6731734523145567E-4
+Average Waiting Time: 2799.6666666666665
+Average Turnaround Time: 5976.666666666667
+Average Response Time: 11
+Quantum 1: 15
+Quantum 2: 36
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1179429849077697E-4
+Average Waiting Time: 1099.0
+Average Turnaround Time: 8945.0
+Average Response Time: 6
+Quantum 1: 15
+Quantum 2: 36
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.016483516483516484
+Average Waiting Time: 21.0
+Average Turnaround Time: 60.666666666666664
+Average Response Time: 13
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010676156583629894
+Average Waiting Time: 13.0
+Average Turnaround Time: 93.66666666666667
+Average Response Time: 5
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.045561296383278E-4
+Average Waiting Time: 628.3333333333334
+Average Turnaround Time: 1419.3333333333333
+Average Response Time: 8
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.4583147570218456E-4
+Average Waiting Time: 280.0
+Average Turnaround Time: 2243.0
+Average Response Time: 7
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.677195728741544E-4
+Average Waiting Time: 2762.0
+Average Turnaround Time: 5962.333333333333
+Average Response Time: 11
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1207411835026898E-4
+Average Waiting Time: 1142.3333333333333
+Average Turnaround Time: 8922.666666666666
+Average Response Time: 6
+Quantum 1: 25
+Quantum 2: 50
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.015228426395939087
+Average Waiting Time: 31.0
+Average Turnaround Time: 65.66666666666667
+Average Response Time: 7
+Quantum 1: 6
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.01079136690647482
+Average Waiting Time: 12.333333333333334
+Average Turnaround Time: 92.66666666666667
+Average Response Time: 5
+Quantum 1: 6
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.928406466512702E-4
+Average Waiting Time: 656.0
+Average Turnaround Time: 1443.3333333333333
+Average Response Time: 7
+Quantum 1: 6
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.407875404055245E-4
+Average Waiting Time: 277.6666666666667
+Average Turnaround Time: 2268.6666666666665
+Average Response Time: 7
+Quantum 1: 6
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6805781188728922E-4
+Average Waiting Time: 2819.0
+Average Turnaround Time: 5950.333333333333
+Average Response Time: 9
+Quantum 1: 6
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1064394777605666E-4
+Average Waiting Time: 1167.6666666666667
+Average Turnaround Time: 9038.0
+Average Response Time: 6
+Quantum 1: 6
+Quantum 2: 12
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
 Average Throughput: 0.015228426395939087
 Average Waiting Time: 27.333333333333332
 Average Turnaround Time: 65.66666666666667
-Average Response Time: 12.0
-Quantum 1: 15
+Average Response Time: 12
+Quantum 1: 20
+Quantum 2: 40
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.011278195488721804
+Average Waiting Time: 15.0
+Average Turnaround Time: 88.66666666666667
+Average Response Time: 5
+Quantum 1: 20
+Quantum 2: 40
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.86027898467871E-4
+Average Waiting Time: 662.0
+Average Turnaround Time: 1457.6666666666667
+Average Response Time: 8
+Quantum 1: 20
+Quantum 2: 40
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.4543429844097997E-4
+Average Waiting Time: 270.3333333333333
+Average Turnaround Time: 2245.0
+Average Response Time: 7
+Quantum 1: 20
+Quantum 2: 40
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.675696810590404E-4
+Average Waiting Time: 2781.0
+Average Turnaround Time: 5967.666666666667
+Average Response Time: 11
+Quantum 1: 20
+Quantum 2: 40
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1153660259508495E-4
+Average Waiting Time: 1090.6666666666667
+Average Turnaround Time: 8965.666666666666
+Average Response Time: 6
+Quantum 1: 20
+Quantum 2: 40
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.016129032258064516
+Average Waiting Time: 24.333333333333332
+Average Turnaround Time: 62.0
+Average Response Time: 13
+Quantum 1: 30
 Quantum 2: 60
 --------- System Metrics ---------
-Average Throughput: 0.010067114093959731
-Average Waiting Time: 14.333333333333334
-Average Turnaround Time: 99.33333333333333
-Average Response Time: 34.333333333333336
-Quantum 1: 15
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010169491525423728
+Average Waiting Time: 13.666666666666666
+Average Turnaround Time: 98.33333333333333
+Average Response Time: 5
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 6.93000693000693E-4
+Average Waiting Time: 627.3333333333334
+Average Turnaround Time: 1443.0
+Average Response Time: 8
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.526935264825713E-4
+Average Waiting Time: 282.6666666666667
+Average Turnaround Time: 2209.0
+Average Response Time: 7
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6826518593303046E-4
+Average Waiting Time: 2755.0
+Average Turnaround Time: 5943.0
+Average Response Time: 11
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1189437171310283E-4
+Average Waiting Time: 1126.0
+Average Turnaround Time: 8937.0
+Average Response Time: 6
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.014354066985645933
+Average Waiting Time: 27.333333333333332
+Average Turnaround Time: 69.66666666666667
+Average Response Time: 8
+Quantum 1: 8
+Quantum 2: 16
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.01020408163265306
+Average Waiting Time: 12.666666666666666
+Average Turnaround Time: 98.0
+Average Response Time: 5
+Quantum 1: 8
+Quantum 2: 16
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.042253521126761E-4
+Average Waiting Time: 626.3333333333334
+Average Turnaround Time: 1420.0
+Average Response Time: 8
+Quantum 1: 8
+Quantum 2: 16
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.462293618920125E-4
+Average Waiting Time: 282.3333333333333
+Average Turnaround Time: 2241.0
+Average Response Time: 7
+Quantum 1: 8
+Quantum 2: 16
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6849199663016007E-4
+Average Waiting Time: 2821.6666666666665
+Average Turnaround Time: 5935.0
+Average Response Time: 10
+Quantum 1: 8
+Quantum 2: 16
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1063986723215932E-4
+Average Waiting Time: 1153.0
+Average Turnaround Time: 9038.333333333334
+Average Response Time: 6
+Quantum 1: 8
+Quantum 2: 16
+--------- System Metrics ---------
+file: files/cases/s-cpu-3.osx
+Average Throughput: 0.01744186046511628
+Average Waiting Time: 20.666666666666668
+Average Turnaround Time: 57.333333333333336
+Average Response Time: 13
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/s-io-3.osx
+Average Throughput: 0.010638297872340425
+Average Waiting Time: 11.0
+Average Turnaround Time: 94.0
+Average Response Time: 5
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/m-cpu-3.osx
+Average Throughput: 7.032348804500703E-4
+Average Waiting Time: 630.3333333333334
+Average Turnaround Time: 1422.0
+Average Response Time: 8
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/m-io-3.osx
+Average Throughput: 4.491017964071856E-4
+Average Waiting Time: 276.0
+Average Turnaround Time: 2226.6666666666665
+Average Response Time: 7
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/l-cpu-3.osx
+Average Throughput: 1.6815200941651252E-4
+Average Waiting Time: 2769.6666666666665
+Average Turnaround Time: 5947.0
+Average Response Time: 11
+Quantum 1: 30
+Quantum 2: 60
+--------- System Metrics ---------
+file: files/cases/l-io-3.osx
+Average Throughput: 1.1156148897400617E-4
+Average Waiting Time: 1173.3333333333333
+Average Turnaround Time: 8963.666666666666
+Average Response Time: 6
+Quantum 1: 30
 Quantum 2: 60

@@ -173,10 +173,6 @@ public class OperatingSystem implements Logging {
         cpu.stopProcess();
     }
 
-    public void charts() {
-        scheduler.makeChart();
-    }
-
     public void testStuff() {
         String one = "execute files/cases/s-cpu-1.osx 1 files/cases/s-cpu-2.osx 1 files/cases/s-cpu-3.osx 1";
         String two = "execute files/cases/s-io-1.osx 1 files/cases/s-io-2.osx 1 files/cases/s-io-3.osx 1";
@@ -185,7 +181,6 @@ public class OperatingSystem implements Logging {
         String five = "execute files/cases/l-cpu-1.osx 1 files/cases/l-cpu-2.osx 1 files/cases/l-cpu-3.osx 1";
         String six = "execute files/cases/l-io-1.osx 1 files/cases/l-io-2.osx 1 files/cases/l-io-3.osx 1";
 
-       // VerboseModeLogger.getInstance().setVerboseMode(true);
         String[] inputs1 = one.split(" ");
         String[] inputs2 = two.split(" ");
         String[] inputs3 = three.split(" ");
@@ -193,24 +188,50 @@ public class OperatingSystem implements Logging {
         String[] inputs5 = five.split(" ");
         String[] inputs6 = six.split(" ");
 
-        //Quantum pairs
+        // 🔹 Quantum pairs for testing different scheduling strategies
         Set<int[]> quantumPairs = new HashSet<>();
-        quantumPairs.add(new int[]{1, 2});
-        quantumPairs.add(new int[]{1, 5});
+
+        // ✅ Baseline (Standard Increments)
+        quantumPairs.add(new int[]{5, 10});
+        quantumPairs.add(new int[]{10, 20});
+        quantumPairs.add(new int[]{15, 30});
+        quantumPairs.add(new int[]{20, 40});
+        quantumPairs.add(new int[]{25, 50});
+        quantumPairs.add(new int[]{30, 60});
+
+        // ✅ Low-Latency (Aggressive Preemption)
         quantumPairs.add(new int[]{2, 4});
-        quantumPairs.add(new int[]{2, 8});
-        quantumPairs.add(new int[]{4, 12});
-        quantumPairs.add(new int[]{4, 16});
-        quantumPairs.add(new int[]{8, 32});
-        quantumPairs.add(new int[]{10, 40});
-        quantumPairs.add(new int[]{15, 60});
-        quantumPairs.add(new int[]{20, 80});
-        quantumPairs.add(new int[]{20, 30});
-        quantumPairs.add(new int[]{22, 32});
+        quantumPairs.add(new int[]{4, 8});
+        quantumPairs.add(new int[]{6, 12});
+        quantumPairs.add(new int[]{8, 16});
+        quantumPairs.add(new int[]{10, 20});
 
+        // ✅ Batch Processing (Reduced Preemption)
+        quantumPairs.add(new int[]{50, 100});
+        quantumPairs.add(new int[]{75, 150});
+        quantumPairs.add(new int[]{100, 200});
+        quantumPairs.add(new int[]{125, 250});
+        quantumPairs.add(new int[]{150, 300});
 
-        for(int[] qp : quantumPairs) {
+        // ✅ Hybrid (Balanced Between Interactive & Batch)
+        quantumPairs.add(new int[]{10, 20});
+        quantumPairs.add(new int[]{20, 40});
+        quantumPairs.add(new int[]{30, 60});
+        quantumPairs.add(new int[]{40, 80});
+        quantumPairs.add(new int[]{50, 100});
+
+        // ✅ Dynamic Scaling (Non-Linear)
+        quantumPairs.add(new int[]{5, 12});
+        quantumPairs.add(new int[]{10, 24});
+        quantumPairs.add(new int[]{15, 36});
+        quantumPairs.add(new int[]{25, 50});
+        quantumPairs.add(new int[]{35, 75});
+        quantumPairs.add(new int[]{50, 100});
+
+        for (int[] qp : quantumPairs) {
+            System.out.println("Testing with Quantum1: " + qp[0] + ", Quantum2: " + qp[1]);
             scheduler.setReadyQueue(new MFQReadyQueue(qp[0], qp[1]));
+
             schedule(inputs1);
             schedule(inputs2);
             schedule(inputs3);
@@ -218,6 +239,6 @@ public class OperatingSystem implements Logging {
             schedule(inputs5);
             schedule(inputs6);
         }
-      //  charts();
     }
+
 }

@@ -10,6 +10,11 @@ execute files/scpu2.osx 1 -v
 execute files/cases/m-cpu-3.osx 1 -v
 execute files/cases/s-cpu-2.osx 1 -v
 
+execute files/cases/m-io-1.osx 1 -v
+execute files/cases/m-io-2.osx 1 -v
+execute files/cases/m-io-3.osx 1 -v
+
+execute files/cases/s-io-1.osx 1 files/cases/s-io-2.osx 1 files/cases/s-io-3.osx 1 -v
 
 
 execute files/scpu1.osx 1 files/scpu1.osx 1 -v

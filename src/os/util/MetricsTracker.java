@@ -7,16 +7,18 @@ import java.io.IOException;
 import java.util.Collection;
 
 public class MetricsTracker implements Logging {
-    private double throughput;
-    private double waitingTime;
-    private double turnAroundTime;
-    private Double responseTime;
+    private double throughput = 0.0;
+    private double waitingTime = 0.0;
+    private double turnAroundTime = 0.0;
+    private int responseTime = 0;
     private int quantum1;
     private int quantum2;
+    private String filename;
 
-    public void calculateMetrics(Collection<ProcessControlBlock> processes, int[] quantum) {
+    public void calculateMetrics(Collection<ProcessControlBlock> processes, int[] quantum, String filename) {
         this.quantum1 = quantum[0];
         this.quantum2 = quantum[1];
+        this.filename = filename;
 
         for (ProcessControlBlock process : processes) {
             waitingTime += process.getWaitingTime();
@@ -46,6 +48,7 @@ public class MetricsTracker implements Logging {
 
         try (FileWriter writer = new FileWriter("metrics_output.txt", true)) {
             writer.write("--------- System Metrics ---------\n");
+            writer.write("file: " + filename + "\n");
             writer.write("Average Throughput: " + throughput + "\n");
             writer.write("Average Waiting Time: " + waitingTime + "\n");
             writer.write("Average Turnaround Time: " + turnAroundTime + "\n");
@@ -74,11 +77,11 @@ public class MetricsTracker implements Logging {
         return turnAroundTime;
     }
 
-    public Double getResponseTime() {
+    public int getResponseTime() {
         return responseTime;
     }
 
-    public void setResponseTime(double responseTime) {
+    public void setResponseTime(int responseTime) {
         this.responseTime = responseTime;
     }
 
