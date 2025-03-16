@@ -1,11 +1,13 @@
 package os;
 
 import os.queues.*;
+import os.util.Charts;
 import os.util.Logging;
 import os.util.MetricsTracker;
 import util.Observer;
 import vm.hardware.Clock;
 
+import javax.swing.*;
 import java.util.*;
 
 /**
@@ -20,6 +22,7 @@ class Scheduler implements Logging, Observer {
     private ProcessControlBlock currentProcess;
 
     private final Map<String, ProcessControlBlock> processMap = new HashMap<>();
+    private final List<ProcessControlBlock> currentProcesses = new ArrayList<>();
     private IReadyQueue readyQueue;
 
     private final OperatingSystem parentOs;
@@ -35,13 +38,14 @@ class Scheduler implements Logging, Observer {
     public Scheduler(OperatingSystem parentOs) {
         //this(parentOs, new RRReadyQueue(5));
         //this(parentOs, new FCFSReadyQueue());
-        this(parentOs, new MFQReadyQueue(5, 10));
+        this(parentOs, new MFQReadyQueue(1, 2));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
         jobQueue.add(pcb);
         pcb.setStatus(ProcessStatus.NEW, QueueId.JOB_QUEUE);
         processMap.put(pcb.getFilePath(), pcb);
+        currentProcesses.add(pcb);
     }
 
     private void pushToBackOfJobQueue(ProcessControlBlock pcb) {
@@ -57,6 +61,10 @@ class Scheduler implements Logging, Observer {
     public void addToIOQueue(ProcessControlBlock pcb) {
         ioQueue.add(pcb);
         transitionProcess();
+    }
+
+    public void makeChart() {
+        Charts.launchChart(metrics);
     }
 
     //moved status change to ready queue
@@ -119,7 +127,7 @@ class Scheduler implements Logging, Observer {
         runThroughReadyQueue();
 
         //print metrics here for now
-        metricsTracker.calculateMetrics(terminatedQueue);
+        metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum());
     }
 
     private void runThroughReadyQueue() {
@@ -197,6 +205,10 @@ class Scheduler implements Logging, Observer {
     public void setReadyQueue(IReadyQueue readyQueue) {
         log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
         this.readyQueue = readyQueue;
+    }
+
+    public void clearCurrentProcesses() {
+        currentProcesses.clear();
     }
 
 }

@@ -20,7 +20,7 @@ public interface IReadyQueue extends Logging {
      */
     boolean incrementQuantumCounter();
 
-    int getQuantum();
+    int[] getQuantum();
 
     int getQuantumCounter();
 

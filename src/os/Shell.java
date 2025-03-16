@@ -14,7 +14,7 @@ public class Shell implements Logging {
         this.os = operatingSystem;
     }
 
-    void startShell(){
+    void startShell() {
         String prompt = "VM-> ";
         Scanner scanner = new Scanner(System.in);
         String[] previousCommand = null;
@@ -62,7 +62,7 @@ public class Shell implements Logging {
                     prompt = "VM-> ";
                     break;
                 case "osx":
-                    if(inputs.length < 3) {
+                    if (inputs.length < 3) {
                         logError("Not enough inputs provided");
                         break;
                     }
@@ -77,6 +77,9 @@ public class Shell implements Logging {
                     break;
                 case "setsched":
                     os.setSchedule(inputs);
+                    break;
+                case "test":
+                   os.testStuff();
                     break;
                 case "help":
                     log("Need some help huh");
@@ -96,8 +99,6 @@ public class Shell implements Logging {
             }
         }
     }
-
-
 
 
 }

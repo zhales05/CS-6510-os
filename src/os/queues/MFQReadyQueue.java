@@ -50,6 +50,9 @@ public class MFQReadyQueue implements IReadyQueue {
                 rrReadyQueue2.addProcess(pcb);
                 addedQueue = QueueId.MFQ_QUEUE_2;
             }
+        } else if (lastReadyQueue == QueueId.MFQ_QUEUE_3) {
+            fcfsReadyQueue.addProcess(pcb);
+            addedQueue = QueueId.MFQ_QUEUE_3;
         }
 
         pcb.setStatus(ProcessStatus.READY, addedQueue);
@@ -121,8 +124,8 @@ public class MFQReadyQueue implements IReadyQueue {
     }
 
     @Override
-    public int getQuantum() {
-        return currentQueue.getQuantum();
+    public int[] getQuantum() {
+        return new int[]{rrReadyQueue1.getQuantum()[0], rrReadyQueue2.getQuantum()[0]};
     }
 
     @Override

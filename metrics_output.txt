@@ -1,0 +1,7 @@
+--------- System Metrics ---------
+Average Throughput: 0.013071895424836602
+Average Waiting Time: 8.5
+Average Turnaround Time: 76.5
+Average Response Time: 2.5
+Quantum 1: 1
+Quantum 2: 2

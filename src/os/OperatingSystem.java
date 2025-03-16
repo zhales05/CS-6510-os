@@ -4,6 +4,7 @@ import os.queues.FCFSReadyQueue;
 import os.queues.MFQReadyQueue;
 import os.queues.RRReadyQueue;
 import os.util.Logging;
+import os.util.VerboseModeLogger;
 import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
@@ -117,6 +118,7 @@ public class OperatingSystem implements Logging {
             logError("Not enough inputs provided");
             return;
         }
+        scheduler.clearCurrentProcesses();
         //grabbing filename and clock starting time
         for (int i = 1; i < inputs.length; i += 2) {
             if (i + 1 >= inputs.length) {
@@ -169,5 +171,39 @@ public class OperatingSystem implements Logging {
 
     public void stopProcess() {
         cpu.stopProcess();
+    }
+
+    public void charts() {
+        scheduler.makeChart();
+    }
+
+    public void testStuff() {
+        String one = "execute files/cases/s-cpu-1.osx 1 files/cases/s-cpu-2.osx 1 files/cases/s-cpu-3.osx 1";
+        String two = "execute files/cases/s-io-1.osx 1 files/cases/s-io-2.osx 1 files/cases/s-io-3.osx 1";
+        String three = "execute files/cases/m-cpu-1.osx 1 files/cases/m-cpu-2.osx 1 files/cases/m-cpu-3.osx 1";
+        String four = "execute files/cases/m-io-1.osx 1 files/cases/m-io-2.osx 1 files/cases/m-io-3.osx 1";
+        String five = "execute files/cases/l-cpu-1.osx 1 files/cases/l-cpu-2.osx 1 files/cases/l-cpu-3.osx 1";
+        String six = "execute files/cases/l-io-1.osx 1 files/cases/l-io-2.osx 1 files/cases/l-io-3.osx 1";
+
+        VerboseModeLogger.getInstance().setVerboseMode(true);
+        String[] inputs1 = one.split(" ");
+        String[] inputs2 = two.split(" ");
+        String[] inputs3 = three.split(" ");
+        String[] inputs4 = four.split(" ");
+        String[] inputs5 = five.split(" ");
+        String[] inputs6 = six.split(" ");
+
+        scheduler.setReadyQueue(new MFQReadyQueue(1,2));
+        schedule(inputs1);
+        schedule(inputs2);
+        scheduler.setReadyQueue(new MFQReadyQueue(4,12));
+        schedule(inputs1);
+        schedule(inputs2);
+
+        // os.schedule(inputs3);
+        // os.schedule(inputs4);
+        // os.schedule(inputs5);
+        // os.schedule(inputs6);
+        charts();
     }
 }
