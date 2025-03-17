@@ -349,4 +349,8 @@ public class ProcessControlBlock implements Logging {
     public int getArrivalTime() {
         return arrivalTime;
     }
+
+    public List<ProcessExecutionBurst> getTimeLine() {
+        return timeLine;
+    }
 }

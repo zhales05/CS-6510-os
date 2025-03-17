@@ -1,12 +1,16 @@
 package os;
 
+
 import os.queues.*;
 import os.util.Logging;
 import os.util.MetricsTracker;
+import os.util.SystemGanttChart;
+import os.util.SystemGanttChartGui;
 import util.Observer;
 import vm.hardware.Clock;
 
 import java.util.*;
+import java.util.List;
 
 /**
  * The Scheduler class is responsible for managing the queues and telling the OS when to run/swap processes.
@@ -36,7 +40,7 @@ class Scheduler implements Logging, Observer {
     public Scheduler(OperatingSystem parentOs) {
         //this(parentOs, new RRReadyQueue(5));
         //this(parentOs, new FCFSReadyQueue());
-        this(parentOs, new MFQReadyQueue(22, 32));
+        this(parentOs, new MFQReadyQueue(5, 10));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -203,6 +207,11 @@ class Scheduler implements Logging, Observer {
 
     public void clearCurrentProcesses() {
         currentProcesses.clear();
+    }
+
+    public void systemGanttChart() {
+        SystemGanttChart.makeChart(currentProcesses);
+        //SystemGanttChartGui.makeChart(currentProcesses);
     }
 
 }

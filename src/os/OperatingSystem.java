@@ -131,6 +131,7 @@ public class OperatingSystem implements Logging {
             scheduler.addToJobQueue(pcb);
         }
         scheduler.processJobs();
+        scheduler.systemGanttChart();
     }
 
 
@@ -188,49 +189,17 @@ public class OperatingSystem implements Logging {
         String[] inputs5 = five.split(" ");
         String[] inputs6 = six.split(" ");
 
-        // 🔹 Quantum pairs for testing different scheduling strategies
-        Set<int[]> quantumPairs = new HashSet<>();
+        // 🔹 Quantum pairs optimized for clean surface plots
+        Set<String> quantumPairs = getQuantumPairs();
 
-        // ✅ Baseline (Standard Increments)
-        quantumPairs.add(new int[]{5, 10});
-        quantumPairs.add(new int[]{10, 20});
-        quantumPairs.add(new int[]{15, 30});
-        quantumPairs.add(new int[]{20, 40});
-        quantumPairs.add(new int[]{25, 50});
-        quantumPairs.add(new int[]{30, 60});
+        // ✅ Iterate over unique quantum pairs and execute tests
+        for (String qp : quantumPairs) {
+            String[] split = qp.split(",");
+            int q1 = Integer.parseInt(split[0]);
+            int q2 = Integer.parseInt(split[1]);
 
-        // ✅ Low-Latency (Aggressive Preemption)
-        quantumPairs.add(new int[]{2, 4});
-        quantumPairs.add(new int[]{4, 8});
-        quantumPairs.add(new int[]{6, 12});
-        quantumPairs.add(new int[]{8, 16});
-        quantumPairs.add(new int[]{10, 20});
-
-        // ✅ Batch Processing (Reduced Preemption)
-        quantumPairs.add(new int[]{50, 100});
-        quantumPairs.add(new int[]{75, 150});
-        quantumPairs.add(new int[]{100, 200});
-        quantumPairs.add(new int[]{125, 250});
-        quantumPairs.add(new int[]{150, 300});
-
-        // ✅ Hybrid (Balanced Between Interactive & Batch)
-        quantumPairs.add(new int[]{10, 20});
-        quantumPairs.add(new int[]{20, 40});
-        quantumPairs.add(new int[]{30, 60});
-        quantumPairs.add(new int[]{40, 80});
-        quantumPairs.add(new int[]{50, 100});
-
-        // ✅ Dynamic Scaling (Non-Linear)
-        quantumPairs.add(new int[]{5, 12});
-        quantumPairs.add(new int[]{10, 24});
-        quantumPairs.add(new int[]{15, 36});
-        quantumPairs.add(new int[]{25, 50});
-        quantumPairs.add(new int[]{35, 75});
-        quantumPairs.add(new int[]{50, 100});
-
-        for (int[] qp : quantumPairs) {
-            System.out.println("Testing with Quantum1: " + qp[0] + ", Quantum2: " + qp[1]);
-            scheduler.setReadyQueue(new MFQReadyQueue(qp[0], qp[1]));
+            System.out.println("Testing with Quantum1: " + q1 + ", Quantum2: " + q2);
+            scheduler.setReadyQueue(new MFQReadyQueue(q1, q2));
 
             schedule(inputs1);
             schedule(inputs2);
@@ -240,5 +209,46 @@ public class OperatingSystem implements Logging {
             schedule(inputs6);
         }
     }
+
+    private static Set<String> getQuantumPairs() {
+        Set<String> quantumPairs = new HashSet<>();
+
+        // ✅ Key Baseline Points (Small & Large)
+        quantumPairs.add("2,4");   // Small
+        quantumPairs.add("5,10");  // Small
+        quantumPairs.add("10,20"); // Medium
+        quantumPairs.add("15,30"); // Medium
+        quantumPairs.add("30,60"); // Large
+        quantumPairs.add("50,100");// Large
+
+        // ✅ Capture Key 1:2, 1:3, 2:5, 3:5 Ratios
+        quantumPairs.add("6,12");  // 1:2
+        quantumPairs.add("8,16");  // 1:2
+        quantumPairs.add("10,30"); // 1:3
+        quantumPairs.add("20,60"); // 1:3
+        quantumPairs.add("40,100");// 2:5
+        quantumPairs.add("50,150");// 1:3
+        quantumPairs.add("60,120");// 1:2
+        quantumPairs.add("80,160");// 1:2
+        quantumPairs.add("120,180");// 2:3
+        quantumPairs.add("150,250");// 3:5
+
+        // ✅ Nonlinear Jumps for Interesting Surface Patterns
+        quantumPairs.add("5,12");   // 1:2.4
+        quantumPairs.add("10,24");  // 1:2.4
+        quantumPairs.add("15,36");  // 1:2.4
+        quantumPairs.add("35,75");  // 1:2.14
+
+        // ✅ Testing High Quantums for Batch Jobs
+        quantumPairs.add("100,200");
+        quantumPairs.add("125,250");
+        quantumPairs.add("150,300");
+
+        // ✅ Include some "extreme" outliers for context
+        quantumPairs.add("3,15");  // 1:5
+        quantumPairs.add("50,200"); // 1:4
+        return quantumPairs;
+    }
+
 
 }
