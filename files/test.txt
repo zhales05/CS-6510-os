@@ -28,3 +28,7 @@ execute files/cases/s-cpu-1.osx 1 files/cases/s-cpu-2.osx 1 files/cases/s-cpu-3.
 execute files/add.osx 1 files/sub.osx 1 files/scpu1.osx 1 -v
 
 execute files/cases/s-cpu-1.osx 1 -v
+
+
+execute files/fcfs.osx 1 files/fcfs.osx 1 -v
+

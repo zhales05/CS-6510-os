@@ -1,0 +1,20 @@
+Background info:
+Sizes: L: 2002 M: 502 s:22
+
+IO: 50%
+CPU: 90%
+
+IO burst is randomly assigned between 1-9 clock counts
+
+MFQ runs 5 quantum's and then switches queues (or if queue is empty)
+
+1.) Round Robin Quantum 1
+setsched rr 1
+execute files/cases/s-cpu-1.osx 0 files/cases/s-cpu-2.osx 0 -v
+
+2.) MFQ Quantum 2 : 4
+setsched mfq 2 4
+execute files/cases/m-cpu-1.osx 0 files/cases/m-cpu-2.osx 0 -v
+
+
+execute files/cases/s-cpu-1.osx 0 -v
