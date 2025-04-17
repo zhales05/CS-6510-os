@@ -1,117 +1,60 @@
 package os;
 
+import os.queues.FCFSReadyQueue;
+import os.queues.MFQReadyQueue;
+import os.queues.RRReadyQueue;
 import os.util.Logging;
+import os.util.VerboseModeLogger;
 import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
-import os.util.ErrorDump;
-import os.util.VerboseModeLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
+/**
+ * The OperatingSystem class is a facade between the hardware and the os software
+ * Think like an interface that allows them to talk to each other
+ */
 public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
+    //this will eventually be instantiated based on the input from the user
+    //this scheduler will eventually need to be able to update the scheduling algorithm
     private final Scheduler scheduler = new Scheduler(this);
 
     public void startShell() {
-        String prompt = "VM-> ";
-        Scanner scanner = new Scanner(System.in);
-        String[] previousCommand = null;
-        boolean rerunMode = false;
         clock.addObserver(scheduler);
+        new Shell(this).startShell();
+    }
 
-        while (true) {
-            System.out.print(prompt);
-            String userInput = scanner.nextLine();
-            String[] inputs = Arrays.stream(userInput.split(" "))
-                    .map(String::toLowerCase)
-                    .toArray(String[]::new);
-
-            if (inputs.length == 0) {
-                logError("No input provided");
-                continue;
-            }
-
-            if (inputs[0].equals("redo")) {
-                if (previousCommand == null) {
-                    System.out.println("No previous command to redo");
-                    logError("No previous command to redo");
-                    continue;
-                }
-
-                log("Redo: " + Arrays.toString(previousCommand));
-                inputs = previousCommand;
-            }
-
-            if (isVerboseMode(inputs)) {
-                VerboseModeLogger.getInstance().setVerboseMode(true);
-
-                //getting rid of the -v flag input - reminder in our program it can only be at the very end
-                inputs = Arrays.copyOf(inputs, inputs.length - 1);
-            }
-
-            switch (inputs[0]) {
-                case "execute":
-                    log("Starting execute");
-                    //add some error checks here for input
-                    schedule(inputs);
-                    break;
-                case "myvm":
-                    prompt = "MYVM-> ";
-                    break;
-                case "vm":
-                    prompt = "VM-> ";
-                    break;
-                case "osx":
-                    if(inputs.length < 3) {
-                        logError("Not enough inputs provided");
-                        break;
-                    }
-                    //if working on windows machine, use false, otherwise use true
-                    assembleFile(inputs[1], inputs[2], true);
-                    break;
-                case "errordump":
-                    ErrorDump.getInstance().printLogs();
-                    break;
-                case "coredump":
-                    if (inputs.length == 1) {
-                        System.out.println(memory.coreDump());
-                        break;
-                    }
-
-                    System.out.println(memory.coreDump(scheduler.getProcess(inputs[1])));
-                    break;
-                case "clearmem":
-                    log("Clearing memory");
-                    memory.clear();
-                    break;
-                case "help":
-                    log("Need some help huh");
-                    printHelp();
-                    break;
-                case "exit":
-                    log("Exiting VM");
-                    scanner.close();
-                    return;
-                default:
-                    System.out.println("Unknown input -  please try again.");
-                    break;
-            }
-
-            if (!rerunMode) {
-                previousCommand = inputs;
-            }
+    //Making the express decision that the quantum values come after the scheduling algorithm
+    void setSchedule(String[] inputs) {
+        //TODO: add error checking for inputs
+        //TODO: make enums/variables for the scheduling algorithms
+        switch (inputs[1]) {
+            case "fcfs":
+                scheduler.setReadyQueue(new FCFSReadyQueue());
+                break;
+            case "rr":
+                scheduler.setReadyQueue(new RRReadyQueue(Integer.parseInt(inputs[2])));
+                break;
+            case "mfq":
+                scheduler.setReadyQueue(new MFQReadyQueue(Integer.parseInt(inputs[2]), Integer.parseInt(inputs[3])));
+                break;
+            default:
+                logError("Unknown scheduling algorithm");
+                break;
         }
     }
 
-    private boolean assembleFile(String filePath, String loaderAddress, boolean mac){
+    void assembleFile(String filePath, String loaderAddress, boolean mac) {
         final String macPath = "files/osx_mac";
         final String windowsPath = "files/osx.exe";
 
@@ -129,14 +72,11 @@ public class OperatingSystem implements Logging {
 
             int exitCode = process.waitFor();
             log("Assembled with code: " + exitCode);
-            return exitCode == 0;
         } catch (Exception e) {
             logError("Error running osx: " + e.getMessage());
         }
 
-        return false;
     }
-
 
 
     private byte[] readProgram(String filePath) {
@@ -148,40 +88,38 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    ProcessControlBlock prepareForReadyQueue(ProcessControlBlock pcb) {
+    ProcessControlBlock loadIntoMemory(ProcessControlBlock pcb) {
         //pcb doesn't exist or is terminated, let's load it into memory
         if (pcb == null || pcb.getFilePath() == null) {
-            logError("Process doesn't exist");
             return null;
         }
 
         byte[] program = readProgram(pcb.getFilePath());
         if (program == null) {
+            logError("Process doesn't exist");
             return null;
         }
         pcb = memory.load(program, pcb);
         return pcb;
     }
 
-    void removeProcess(ProcessControlBlock pcb) {
-        Memory.getInstance().clear(pcb);
-    }
-
-    public ProcessControlBlock runProcess(ProcessControlBlock pcb) {
-        //if null ready queue is empty so just return.
+    public void runProcess(ProcessControlBlock pcb) {
+        //if null ready queue is empty just return.
         if (pcb != null) {
             cpu.run(pcb, this);
         }
-
-        return pcb;
     }
 
+    boolean isVerboseMode(String[] inputs) {
+        return inputs[inputs.length - 1].equals("-v");
+    }
 
-    private void schedule(String[] inputs) {
+    void schedule(String[] inputs) {
         if (inputs.length < 3) {
             logError("Not enough inputs provided");
             return;
         }
+        scheduler.clearCurrentProcesses();
         //grabbing filename and clock starting time
         for (int i = 1; i < inputs.length; i += 2) {
             if (i + 1 >= inputs.length) {
@@ -193,14 +131,11 @@ public class OperatingSystem implements Logging {
             scheduler.addToJobQueue(pcb);
         }
         scheduler.processJobs();
+        scheduler.systemGanttChart();
     }
 
 
-    private boolean isVerboseMode(String[] inputs) {
-        return inputs[inputs.length - 1].equals("-v");
-    }
-
-    private void printHelp() {
+    void printHelp() {
         final String FILE_PATH = "files/Engineering Glossary List.txt";
         try {
             String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
@@ -214,8 +149,106 @@ public class OperatingSystem implements Logging {
         return scheduler.startChildProcess(parent);
     }
 
+    void coreDump(String[] inputs) {
+        if (inputs.length == 1) {
+            System.out.println(memory.coreDump());
+            return;
+        }
+
+        System.out.println(memory.coreDump(scheduler.getProcess(inputs[1])));
+    }
+
     public void terminateProcess(ProcessControlBlock pcb) {
         scheduler.addToTerminatedQueue(pcb);
     }
+
+    void transitionProcess(ProcessControlBlock next) {
+        cpu.transition(next);
+    }
+
+    public void addToIOQueue(ProcessControlBlock pcb) {
+        scheduler.addToIOQueue(pcb);
+    }
+
+    public void stopProcess() {
+        cpu.stopProcess();
+    }
+
+    public void testStuff() {
+        String one = "execute files/cases/s-cpu-1.osx 1 files/cases/s-cpu-2.osx 1 files/cases/s-cpu-3.osx 1";
+        String two = "execute files/cases/s-io-1.osx 1 files/cases/s-io-2.osx 1 files/cases/s-io-3.osx 1";
+        String three = "execute files/cases/m-cpu-1.osx 1 files/cases/m-cpu-2.osx 1 files/cases/m-cpu-3.osx 1";
+        String four = "execute files/cases/m-io-1.osx 1 files/cases/m-io-2.osx 1 files/cases/m-io-3.osx 1";
+        String five = "execute files/cases/l-cpu-1.osx 1 files/cases/l-cpu-2.osx 1 files/cases/l-cpu-3.osx 1";
+        String six = "execute files/cases/l-io-1.osx 1 files/cases/l-io-2.osx 1 files/cases/l-io-3.osx 1";
+
+        String[] inputs1 = one.split(" ");
+        String[] inputs2 = two.split(" ");
+        String[] inputs3 = three.split(" ");
+        String[] inputs4 = four.split(" ");
+        String[] inputs5 = five.split(" ");
+        String[] inputs6 = six.split(" ");
+
+        // 🔹 Quantum pairs optimized for clean surface plots
+        Set<String> quantumPairs = getQuantumPairs();
+
+        // ✅ Iterate over unique quantum pairs and execute tests
+        for (String qp : quantumPairs) {
+            String[] split = qp.split(",");
+            int q1 = Integer.parseInt(split[0]);
+            int q2 = Integer.parseInt(split[1]);
+
+            System.out.println("Testing with Quantum1: " + q1 + ", Quantum2: " + q2);
+            scheduler.setReadyQueue(new MFQReadyQueue(q1, q2));
+
+            schedule(inputs1);
+            schedule(inputs2);
+            schedule(inputs3);
+            schedule(inputs4);
+            schedule(inputs5);
+            schedule(inputs6);
+        }
+    }
+
+    private static Set<String> getQuantumPairs() {
+        Set<String> quantumPairs = new HashSet<>();
+
+        // ✅ Key Baseline Points (Small & Large)
+        quantumPairs.add("2,4");   // Small
+        quantumPairs.add("5,10");  // Small
+        quantumPairs.add("10,20"); // Medium
+        quantumPairs.add("15,30"); // Medium
+        quantumPairs.add("30,60"); // Large
+        quantumPairs.add("50,100");// Large
+
+        // ✅ Capture Key 1:2, 1:3, 2:5, 3:5 Ratios
+        quantumPairs.add("6,12");  // 1:2
+        quantumPairs.add("8,16");  // 1:2
+        quantumPairs.add("10,30"); // 1:3
+        quantumPairs.add("20,60"); // 1:3
+        quantumPairs.add("40,100");// 2:5
+        quantumPairs.add("50,150");// 1:3
+        quantumPairs.add("60,120");// 1:2
+        quantumPairs.add("80,160");// 1:2
+        quantumPairs.add("120,180");// 2:3
+        quantumPairs.add("150,250");// 3:5
+
+        // ✅ Nonlinear Jumps for Interesting Surface Patterns
+        quantumPairs.add("5,12");   // 1:2.4
+        quantumPairs.add("10,24");  // 1:2.4
+        quantumPairs.add("15,36");  // 1:2.4
+        quantumPairs.add("35,75");  // 1:2.14
+
+        // ✅ Testing High Quantums for Batch Jobs
+        quantumPairs.add("100,200");
+        quantumPairs.add("125,250");
+        quantumPairs.add("150,300");
+
+        // ✅ Include some "extreme" outliers for context
+        quantumPairs.add("3,15");  // 1:5
+        quantumPairs.add("50,200"); // 1:4
+        return quantumPairs;
+    }
+
 
 }

@@ -7,7 +7,7 @@ public class Clock extends Subject {
     private int time;
 
     private Clock() {
-        time = 0;
+        time = 1;
     }
 
     public static synchronized Clock getInstance() {

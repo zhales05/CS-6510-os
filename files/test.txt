@@ -1,0 +1,34 @@
+osx files/sub.asm 200
+
+execute files/sub.osx 2 -v
+
+execute files/vfork.osx 2 -v
+
+execute files/scpu1.osx 1 -v
+execute files/scpu2.osx 1 -v
+
+execute files/cases/m-cpu-3.osx 1 -v
+execute files/cases/s-cpu-2.osx 1 -v
+
+execute files/cases/m-io-1.osx 1 -v
+execute files/cases/m-io-2.osx 1 -v
+execute files/cases/m-io-3.osx 1 -v
+
+execute files/cases/s-io-1.osx 1 files/cases/s-io-2.osx 1 files/cases/s-io-3.osx 1 -v
+
+
+execute files/scpu1.osx 1 files/scpu1.osx 1 -v
+
+execute files/add.osx 5 files/add.osx 10 files/sub.osx 20 files/sub.osx 30 files/vfork.osx 60 -v
+
+execute files/cases/l-cpu-1.osx 1 files/cases/l-cpu-2.osx 1 files/cases/l-cpu-3.osx 1
+
+execute files/cases/s-cpu-1.osx 1 files/cases/s-cpu-2.osx 1 files/cases/s-cpu-3.osx 1 -v
+
+execute files/add.osx 1 files/sub.osx 1 files/scpu1.osx 1 -v
+
+execute files/cases/s-cpu-1.osx 1 -v
+
+
+execute files/fcfs.osx 1 files/fcfs.osx 1 -v
+
