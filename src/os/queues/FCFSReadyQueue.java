@@ -37,9 +37,9 @@ public class FCFSReadyQueue implements IReadyQueue {
     }
 
     @Override
-    public int getQuantum() {
+    public int[] getQuantum() {
         //FIFO no quantum
-        return -1;
+        return new int[]{-1, -1};
     }
 
     @Override

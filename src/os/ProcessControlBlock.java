@@ -27,7 +27,7 @@ public class ProcessControlBlock implements Logging {
     private int completionTime;
     private int turnAroundTime;
     private int waitingTime = 0;
-    private Integer responseTime;
+    private int responseTime = 0;
 
 
     List<ProcessExecutionBurst> currentCPUBursts = new ArrayList<>();
@@ -94,7 +94,7 @@ public class ProcessControlBlock implements Logging {
                     .append(", Execution Time: ").append(pet.getExecutionTime())
                     .append(" units\n");
         }
-        System.out.println(sb.toString());
+        log(sb.toString());
     }
 
     public void evaluateMetrics() {
@@ -142,8 +142,9 @@ public class ProcessControlBlock implements Logging {
                         mfq2.append(String.format("%4s", ""));
                         mfq3.append(String.format("%4s", ""));
 
-                        if (responseTime == null) {
+                        if (responseTime == 0) {
                             responseTime = pet.getStart() - arrivalTime;
+                            log("Response time set to: " + responseTime);
                         }
 
                         break;
@@ -275,11 +276,11 @@ public class ProcessControlBlock implements Logging {
         this.waitingTime = waitingTime;
     }
 
-    public Integer getResponseTime() {
+    public int getResponseTime() {
         return responseTime;
     }
 
-    public void setResponseTime(Integer responseTime) {
+    public void setResponseTime(int responseTime) {
         this.responseTime = responseTime;
     }
 
@@ -302,7 +303,7 @@ public class ProcessControlBlock implements Logging {
     public void setStatus(ProcessStatus status, QueueId queueId) {
         processStatusChange(status, queueId);
         this.status = status;
-        log("Process " + pid + " is now " + status);
+        log("Process " + pid + " is now " + status + " in queue " + queueId);
     }
 
     public int getProgramSize() {
@@ -343,5 +344,13 @@ public class ProcessControlBlock implements Logging {
 
     public void setCodeStart(int codeStart) {
         this.codeStart = codeStart;
+    }
+
+    public int getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public List<ProcessExecutionBurst> getTimeLine() {
+        return timeLine;
     }
 }

@@ -50,6 +50,9 @@ public class MFQReadyQueue implements IReadyQueue {
                 rrReadyQueue2.addProcess(pcb);
                 addedQueue = QueueId.MFQ_QUEUE_2;
             }
+        } else if (lastReadyQueue == QueueId.MFQ_QUEUE_3) {
+            fcfsReadyQueue.addProcess(pcb);
+            addedQueue = QueueId.MFQ_QUEUE_3;
         }
 
         pcb.setStatus(ProcessStatus.READY, addedQueue);
@@ -62,20 +65,28 @@ public class MFQReadyQueue implements IReadyQueue {
     }
 
     private void determineCurrentQueue() {
-        if (currentQuantum >= TOTAL_QUANTUMS) {
+        if (currentQuantum >= TOTAL_QUANTUMS || currentQueue.isEmpty()) {
             incrementCurrentQueue();
             currentQuantum = currentQueue == fcfsReadyQueue ? TOTAL_QUANTUMS : 0;
         }
     }
 
     private void incrementCurrentQueue(){
+        int count = 0;
         while(currentQueue.isEmpty()) {
             if (currentQueue == rrReadyQueue1) {
                 currentQueue = rrReadyQueue2;
+                count++;
             } else if (currentQueue == rrReadyQueue2) {
                 currentQueue = fcfsReadyQueue;
+                count++;
             } else {
                 currentQueue = rrReadyQueue1;
+                count++;
+            }
+
+            if(count > 3) {
+                break;
             }
         }
     }
@@ -113,8 +124,8 @@ public class MFQReadyQueue implements IReadyQueue {
     }
 
     @Override
-    public int getQuantum() {
-        return currentQueue.getQuantum();
+    public int[] getQuantum() {
+        return new int[]{rrReadyQueue1.getQuantum()[0], rrReadyQueue2.getQuantum()[0]};
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class Memory implements Logging {
-    private static final int TOTAL_SIZE = 100000;
+    private static final int TOTAL_SIZE = 10000000;
     private static Memory instance;
 
     private static final Cpu cpu = Cpu.getInstance();
@@ -80,28 +80,28 @@ public class Memory implements Logging {
         int programCounter = bb.getInt();
 
         //loader address is third int in the program header
-        int loaderAddress = bb.getInt();
+        //int loaderAddress = bb.getInt();
 
         //check if program size exceeds memory capacity
-        if (programSize + loaderAddress > TOTAL_SIZE) {
+        if (programSize + index > TOTAL_SIZE) {
             logError("Process: " + pcb.getPid() + "Program size exceeds memory capacity");
             return null;
         }
 
         //pc needs to be adjusted for loader address
-        pcb.setPc(programCounter + loaderAddress);
+        pcb.setPc(programCounter + index);
         log("PC: " + pcb.getPc());
 
         //loading up PCB for future use
-        pcb.setProgramStart(loaderAddress);
+        pcb.setProgramStart(index);
         pcb.setCodeStart(pcb.getPc());
         pcb.setPc(pcb.getPc());
         pcb.setProgramSize(programSize);
 
         log("Copying program to memory");
-        System.arraycopy(program, 12, memory, loaderAddress, programSize);
-        index = Math.max(index, loaderAddress + programSize);
-        memory[loaderAddress + programSize] = (byte) Cpu.END;
+        System.arraycopy(program, 12, memory, index, programSize);
+        index += programSize;
+        memory[index++] = (byte) Cpu.END;
         log(coreDump(pcb));
         clock.tick(1);
         return pcb;

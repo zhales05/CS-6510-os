@@ -1,15 +1,16 @@
 package os;
 
-import os.queues.IOQueue;
-import os.queues.IReadyQueue;
-import os.queues.MFQReadyQueue;
-import os.queues.QueueId;
+
+import os.queues.*;
 import os.util.Logging;
 import os.util.MetricsTracker;
+import os.util.SystemGanttChart;
+import os.util.SystemGanttChartGui;
 import util.Observer;
 import vm.hardware.Clock;
 
 import java.util.*;
+import java.util.List;
 
 /**
  * The Scheduler class is responsible for managing the queues and telling the OS when to run/swap processes.
@@ -23,6 +24,7 @@ class Scheduler implements Logging, Observer {
     private ProcessControlBlock currentProcess;
 
     private final Map<String, ProcessControlBlock> processMap = new HashMap<>();
+    private final List<ProcessControlBlock> currentProcesses = new ArrayList<>();
     private IReadyQueue readyQueue;
 
     private final OperatingSystem parentOs;
@@ -45,6 +47,7 @@ class Scheduler implements Logging, Observer {
         jobQueue.add(pcb);
         pcb.setStatus(ProcessStatus.NEW, QueueId.JOB_QUEUE);
         processMap.put(pcb.getFilePath(), pcb);
+        currentProcesses.add(pcb);
     }
 
     private void pushToBackOfJobQueue(ProcessControlBlock pcb) {
@@ -122,13 +125,13 @@ class Scheduler implements Logging, Observer {
         runThroughReadyQueue();
 
         //print metrics here for now
-        metricsTracker.calculateMetrics(terminatedQueue);
+        metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
     }
 
     private void runThroughReadyQueue() {
         while (!readyQueue.isEmpty() || !ioQueue.isEmpty()) {
             ProcessControlBlock pcb = getFromReadyQueue();
-            if(pcb == null){
+            if (pcb == null) {
                 clock.tick();
                 continue;
             }
@@ -190,6 +193,7 @@ class Scheduler implements Logging, Observer {
             } else {
                 //nothing in ready queue, probably stuck in IO
                 parentOs.stopProcess();
+                currentProcess = null;
                 clock.tick();
             }
         }
@@ -199,6 +203,15 @@ class Scheduler implements Logging, Observer {
     public void setReadyQueue(IReadyQueue readyQueue) {
         log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
         this.readyQueue = readyQueue;
+    }
+
+    public void clearCurrentProcesses() {
+        currentProcesses.clear();
+    }
+
+    public void systemGanttChart() {
+        SystemGanttChart.makeChart(currentProcesses);
+        //SystemGanttChartGui.makeChart(currentProcesses);
     }
 
 }

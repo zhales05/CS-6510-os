@@ -43,8 +43,8 @@ public class RRReadyQueue implements IReadyQueue{
     }
 
     @Override
-    public int getQuantum() {
-        return quantum;
+    public int[] getQuantum() {
+        return new int[]{quantum, -1};
     }
 
     @Override
