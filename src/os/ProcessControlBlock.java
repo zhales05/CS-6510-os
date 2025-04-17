@@ -303,7 +303,7 @@ public class ProcessControlBlock implements Logging {
     public void setStatus(ProcessStatus status, QueueId queueId) {
         processStatusChange(status, queueId);
         this.status = status;
-        log("Process " + pid + " is now " + status);
+        log("Process " + pid + " is now " + status + " in queue " + queueId);
     }
 
     public int getProgramSize() {
