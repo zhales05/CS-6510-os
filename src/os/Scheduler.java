@@ -38,9 +38,8 @@ class Scheduler implements Logging, Observer {
     }
 
     public Scheduler(OperatingSystem parentOs) {
-        //this(parentOs, new RRReadyQueue(5));
-        //this(parentOs, new FCFSReadyQueue());
-        this(parentOs, new MFQReadyQueue(5, 10));
+        this(parentOs, new RRReadyQueue(5));
+        //this(parentOs, new MFQReadyQueue(5, 10));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -48,6 +47,13 @@ class Scheduler implements Logging, Observer {
         pcb.setStatus(ProcessStatus.NEW, QueueId.JOB_QUEUE);
         processMap.put(pcb.getFilePath(), pcb);
         currentProcesses.add(pcb);
+    }
+
+    public void addBatchToJobQueue(List<ProcessControlBlock> pcbs, boolean shareAccess) {
+        for(ProcessControlBlock pcb : pcbs) {
+            pcb.setShareDataAccess(shareAccess);
+            addToJobQueue(pcb);
+        }
     }
 
     private void pushToBackOfJobQueue(ProcessControlBlock pcb) {
@@ -211,7 +217,6 @@ class Scheduler implements Logging, Observer {
 
     public void systemGanttChart() {
         SystemGanttChart.makeChart(currentProcesses);
-        //SystemGanttChartGui.makeChart(currentProcesses);
     }
 
 }

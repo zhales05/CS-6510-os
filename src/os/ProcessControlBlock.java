@@ -20,6 +20,7 @@ public class ProcessControlBlock implements Logging {
     private final String filePath;
     private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
+    private boolean shareDataAccess = false;
 
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
@@ -352,5 +353,13 @@ public class ProcessControlBlock implements Logging {
 
     public List<ProcessExecutionBurst> getTimeLine() {
         return timeLine;
+    }
+
+    public boolean isShareDataAccess() {
+        return shareDataAccess;
+    }
+
+    public void setShareDataAccess(boolean shareDataAccess) {
+        this.shareDataAccess = shareDataAccess;
     }
 }

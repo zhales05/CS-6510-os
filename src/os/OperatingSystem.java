@@ -14,8 +14,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The OperatingSystem class is a facade between the hardware and the os software
@@ -25,6 +28,10 @@ public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
+
+    AtomicInteger counter = new AtomicInteger(0);
+    public int[] sharedArray = new int[10];
+    private boolean lock = false;
     //this will eventually be instantiated based on the input from the user
     //this scheduler will eventually need to be able to update the scheduling algorithm
     private final Scheduler scheduler = new Scheduler(this);
@@ -52,6 +59,14 @@ public class OperatingSystem implements Logging {
                 logError("Unknown scheduling algorithm");
                 break;
         }
+    }
+
+    public void lockSharedMemory() {
+        lock = true;
+    }
+
+    public void unlockSharedMemory() {
+        lock = false;
     }
 
     void assembleFile(String filePath, String loaderAddress, boolean mac) {
@@ -120,15 +135,31 @@ public class OperatingSystem implements Logging {
             return;
         }
         scheduler.clearCurrentProcesses();
+        List<ProcessControlBlock> toAdd = new ArrayList<>();
+        boolean sharedAccess = false;
         //grabbing filename and clock starting time
         for (int i = 1; i < inputs.length; i += 2) {
+            if('|' == inputs[i].charAt(0)) {
+               log("Shared Memory");
+               sharedAccess = true;
+               break;
+            }
+
             if (i + 1 >= inputs.length) {
                 logError("Not enough inputs provided, you likely forgot to add the starting clock time");
                 return;
             }
 
             ProcessControlBlock pcb = new ProcessControlBlock(scheduler.getNewPid(), inputs[i], Integer.parseInt(inputs[i + 1]));
+            toAdd.add(pcb);
             scheduler.addToJobQueue(pcb);
+        }
+        //set shared access if needed
+        // can only be found retroactively based on the pipe so this is the best way.
+        if(sharedAccess) {
+            for(ProcessControlBlock pcb : toAdd) {
+                pcb.setShareDataAccess(sharedAccess);
+            }
         }
         scheduler.processJobs();
         scheduler.systemGanttChart();
