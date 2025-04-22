@@ -5,7 +5,6 @@ import os.queues.*;
 import os.util.Logging;
 import os.util.MetricsTracker;
 import os.util.SystemGanttChart;
-import os.util.SystemGanttChartGui;
 import util.Observer;
 import vm.hardware.Clock;
 
@@ -123,7 +122,7 @@ class Scheduler implements Logging, Observer {
             } else {
                 //put back in job queue
                 pushToBackOfJobQueue(pcb);
-                //ticking clock se we don't get stuck with a process that never starts
+                //ticking clock so we don't get stuck with a process that never starts
                 clock.tick();
             }
         }

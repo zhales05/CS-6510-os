@@ -2838,3 +2838,11 @@ Average Turnaround Time: 49.0
 Average Response Time: 1
 Quantum 1: 2
 Quantum 2: 4
+--------- System Metrics ---------
+file: files/cases/s-cpu-1.osx
+Average Throughput: 0.013986013986013986
+Average Waiting Time: 5.0
+Average Turnaround Time: 71.5
+Average Response Time: 3
+Quantum 1: 5
+Quantum 2: -1

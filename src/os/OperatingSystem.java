@@ -31,7 +31,8 @@ public class OperatingSystem implements Logging {
 
     AtomicInteger counter = new AtomicInteger(0);
     public int[] sharedArray = new int[10];
-    private boolean lock = false;
+    private int in = 0;
+    private int out = 0;
     //this will eventually be instantiated based on the input from the user
     //this scheduler will eventually need to be able to update the scheduling algorithm
     private final Scheduler scheduler = new Scheduler(this);
@@ -61,12 +62,17 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    public void lockSharedMemory() {
-        lock = true;
+    public void writeToSharedMemory(int value) {
+        counter.incrementAndGet();
+        sharedArray[getIn()] = value;
+        incrementIn();
     }
 
-    public void unlockSharedMemory() {
-        lock = false;
+    public int readFromSharedMemory() {
+        counter.decrementAndGet();
+        int currOut = getOut();
+        incrementOut();
+        return sharedArray[currOut];
     }
 
     void assembleFile(String filePath, String loaderAddress, boolean mac) {
@@ -282,4 +288,19 @@ public class OperatingSystem implements Logging {
     }
 
 
+    public int getIn() {
+        return in;
+    }
+
+    public void incrementIn() {
+        this.in = (in + 1) % 10;
+    }
+
+    public int getOut() {
+        return out;
+    }
+
+    public void incrementOut() {
+        this.out = (out + 1) % 10;
+    }
 }

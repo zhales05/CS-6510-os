@@ -258,12 +258,12 @@ public class Cpu implements Logging {
                 os.addToIOQueue(currentPcb);
                 break;
             case 5:
-                log("LOCK ENGAGED");
-                os.lockSharedMemory();
+                log("Write to shared memory from register 0");
+                os.writeToSharedMemory(registers[0]);
                 break;
             case 6:
-                log("UNLOCK ENGAGED");
-                os.unlockSharedMemory();
+                log("Read from shared memory to register 0");
+                os.readFromSharedMemory();
                 break;
             default:
                 logError("Process: " + pcb.getPid() + "Invalid SWI call");
