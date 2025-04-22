@@ -75,6 +75,11 @@ public class OperatingSystem implements Logging {
         return sharedArray[currOut];
     }
 
+    public void unlinkFromSharedMemory() {
+        counter.set(0);
+        sharedArray = new int[10];
+    }
+
     void assembleFile(String filePath, String loaderAddress, boolean mac) {
         final String macPath = "files/osx_mac";
         final String windowsPath = "files/osx.exe";
