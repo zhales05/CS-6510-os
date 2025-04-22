@@ -47,6 +47,8 @@ public class Shell implements Logging {
                 VerboseModeLogger.getInstance().setVerboseMode(true);
                 //getting rid of the -v flag input - reminder in our program it can only be at the very end
                 inputs = Arrays.copyOf(inputs, inputs.length - 1);
+            } else {
+                VerboseModeLogger.getInstance().setVerboseMode(false);
             }
 
             switch (inputs[0]) {

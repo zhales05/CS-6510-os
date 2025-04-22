@@ -29,7 +29,7 @@ public class OperatingSystem implements Logging {
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
 
-    AtomicInteger counter = new AtomicInteger(0);
+    public AtomicInteger counter = new AtomicInteger(0);
     public int[] sharedArray = new int[10];
     private int in = 0;
     private int out = 0;

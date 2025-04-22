@@ -2846,3 +2846,91 @@ Average Turnaround Time: 71.5
 Average Response Time: 3
 Quantum 1: 5
 Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/producer.asm
+Average Throughput: Infinity
+Average Waiting Time: 0.0
+Average Turnaround Time: 0.0
+Average Response Time: 0
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/producer.asm
+Average Throughput: Infinity
+Average Waiting Time: 0.0
+Average Turnaround Time: 0.0
+Average Response Time: 0
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/producer.osx
+Average Throughput: 0.0273972602739726
+Average Waiting Time: 17.0
+Average Turnaround Time: 36.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/producer.osx
+Average Throughput: 0.0273972602739726
+Average Waiting Time: 17.0
+Average Turnaround Time: 36.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/producer.osx
+Average Throughput: 0.0273972602739726
+Average Waiting Time: 17.0
+Average Turnaround Time: 36.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02702702702702703
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.0
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02702702702702703
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.0
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.08
+Average Waiting Time: 3.0
+Average Turnaround Time: 12.5
+Average Response Time: 1
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02564102564102564
+Average Waiting Time: 17.0
+Average Turnaround Time: 39.0
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02564102564102564
+Average Waiting Time: 17.0
+Average Turnaround Time: 39.0
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1

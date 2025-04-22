@@ -258,12 +258,20 @@ public class Cpu implements Logging {
                 os.addToIOQueue(currentPcb);
                 break;
             case 5:
-                log("Write to shared memory from register 0");
-                os.writeToSharedMemory(registers[0]);
+                if(os.counter.get() == 9) {
+                    addToPC(-6);
+                } else {
+                    log("Write to shared memory from register 0");
+                    os.writeToSharedMemory(registers[0]);
+                }
                 break;
             case 6:
-                log("Read from shared memory to register 0");
-                registers[0] = os.readFromSharedMemory();
+                if(os.counter.get() == 0) {
+                    addToPC(-6);
+                } else {
+                    log("Read from shared memory to register 0");
+                    registers[0] = os.readFromSharedMemory();
+                }
                 break;
             case 7:
                 log("Unlink from shared memory");
