@@ -275,6 +275,7 @@ public class Cpu implements Logging {
                 break;
             case 7:
                 log("Unlink from shared memory");
+                os.unlinkFromSharedMemory();
                 break;
             default:
                 logError("Process: " + pcb.getPid() + "Invalid SWI call");
