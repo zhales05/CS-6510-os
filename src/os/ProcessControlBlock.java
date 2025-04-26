@@ -22,6 +22,8 @@ public class ProcessControlBlock implements Logging {
     private final int[] registers = new int[12];
     private boolean shareDataAccess = false;
 
+    private PageTable pageTable;
+
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
     private int arrivalTime;
@@ -361,5 +363,13 @@ public class ProcessControlBlock implements Logging {
 
     public void setShareDataAccess(boolean shareDataAccess) {
         this.shareDataAccess = shareDataAccess;
+    }
+
+    public PageTable getPageTable() {
+        return pageTable;
+    }
+
+    public void setPageTable(PageTable pageTable) {
+        this.pageTable = pageTable;
     }
 }

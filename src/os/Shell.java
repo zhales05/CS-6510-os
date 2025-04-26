@@ -43,7 +43,7 @@ public class Shell implements Logging {
                 inputs = previousCommand;
             }
 
-            if (os.isVerboseMode(inputs)) {
+            if (isVerboseMode(inputs)) {
                 VerboseModeLogger.getInstance().setVerboseMode(true);
                 //getting rid of the -v flag input - reminder in our program it can only be at the very end
                 inputs = Arrays.copyOf(inputs, inputs.length - 1);
@@ -56,6 +56,17 @@ public class Shell implements Logging {
                     log("Starting execute");
                     //add some error checks here for input
                     os.schedule(inputs);
+                    os.loadForReady();
+                    os.run();
+                    break;
+                case "load":
+                    log("loading program");
+                    os.schedule(inputs);
+                    os.loadForReady();
+                    break;
+                case "run":
+                    log("running program");
+                    os.run();
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";
@@ -100,6 +111,10 @@ public class Shell implements Logging {
                 previousCommand = inputs;
             }
         }
+    }
+
+    boolean isVerboseMode(String[] inputs) {
+        return inputs[inputs.length - 1].equals("-v");
     }
 
 

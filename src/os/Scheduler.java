@@ -104,7 +104,7 @@ class Scheduler implements Logging, Observer {
         return currentProcess;
     }
 
-    public void processJobs() {
+    public void processJobsForReadyQueue() {
         MetricsTracker metricsTracker = new MetricsTracker();
         metrics.add(metricsTracker);
 
@@ -126,14 +126,11 @@ class Scheduler implements Logging, Observer {
                 clock.tick();
             }
         }
-
-        runThroughReadyQueue();
-
         //print metrics here for now
-        metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
+       // metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
     }
 
-    private void runThroughReadyQueue() {
+    public void runThroughReadyQueue() {
         while (!readyQueue.isEmpty() || !ioQueue.isEmpty()) {
             ProcessControlBlock pcb = getFromReadyQueue();
             if (pcb == null) {

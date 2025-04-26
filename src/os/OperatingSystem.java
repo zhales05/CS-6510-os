@@ -4,7 +4,6 @@ import os.queues.FCFSReadyQueue;
 import os.queues.MFQReadyQueue;
 import os.queues.RRReadyQueue;
 import os.util.Logging;
-import os.util.VerboseModeLogger;
 import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
@@ -136,10 +135,6 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    boolean isVerboseMode(String[] inputs) {
-        return inputs[inputs.length - 1].equals("-v");
-    }
-
     void schedule(String[] inputs) {
         if (inputs.length < 3) {
             logError("Not enough inputs provided");
@@ -172,9 +167,17 @@ public class OperatingSystem implements Logging {
                 pcb.setShareDataAccess(sharedAccess);
             }
         }
-        scheduler.processJobs();
+    }
+
+    void loadForReady() {
+        scheduler.processJobsForReadyQueue();
+    }
+
+    void run(){
+        scheduler.runThroughReadyQueue();
         scheduler.systemGanttChart();
     }
+
 
 
     void printHelp() {
@@ -193,7 +196,7 @@ public class OperatingSystem implements Logging {
 
     void coreDump(String[] inputs) {
         if (inputs.length == 1) {
-            System.out.println(memory.coreDump());
+            System.out.println(memory.fullCoreDump());
             return;
         }
 

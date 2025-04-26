@@ -2934,3 +2934,59 @@ Average Turnaround Time: 37.5
 Average Response Time: 4
 Quantum 1: 5
 Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-4/consumer.osx
+Average Throughput: 0.02666666666666667
+Average Waiting Time: 17.0
+Average Turnaround Time: 37.5
+Average Response Time: 4
+Quantum 1: 5
+Quantum 2: -1
+--------- System Metrics ---------
+file: files/milestone-5/producer.osx
+Average Throughput: Infinity
+Average Waiting Time: 0.0
+Average Turnaround Time: 0.0
+Average Response Time: 0
+Quantum 1: 5
+Quantum 2: -1
