@@ -8,3 +8,4 @@ Using the terminal, load the osx file into memory and then run the program.
 - load
 - run - only to be used after run
 - execute - like calling load and run together
+- setpagesize \<size\>

@@ -1,8 +1,10 @@
 package os;
 
+import os.util.Logging;
+
 import java.util.Arrays;
 
-public class FrameTable {
+public class FrameTable implements Logging {
     private static FrameTable instance;
     private boolean[] frameUsed;
 
@@ -36,6 +38,7 @@ public class FrameTable {
     }
 
     public void reinitialize() {
+        log("Clearing out existing memory");
         Arrays.fill(frameUsed, false);
     }
 

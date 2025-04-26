@@ -128,6 +128,11 @@ public class OperatingSystem implements Logging {
         return pcb;
     }
 
+    void setPageSize(int pageSize) {
+        VirtualMemoryManager.setPageSize(pageSize);
+        FrameTable.getInstance().reinitialize();
+    }
+
     public void runProcess(ProcessControlBlock pcb) {
         //if null ready queue is empty just return.
         if (pcb != null) {

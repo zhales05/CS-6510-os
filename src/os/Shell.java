@@ -64,6 +64,18 @@ public class Shell implements Logging {
                     os.schedule(inputs);
                     os.loadForReady();
                     break;
+                case "setpagesize":
+                    log("setting page size");
+                    if (inputs.length < 2) {
+                        logError("Usage: setpagesize <size>");
+                        break;
+                    }
+                    os.setPageSize(Integer.parseInt(inputs[1]));
+                    break;
+                case "getpagesize":
+                    log("get page size");
+                    System.out.println(VirtualMemoryManager.getPageSize());
+                    break;
                 case "run":
                     log("running program");
                     os.run();

@@ -6,3 +6,6 @@ execute files/milestone-4/producer.osx 0 files/milestone-4/consumer.osx 0 | shm_
 
 MILESTONE 5 TEST CASES
 load files/milestone-5/producer.osx 0 -v
+
+
+setpagesize 10

@@ -88,7 +88,7 @@ public class Cpu implements Logging {
         idle = false;
 
         while (true) {
-            int curr = memory.getByte();
+            int curr = memory.getByte(pcb);
 
             if(idle){
                 //if the cpu has been set to idle it has been stopped and we need to bail
@@ -99,9 +99,9 @@ public class Cpu implements Logging {
                 case ADD:
                     log("ADD");
 
-                    int resultR = memory.getByte();
-                    int val1R = memory.getByte();
-                    int val2R = memory.getByte();
+                    int resultR = memory.getByte(pcb);
+                    int val1R = memory.getByte(pcb);
+                    int val2R = memory.getByte(pcb);
 
                     addToPC(2);
 
@@ -118,9 +118,9 @@ public class Cpu implements Logging {
                 case SUB:
                     log("SUB");
 
-                    int subR = memory.getByte();
-                    int sub1R = memory.getByte();
-                    int sub2R = memory.getByte();
+                    int subR = memory.getByte(pcb);
+                    int sub1R = memory.getByte(pcb);
+                    int sub2R = memory.getByte(pcb);
 
                     addToPC(2);
 
@@ -136,9 +136,9 @@ public class Cpu implements Logging {
                     break;
                 case MUL:
                     log("MUL");
-                    int mulR = memory.getByte();
-                    int mul1R = memory.getByte();
-                    int mul2R = memory.getByte();
+                    int mulR = memory.getByte(pcb);
+                    int mul1R = memory.getByte(pcb);
+                    int mul2R = memory.getByte(pcb);
 
                     addToPC(2);
 
@@ -153,9 +153,9 @@ public class Cpu implements Logging {
                     break;
                 case DIV:
                     log("DIV");
-                    int divR = memory.getByte();
-                    int div1R = memory.getByte();
-                    int div2R = memory.getByte();
+                    int divR = memory.getByte(pcb);
+                    int div1R = memory.getByte(pcb);
+                    int div2R = memory.getByte(pcb);
 
                     addToPC(2);
 
@@ -174,8 +174,8 @@ public class Cpu implements Logging {
                     break;
                 case MVI:
                     log("MVI");
-                    int r = memory.getByte();
-                    int val = memory.getInt();
+                    int r = memory.getByte(pcb);
+                    int val = memory.getInt(pcb);
 
                     if (isNotValidRegisters(r)) {
                         return;
@@ -187,8 +187,8 @@ public class Cpu implements Logging {
                 case MOV:
                     log("MOV");
 
-                    int dest = memory.getByte();
-                    int src = memory.getByte();
+                    int dest = memory.getByte(pcb);
+                    int src = memory.getByte(pcb);
                     addToPC(3);
 
                     if (isNotValidRegisters(dest, src)) {
@@ -202,8 +202,8 @@ public class Cpu implements Logging {
                 case STR:
                     log("STR");
 
-                    int destR = memory.getByte();
-                    int srcR = memory.getByte();
+                    int destR = memory.getByte(pcb);
+                    int srcR = memory.getByte(pcb);
                     addToPC(3);
 
                     if (isNotValidRegisters(destR, srcR)) {
@@ -230,7 +230,7 @@ public class Cpu implements Logging {
     }
 
     private void swi(OperatingSystem os, ProcessControlBlock pcb) {
-        int c = memory.getInt();
+        int c = memory.getInt(pcb);
         setKernelMode(true);
         addToPC(1);
         switch (c) {

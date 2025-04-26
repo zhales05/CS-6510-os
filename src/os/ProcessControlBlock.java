@@ -23,6 +23,7 @@ public class ProcessControlBlock implements Logging {
     private boolean shareDataAccess = false;
 
     private PageTable pageTable;
+    private byte[] backingStore;
 
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
@@ -372,4 +373,26 @@ public class ProcessControlBlock implements Logging {
     public void setPageTable(PageTable pageTable) {
         this.pageTable = pageTable;
     }
+
+    public void setBackingStore(byte[] programBytes) {
+        this.backingStore = programBytes;
+    }
+
+    public byte[] getBackingStorePage(int pageNumber) {
+        int pageSize = VirtualMemoryManager.getPageSize();
+        int offset   = 12 + pageNumber * pageSize;  // skip 12-byte header
+        int length   = Math.min(pageSize, programSize - pageNumber * pageSize);
+
+        byte[] page = new byte[length];
+        System.arraycopy(backingStore, offset, page, 0, length);
+        return page;
+    }
+
+    public void writeBackPage(int pageNumber, byte[] pageData) {
+        int pageSize = VirtualMemoryManager.getPageSize();
+        int headerSize = 12;
+        int offset     = headerSize + pageNumber * pageSize;
+        System.arraycopy(pageData, 0, backingStore, offset, pageData.length);
+    }
+
 }
