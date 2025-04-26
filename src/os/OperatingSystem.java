@@ -5,6 +5,7 @@ import os.queues.MFQReadyQueue;
 import os.queues.RRReadyQueue;
 import os.util.Logging;
 import os.util.VerboseModeLogger;
+import vm.MemoryManager;
 import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
@@ -15,8 +16,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,6 +31,10 @@ public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
+    private static final MemoryManager memoryManager = MemoryManager.getInstance();
+
+    // Map to store all active processes by PID
+    private final Map<Integer, ProcessControlBlock> processMap = new HashMap<>();
 
     public AtomicInteger counter = new AtomicInteger(0);
     public int[] sharedArray = new int[10];
@@ -126,6 +133,12 @@ public class OperatingSystem implements Logging {
             return null;
         }
         pcb = memory.load(program, pcb);
+        
+        if (pcb != null) {
+            // Add to process map for tracking
+            processMap.put(pcb.getPid(), pcb);
+        }
+        
         return pcb;
     }
 
@@ -201,6 +214,12 @@ public class OperatingSystem implements Logging {
     }
 
     public void terminateProcess(ProcessControlBlock pcb) {
+        // Free memory used by the process
+        memory.clearWithMemoryManager(pcb);
+        
+        // Remove from process map
+        processMap.remove(pcb.getPid());
+        
         scheduler.addToTerminatedQueue(pcb);
     }
 
@@ -307,5 +326,39 @@ public class OperatingSystem implements Logging {
 
     public void incrementOut() {
         this.out = (out + 1) % 10;
+    }
+
+    /**
+     * Find a process by its ID
+     */
+    public ProcessControlBlock findProcessById(int pid) {
+        // Check in the process map
+        if (processMap.containsKey(pid)) {
+            return processMap.get(pid);
+        }
+        
+        // Not found in active processes
+        return null;
+    }
+    
+    /**
+     * Get a list of all active processes
+     */
+    public List<ProcessControlBlock> getAllProcesses() {
+        return new ArrayList<>(processMap.values());
+    }
+    
+    /**
+     * Get memory usage information
+     */
+    public String getMemoryUsageInfo() {
+        return memoryManager.getMemoryUsageInfo();
+    }
+    
+    /**
+     * Get page table information for a process
+     */
+    public String getPageTableInfo(ProcessControlBlock pcb) {
+        return memoryManager.getPageTableInfo(pcb);
     }
 }

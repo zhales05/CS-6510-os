@@ -3,6 +3,7 @@ package os;
 import os.queues.QueueId;
 import os.util.Logging;
 import os.util.ProcessExecutionBurst;
+import vm.PageTable;
 import vm.hardware.Clock;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class ProcessControlBlock implements Logging {
     private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
     private boolean shareDataAccess = false;
+    private PageTable pageTable = new PageTable();
 
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
@@ -361,5 +363,13 @@ public class ProcessControlBlock implements Logging {
 
     public void setShareDataAccess(boolean shareDataAccess) {
         this.shareDataAccess = shareDataAccess;
+    }
+
+    public PageTable getPageTable() {
+        return pageTable;
+    }
+
+    public void setPageTable(PageTable pageTable) {
+        this.pageTable = pageTable;
     }
 }

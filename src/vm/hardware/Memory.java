@@ -2,6 +2,7 @@ package vm.hardware;
 
 import os.ProcessControlBlock;
 import os.util.Logging;
+import vm.MemoryManager;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -13,6 +14,7 @@ public class Memory implements Logging {
 
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
+    private static final MemoryManager memoryManager = MemoryManager.getInstance();
 
     private final byte[] memory = new byte[TOTAL_SIZE];
     private int index = 0;
@@ -29,13 +31,39 @@ public class Memory implements Logging {
     }
 
     public byte getByte() {
-        byte b = memory[cpu.getProgramCounter()];
+        // Get current process from CPU
+        ProcessControlBlock currentProcess = cpu.getCurrentProcess();
+        if (currentProcess == null) {
+            // If no current process, use raw memory access
+            byte b = memory[cpu.getProgramCounter()];
+            cpu.addToPC(1);
+            return b;
+        }
+        
+        // Convert logical address to physical address using memory manager
+        int physicalAddress = memoryManager.getPhysicalAddress(currentProcess, cpu.getProgramCounter());
+        byte b = memory[physicalAddress];
         cpu.addToPC(1);
         return b;
     }
 
-    public int getInt(){
-        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, cpu.getProgramCounter(), cpu.getProgramCounter() + 4));
+    public int getInt() {
+        // Get current process from CPU
+        ProcessControlBlock currentProcess = cpu.getCurrentProcess();
+        if (currentProcess == null) {
+            // If no current process, use raw memory access
+            ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, cpu.getProgramCounter(), cpu.getProgramCounter() + 4));
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+            int i = bb.getInt();
+            cpu.addToPC(4);
+            return i;
+        }
+        
+        // Convert logical address to physical address using memory manager
+        int physicalAddress = memoryManager.getPhysicalAddress(currentProcess, cpu.getProgramCounter());
+        
+        // Read 4 bytes from physical memory
+        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, physicalAddress, physicalAddress + 4));
         bb.order(ByteOrder.LITTLE_ENDIAN);
         int i = bb.getInt();
         cpu.addToPC(4);
@@ -63,7 +91,6 @@ public class Memory implements Logging {
         return bb.getInt();
     }
 
-
     public ProcessControlBlock load(byte[] program, ProcessControlBlock pcb) {
         if(!validateLoad(program, pcb)){
             return null;
@@ -78,9 +105,6 @@ public class Memory implements Logging {
 
         //program counter(pc) is second int in the program header
         int programCounter = bb.getInt();
-
-        //loader address is third int in the program header
-        //int loaderAddress = bb.getInt();
 
         //check if program size exceeds memory capacity
         if (programSize + index > TOTAL_SIZE) {
@@ -102,6 +126,10 @@ public class Memory implements Logging {
         System.arraycopy(program, 12, memory, index, programSize);
         index += programSize;
         memory[index++] = (byte) Cpu.END;
+        
+        // Register the program with memory manager (using demand paging)
+        memoryManager.allocateMemory(pcb);
+        
         log(coreDump(pcb));
         clock.tick(1);
         return pcb;
@@ -130,7 +158,12 @@ public class Memory implements Logging {
 
     public void clear(ProcessControlBlock pcb){
         Arrays.fill(memory, pcb.getProgramStart(), pcb.getProgramStart() + pcb.getProgramSize() + 1, (byte) 0);
-       // log("Memory cleared for process " + pcb.getPid());
+    }
+
+    // Method to free memory for a process
+    public void clearWithMemoryManager(ProcessControlBlock pcb) {
+        memoryManager.freeMemory(pcb);
+        clear(pcb);
     }
 
     public String coreDump(int start, int end) {
@@ -153,5 +186,12 @@ public class Memory implements Logging {
 
     public String coreDump() {
         return coreDump(0, index);
+    }
+
+    /**
+     * Get the total size of memory
+     */
+    public int getTotalSize() {
+        return TOTAL_SIZE;
     }
 }
