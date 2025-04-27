@@ -291,9 +291,6 @@ public class Memory implements Logging {
         log("Cleared memory and freed frames for Process " + pcb.getPid());
     }
 
-
-
-    //temp trying to see if this is a better core dump
     public String fullCoreDump() {
         StringBuilder sb = new StringBuilder();
         sb.append("Full System Core Dump:\n");
@@ -302,11 +299,24 @@ public class Memory implements Logging {
         int totalFrames = VirtualMemoryManager.getTotalFrames();
 
         for (int frameNumber = 0; frameNumber < totalFrames; frameNumber++) {
-            sb.append("Frame ").append(frameNumber).append(":\n");
-
             int start = frameNumber * pageSize;
             int end = Math.min(start + pageSize, memory.length);
 
+            // Check if frame is all zeros
+            boolean isEmpty = true;
+            for (int i = start; i < end; i++) {
+                if (memory[i] != 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+
+            if (isEmpty) {
+                continue;  // Skip printing this frame
+            }
+
+            // Otherwise, print the frame
+            sb.append("Frame ").append(frameNumber).append(":\n");
             for (int i = start; i < end; i++) {
                 sb.append(memory[i]).append(" ");
                 if ((i - start + 1) % 6 == 0) {

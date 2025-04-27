@@ -245,7 +245,6 @@ public class OperatingSystem implements Logging {
     public void terminateProcess(ProcessControlBlock pcb) {
         scheduler.addToTerminatedQueue(pcb);
         memory.clear(pcb);  // Your method already exists!
-
     }
 
     void transitionProcess() {
