@@ -5,7 +5,12 @@ execute files/milestone-4/producer.osx 0 files/milestone-4/consumer.osx 0 | shm_
 execute files/milestone-4/producer.osx 0 files/milestone-4/consumer.osx 0 | shm_open() -v
 
 MILESTONE 5 TEST CASES
-load files/milestone-5/producer.osx 0 -v
+setpagesize 10 -v
+setpagenumber 100 -v
+
+load files/milestone-5/s-producer.osx 0 files/milestone-5/s-consumer.osx 0
+load files/milestone-5/producer.osx 0 files/milestone-5/consumer.osx 0
+
 
 
 setpagesize 10

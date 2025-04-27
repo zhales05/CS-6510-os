@@ -72,6 +72,10 @@ public class Shell implements Logging {
                     }
                     os.setPageSize(Integer.parseInt(inputs[1]));
                     break;
+                case "setpagenumber":
+                    log("setting page number");
+                    os.setPageNumber(Integer.parseInt(inputs[1]));
+                    break;
                 case "getpagesize":
                     log("get page size");
                     System.out.println(VirtualMemoryManager.getPageSize());
@@ -79,6 +83,9 @@ public class Shell implements Logging {
                 case "run":
                     log("running program");
                     os.run();
+                    break;
+                case "ps":
+                    os.ps(inputs);
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";

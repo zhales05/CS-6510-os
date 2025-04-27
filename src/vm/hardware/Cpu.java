@@ -17,8 +17,6 @@ public class Cpu implements Logging {
     private final int[] registers = new int[12];
 
     static final int MOV = 1;
-    static final int STR = 2;
-    static final int BX = 6;
     static final int ADD = 16;
     static final int SUB = 17;
     static final int MUL = 18;
@@ -199,22 +197,6 @@ public class Cpu implements Logging {
                     log("Register: " + src + " Value: " + registers[src]);
                     log("Register: " + dest + " Value: " + registers[dest]);
                     break;
-                case STR:
-                    log("STR");
-
-                    int destR = memory.getByte(pcb);
-                    int srcR = memory.getByte(pcb);
-                    addToPC(3);
-
-                    if (isNotValidRegisters(destR, srcR)) {
-                        return;
-                    }
-
-                    memory.setInt((byte) registers[srcR], registers[destR]);
-                    log("Register: " + srcR + " Value: " + registers[srcR]);
-                    log("Register: " + destR + " Value: " + registers[destR]);
-                    break;
-
                 case END:
                     currentPcb.setRegisters(registers);
                     os.terminateProcess(currentPcb);
@@ -293,13 +275,9 @@ public class Cpu implements Logging {
         loadRegistersFromPcb(parent);
     }
 
-    public void transition(ProcessControlBlock next) {
+    public void transition() {
         currentPcb.setRegisters(registers);
-        loadRegistersFromPcb(next);
-    }
-
-    public boolean isIdle() {
-        return idle;
+        idle = true;
     }
 
     public void stopProcess() {

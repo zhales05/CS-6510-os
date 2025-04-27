@@ -21,4 +21,15 @@ public class PageTable {
     public int getNumberOfPages() {
         return entries.length;
     }
+
+    public int getUsedFrames() {
+        int count = 0;
+        for (PageTableEntry entry : entries) {
+            if (entry.isValid()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
 }

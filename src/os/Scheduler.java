@@ -48,23 +48,10 @@ class Scheduler implements Logging, Observer {
         currentProcesses.add(pcb);
     }
 
-    public void addBatchToJobQueue(List<ProcessControlBlock> pcbs, boolean shareAccess) {
-        for(ProcessControlBlock pcb : pcbs) {
-            pcb.setShareDataAccess(shareAccess);
-            addToJobQueue(pcb);
-        }
-    }
-
     private void pushToBackOfJobQueue(ProcessControlBlock pcb) {
         jobQueue.add(pcb);
     }
 
-    /**
-     * This method is responsible for adding a process to the IO queue
-     * this process will have been running every single time
-     *
-     * @param pcb the process to add to the IO queue
-     */
     public void addToIOQueue(ProcessControlBlock pcb) {
         ioQueue.add(pcb);
         transitionProcess();
@@ -186,21 +173,10 @@ class Scheduler implements Logging, Observer {
     private void transitionProcess() {
         readyQueue.resetQuantumCounter();
         if (currentProcess != null) {
-            //setting the new current process
-            currentProcess = getFromReadyQueue();
-            //running the new current process
-            if (currentProcess != null) {
-                currentProcess.setStatus(ProcessStatus.RUNNING, QueueId.RUNNING_QUEUE);
-                parentOs.transitionProcess(currentProcess);
-            } else {
-                //nothing in ready queue, probably stuck in IO
-                parentOs.stopProcess();
-                currentProcess = null;
-                clock.tick();
-            }
+            parentOs.transitionProcess();
         }
-        //if current process == null then we're probably waiting on io and the clock ticked
     }
+
 
     public void setReadyQueue(IReadyQueue readyQueue) {
         log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
@@ -214,5 +190,10 @@ class Scheduler implements Logging, Observer {
     public void systemGanttChart() {
         SystemGanttChart.makeChart(currentProcesses);
     }
+
+    public List<ProcessControlBlock> getCurrentProcesses(){
+        return currentProcesses;
+    }
+
 
 }

@@ -8,18 +8,19 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 public class Memory implements Logging {
-    private static final int TOTAL_SIZE = 1000;
     private static Memory instance;
 
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
 
-    private final byte[] memory = new byte[TOTAL_SIZE];
-    private int index = 0;
+    private byte[] memory;
     private int clockHand = -1;
+
+    private int numberOfPages = 10;
 
 
     private Memory() {
+        initializeMemory();
     }
 
     public static Memory getInstance() {
@@ -30,12 +31,17 @@ public class Memory implements Logging {
         return instance;
     }
 
-    //TODO-SHALES - will likely delete this
-    public byte getByte() {
-        byte b = memory[cpu.getProgramCounter()];
-        cpu.addToPC(1);
-        return b;
+    public void setPageNumber(int numberOfPages) {
+        this.numberOfPages = numberOfPages;
+        initializeMemory();
     }
+
+    public void initializeMemory() {
+        int pageSize = VirtualMemoryManager.getPageSize();
+        memory = new byte[pageSize * numberOfPages];
+        log("Memory initialized with size: " + memory.length);
+    }
+
 
     public byte getByte(ProcessControlBlock pcb) {
         int logicalAddress = cpu.getProgramCounter();
@@ -52,14 +58,6 @@ public class Memory implements Logging {
         ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, physicalAddress, physicalAddress + 4));
         bb.order(ByteOrder.LITTLE_ENDIAN);
         return bb.getInt();
-    }
-
-    public int getInt() {
-        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, cpu.getProgramCounter(), cpu.getProgramCounter() + 4));
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        int i = bb.getInt();
-        cpu.addToPC(4);
-        return i;
     }
 
     private int translate(int logicalAddress, ProcessControlBlock pcb) {
@@ -167,29 +165,6 @@ public class Memory implements Logging {
         return -1;
     }
 
-
-    public void setInt(byte location, int value) {
-        ByteBuffer bb = ByteBuffer.allocate(4);
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        bb.putInt(value);
-        System.arraycopy(bb.array(), 0, memory, location, 4);
-    }
-
-    public void setByte(byte location, byte value) {
-        memory[location] = value;
-    }
-
-    public byte peakByte() {
-        return memory[cpu.getProgramCounter()];
-    }
-
-    public int peakInt() {
-        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, cpu.getProgramCounter(), cpu.getProgramCounter() + 4));
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        return bb.getInt();
-    }
-
-
     public ProcessControlBlock load(byte[] program, ProcessControlBlock pcb) {
         if(!validateLoad(program, pcb)){
             return null;
@@ -223,8 +198,17 @@ public class Memory implements Logging {
             int physicalAddress = frameNumber * pageSize;
             int bytesToCopy = Math.min(pageSize, programSize - (virtualPageNumber * pageSize));
 
+            if (physicalAddress + bytesToCopy > memory.length) {
+                logError("Not enough physical memory to load page " + virtualPageNumber + " for process " + pcb.getPid());
+                return null;
+            }
             System.arraycopy(program, programByteIndex, memory, physicalAddress, bytesToCopy);
             programByteIndex += bytesToCopy;
+
+            if (virtualPageNumber == pagesNeeded - 1) {
+                // next byte after code
+                memory[physicalAddress + bytesToCopy] = (byte)Cpu.END;
+            }
 
             // Create PageTableEntry
             PageTableEntry entry = new PageTableEntry();
@@ -261,20 +245,53 @@ public class Memory implements Logging {
             return false;
         }
 
+        int pageSize = VirtualMemoryManager.getPageSize();
+        int requiredPages = (int) Math.ceil((double)(program.length - 12) / pageSize);
+
+        if (requiredPages > numberOfPages) {
+            logError("Program too large to fit into memory. Required pages: " + requiredPages + ", available pages: " + numberOfPages);
+            return false;
+        }
+
+
         return true;
     }
 
     public void clear() {
         Arrays.fill(memory, (byte) 0);
         cpu.setProgramCounter(0);
-        index = 0;
         log("Memory cleared");
+        clockHand = -1;
     }
 
-    public void clear(ProcessControlBlock pcb){
-        Arrays.fill(memory, pcb.getProgramStart(), pcb.getProgramStart() + pcb.getProgramSize() + 1, (byte) 0);
-       // log("Memory cleared for process " + pcb.getPid());
+    public void clear(ProcessControlBlock pcb) {
+        PageTable pageTable = pcb.getPageTable();
+        int pageSize = VirtualMemoryManager.getPageSize();
+
+        for (int i = 0; i < pageTable.getNumberOfPages(); i++) {
+            PageTableEntry entry = pageTable.getEntry(i);
+            if (entry.isValid()) {
+                int frameNumber = entry.getFrameNumber();
+                int startAddress = frameNumber * pageSize;
+                int endAddress = startAddress + pageSize;
+
+                // Clear the memory contents of that frame
+                Arrays.fill(memory, startAddress, endAddress, (byte) 0);
+
+                // Free the frame in the frame table
+                FrameTable.getInstance().freeFrame(frameNumber);
+
+                // Invalidate the page table entry
+                entry.setValid(false);
+                entry.setReferenceBit(false);
+                entry.setDirtyBit(false);
+            }
+        }
+
+        log("Cleared memory and freed frames for Process " + pcb.getPid());
     }
+
+
 
     //temp trying to see if this is a better core dump
     public String fullCoreDump() {
@@ -320,11 +337,7 @@ public class Memory implements Logging {
         return coreDump(pcb.getCodeStart(), pcb.getCodeStart() + pcb.getProgramSize());
     }
 
-    public String coreDump() {
-        return coreDump(0, index);
-    }
-
     public int getMemorySize() {
-        return TOTAL_SIZE;
+        return memory.length;
     }
 }

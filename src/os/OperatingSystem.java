@@ -183,6 +183,34 @@ public class OperatingSystem implements Logging {
         scheduler.systemGanttChart();
     }
 
+    void ps(String[] inputs) {
+        if(inputs.length == 1) {
+            printProcesses(true, true);
+        }
+    }
+
+    private void printProcesses(boolean showProcesses, boolean showFreeFrames) {
+        if (showProcesses) {
+            System.out.println("Processes:");
+            for (ProcessControlBlock pcb : scheduler.getCurrentProcesses()) {
+                System.out.println("PID: " + pcb.getPid() +
+                        " | Status: " + pcb.getStatus() +
+                        " | Frames: " + pcb.getPageTable().getUsedFrames());
+            }
+        }
+
+        if (showFreeFrames) {
+            System.out.println("\nFree Frames:");
+            for (int i = 0; i < FrameTable.getInstance().getTotalFrames(); i++) {
+                if (FrameTable.getInstance().isFrameFree(i)) {
+                    System.out.print(i + " ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+
 
 
     void printHelp() {
@@ -210,10 +238,12 @@ public class OperatingSystem implements Logging {
 
     public void terminateProcess(ProcessControlBlock pcb) {
         scheduler.addToTerminatedQueue(pcb);
+        memory.clear(pcb);  // Your method already exists!
+
     }
 
-    void transitionProcess(ProcessControlBlock next) {
-        cpu.transition(next);
+    void transitionProcess() {
+        cpu.transition();
     }
 
     public void addToIOQueue(ProcessControlBlock pcb) {
@@ -222,6 +252,10 @@ public class OperatingSystem implements Logging {
 
     public void stopProcess() {
         cpu.stopProcess();
+    }
+
+    public void setPageNumber(int pageNumber) {
+        memory.setPageNumber(pageNumber);
     }
 
     public void testStuff() {
