@@ -56,13 +56,13 @@ public class Shell implements Logging {
                     log("Starting execute");
                     //add some error checks here for input
                     os.schedule(inputs);
-                    os.loadForReady();
+                    os.moveToReadyAndRun();
                     os.run();
                     break;
                 case "load":
                     log("loading program");
                     os.schedule(inputs);
-                    os.loadForReady();
+                    os.loadJobs();
                     break;
                 case "setpagesize":
                     log("setting page size");
@@ -82,7 +82,8 @@ public class Shell implements Logging {
                     break;
                 case "run":
                     log("running program");
-                    os.run();
+                    String[] programInputs = Arrays.copyOfRange(inputs, 1, inputs.length);
+                    os.moveToReadyAndRun(programInputs);
                     break;
                 case "ps":
                     os.ps(inputs);

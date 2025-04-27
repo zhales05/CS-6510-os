@@ -165,7 +165,7 @@ public class OperatingSystem implements Logging {
             toAdd.add(pcb);
             scheduler.addToJobQueue(pcb);
         }
-        //set shared access if needed
+        // set shared access if needed
         // can only be found retroactively based on the pipe so this is the best way.
         if(sharedAccess) {
             for(ProcessControlBlock pcb : toAdd) {
@@ -174,7 +174,16 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    void loadForReady() {
+    void loadJobs(){
+        scheduler.loadJobs();
+    }
+
+    void moveToReadyAndRun(String[] inputs) {
+        scheduler.run(inputs);
+        run();
+    }
+
+    void moveToReadyAndRun() {
         scheduler.processJobsForReadyQueue();
     }
 
@@ -209,9 +218,6 @@ public class OperatingSystem implements Logging {
             System.out.println();
         }
     }
-
-
-
 
     void printHelp() {
         final String FILE_PATH = "files/Engineering Glossary List.txt";

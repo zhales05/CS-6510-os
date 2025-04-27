@@ -12,5 +12,8 @@ load files/milestone-5/s-producer.osx 0 files/milestone-5/s-consumer.osx 0
 load files/milestone-5/producer.osx 0 files/milestone-5/consumer.osx 0
 
 
+run files/milestone-5/s-producer.osx files/milestone-5/s-consumer.osx
+
+
 
 setpagesize 10

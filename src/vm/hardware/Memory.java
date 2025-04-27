@@ -224,8 +224,8 @@ public class Memory implements Logging {
         pcb.setPageTable(pageTable);
         pcb.setProgramSize(programSize);
         pcb.setBackingStore(program);
-        pcb.setPc(programCounter); // PC is still logical address now (typically 0)
-        pcb.setProgramStart(0);    // Logical start is 0
+        pcb.setPc(programCounter);
+        pcb.setProgramStart(0);
         pcb.setCodeStart(programCounter);
 
         log(coreDump(pcb));

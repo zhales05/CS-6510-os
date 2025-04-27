@@ -98,7 +98,7 @@ class Scheduler implements Logging, Observer {
         while (!jobQueue.isEmpty()) {
             ProcessControlBlock pcb = getJob();
             if (pcb.getStartAfter() <= clock.getTime()) {
-                pcb = parentOs.loadIntoMemory(pcb);
+                pcb = loadIntoMemory(pcb);
                 //checking if error with load
                 if (pcb == null) {
                     continue;
@@ -115,6 +115,29 @@ class Scheduler implements Logging, Observer {
         }
         //print metrics here for now
        // metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
+    }
+
+    public void loadJobs(){
+        for (ProcessControlBlock pcb : jobQueue) {
+            loadIntoMemory(pcb);
+        }
+    }
+
+    public void run(String[] inputs) {
+        Set<String> inputSet = new HashSet<>(Arrays.asList(inputs));  // faster lookup
+        Iterator<ProcessControlBlock> iterator = jobQueue.iterator();
+
+        while (iterator.hasNext()) {
+            ProcessControlBlock pcb = iterator.next();
+            if (inputSet.contains(pcb.getFilePath())) {
+                addToReadyQueue(pcb);
+                iterator.remove();
+            }
+        }
+    }
+
+    public ProcessControlBlock loadIntoMemory(ProcessControlBlock pcb) {
+        return parentOs.loadIntoMemory(pcb);
     }
 
     public void runThroughReadyQueue() {
@@ -166,10 +189,6 @@ class Scheduler implements Logging, Observer {
         }
     }
 
-    /**
-     * This method is responsible for transitioning the current process to the next process in the ready queue
-     * this is only used if the there is a current process running
-     */
     private void transitionProcess() {
         readyQueue.resetQuantumCounter();
         if (currentProcess != null) {
