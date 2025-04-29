@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Memory implements Logging {
-    private static final int MEMORY_SIZE = 10000;
+    private static final int MEMORY_SIZE = 1000;
     private static  Memory instance;
 
     private final byte[] memory = new byte[MEMORY_SIZE];
     private int maxPagesPerProgram = Integer.MAX_VALUE;
-    private List<ProcessControlBlock> processControlBlocks = new ArrayList<>();
+    private final List<ProcessControlBlock> processControlBlocks = new ArrayList<>();
 
     // Cpu and Clock are no longer static final here
     private static final Cpu cpu = Cpu.getInstance();
@@ -73,6 +73,7 @@ public class Memory implements Logging {
     }
 
     private void handlePageFault(int pageNumber, ProcessControlBlock pcb) {
+        pcb.incrementPageFault();
         int resident = countResidentPages(pcb);
         int frame = -1;
 
@@ -288,10 +289,6 @@ public class Memory implements Logging {
 
     public String coreDump(ProcessControlBlock pcb) {
         return coreDump(pcb.getCodeStart(), pcb.getCodeStart() + pcb.getProgramSize());
-    }
-
-    public int getMaxPagesPerProgram() {
-        return maxPagesPerProgram;
     }
 
     public void setMaxPagesPerProgram(int maxPagesPerProgram) {

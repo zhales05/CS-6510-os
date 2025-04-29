@@ -208,6 +208,15 @@ class Scheduler implements Logging, Observer {
 
     public void systemGanttChart() {
         SystemGanttChart.makeChart(currentProcesses);
+        System.out.println("Total Page Faults: " + totalPageFaults());
+    }
+
+    private int totalPageFaults() {
+        int pageFaults = 0;
+        for (ProcessControlBlock pcb : currentProcesses) {
+            pageFaults += pcb.getPageFaults();
+        }
+        return pageFaults;
     }
 
     public List<ProcessControlBlock> getCurrentProcesses(){

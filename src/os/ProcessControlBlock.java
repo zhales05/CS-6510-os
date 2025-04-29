@@ -25,6 +25,7 @@ public class ProcessControlBlock implements Logging {
     private PageTable pageTable;
     private byte[] backingStore;
     private int maxPages = Integer.MAX_VALUE;
+    private int pageFaults = 0;
 
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
@@ -80,10 +81,10 @@ public class ProcessControlBlock implements Logging {
                 completionTime = clock.getTime();
                 evaluateMetrics();
                 printfTimeline();
+                log(Integer.toString(pageFaults));
                 break;
         }
     }
-
 
     public void addChild(ProcessControlBlock pcb) {
         log("Adding child " + pcb.getPid() + " to " + pid);
@@ -264,21 +265,12 @@ public class ProcessControlBlock implements Logging {
         return null;
     }
 
-
     public int getTurnAroundTime() {
         return turnAroundTime;
     }
 
-    public void setTurnAroundTime(int turnAroundTime) {
-        this.turnAroundTime = turnAroundTime;
-    }
-
     public int getWaitingTime() {
         return waitingTime;
-    }
-
-    public void setWaitingTime(int waitingTime) {
-        this.waitingTime = waitingTime;
     }
 
     public int getResponseTime() {
@@ -380,5 +372,13 @@ public class ProcessControlBlock implements Logging {
 
     public void setMaxPages(int maxPages) {
         this.maxPages = maxPages;
+    }
+
+    public int getPageFaults() {
+        return pageFaults;
+    }
+
+    public void incrementPageFault() {
+        pageFaults++;
     }
 }
