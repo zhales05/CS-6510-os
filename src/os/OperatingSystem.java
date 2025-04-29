@@ -149,7 +149,7 @@ public class OperatingSystem implements Logging {
         boolean sharedAccess = false;
         //grabbing filename and clock starting time
         for (int i = 1; i < inputs.length; i += 2) {
-            if('|' == inputs[i].charAt(0)) {
+            if (!inputs[i].isEmpty() && '|' == inputs[i].charAt(0)) {
                log("Shared Memory");
                sharedAccess = true;
                break;
