@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Memory implements Logging {
-    private static final int MEMORY_SIZE = 1000;
+    private static final int MEMORY_SIZE = 10000;
     private static  Memory instance;
 
     private final byte[] memory = new byte[MEMORY_SIZE];
