@@ -1,26 +1,27 @@
 package vm.hardware;
 
 import os.*;
+import os.queues.QueueId;
 import os.util.Logging;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Memory implements Logging {
     private static Memory instance;
+    private static final int MEMORY_SIZE = 10000;
 
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
 
-    private byte[] memory;
-    private int clockHand = -1;
-
-    private int numberOfPages = 10;
-
+    private final byte[] memory = new byte[MEMORY_SIZE];
+    private int maxPagesPerProgram = Integer.MAX_VALUE;
+    private List<ProcessControlBlock> processControlBlocks = new ArrayList<>();
 
     private Memory() {
-        initializeMemory();
     }
 
     public static Memory getInstance() {
@@ -31,17 +32,9 @@ public class Memory implements Logging {
         return instance;
     }
 
-    public void setPageNumber(int numberOfPages) {
-        this.numberOfPages = numberOfPages;
-        initializeMemory();
+    public static int getMemorySize() {
+        return MEMORY_SIZE;
     }
-
-    public void initializeMemory() {
-        int pageSize = VirtualMemoryManager.getPageSize();
-        memory = new byte[pageSize * numberOfPages];
-        log("Memory initialized with size: " + memory.length);
-    }
-
 
     public byte getByte(ProcessControlBlock pcb) {
         int logicalAddress = cpu.getProgramCounter();
@@ -51,14 +44,16 @@ public class Memory implements Logging {
     }
 
     public int getInt(ProcessControlBlock pcb) {
-        int logicalAddress = cpu.getProgramCounter();
-        int physicalAddress = translate(logicalAddress, pcb);
-        cpu.addToPC(4);
-
-        ByteBuffer bb = ByteBuffer.wrap(Arrays.copyOfRange(memory, physicalAddress, physicalAddress + 4));
-        bb.order(ByteOrder.LITTLE_ENDIAN);
-        return bb.getInt();
+        byte b0 = getByte(pcb);  // <- each getByte() increments PC by 1
+        byte b1 = getByte(pcb);
+        byte b2 = getByte(pcb);
+        byte b3 = getByte(pcb);
+        return ((b3 & 0xFF) << 24) |
+                ((b2 & 0xFF) << 16) |
+                ((b1 & 0xFF) << 8) |
+                (b0 & 0xFF);
     }
+
 
     private int translate(int logicalAddress, ProcessControlBlock pcb) {
         int pageSize = VirtualMemoryManager.getPageSize();
@@ -69,7 +64,6 @@ public class Memory implements Logging {
 
         if (!entry.isValid()) {
             handlePageFault(pageNumber, pcb);
-            // now that it’s loaded, re-fetch the entry
             entry = pcb.getPageTable().getEntry(pageNumber);
         }
 
@@ -78,190 +72,140 @@ public class Memory implements Logging {
     }
 
     private void handlePageFault(int pageNumber, ProcessControlBlock pcb) {
-        logError("Page fault on page " + pageNumber + " in process " + pcb.getPid());
+        int resident = countResidentPages(pcb);
+        int frame = -1;
 
-        // 1) Allocate a free frame (or pick a victim via LRU/ESCA)
-        int frame = FrameTable.getInstance().allocateFreeFrame();
-        if (frame == -1) {
-            frame = evictFrame(pcb);  // your replacement algorithm
+        if (resident < pcb.getMaxPages()) {
+            // still under quota → try to grab any free frame
+            frame = FrameTable.getInstance().allocateFreeFrame();
+            if (frame != -1) {
+                log("Allocated free frame " + frame + " for P" + pcb.getPid() + "/vpn=" + pageNumber);
+            }
         }
 
-        // 2) Load the page into that frame
-        // You need a “backing store” reference—either
-        //   a) keep the original program byte[] in the PCB
-        //   b) ask the OS to read it from disk
+        if (frame == -1) {
+            frame = evictFromSameProcess(pcb, pageNumber);
+            if (frame == -1) {
+                frame = evictFromOtherProcess(pcb);
+            }
+
+            if (frame == -1) {
+                // out of memory globally
+                logError("System out of memory: cannot evict any page. Terminating P" + pcb.getPid());
+                pcb.setStatus(ProcessStatus.TERMINATED, QueueId.TERMINATED_QUEUE);
+                return;
+            }
+            log("Reclaimed frame " + frame + " from P" + pcb.getPid());
+        }
+
+        // load the new page into 'frame'…
         byte[] pageBytes = pcb.getBackingStorePage(pageNumber);
         int pageSize = VirtualMemoryManager.getPageSize();
         int physStart = frame * pageSize;
-        System.arraycopy(pageBytes, 0, memory, physStart, pageBytes.length);
+        int toCopy = Math.min(pageBytes.length, pageSize);
+        System.arraycopy(pageBytes, 0, memory, physStart, toCopy);
 
-        // 3) Update the page table
-        PageTableEntry entry = pcb.getPageTable().getEntry(pageNumber);
-        entry.setFrameNumber(frame);
-        entry.setValid(true);
-        entry.setReferenceBit(true);
-        entry.setDirtyBit(false);  // freshly loaded
+        // finally update its page‐table
+        PageTableEntry e = pcb.getPageTable().getEntry(pageNumber);
+        e.setFrameNumber(frame);
+        e.setValid(true);
+        log(fullCoreDump());
     }
 
-    /**
-     * Evict one frame using ESCA (Enhanced Second-Chance).
-     * Scans the running process's pages in four classes:
-     *  (R=0,D=0) → (R=0,D=1) → clear R bits → (R=1,D=0) → (R=1,D=1)
-     */
-    private int evictFrame(ProcessControlBlock pcb) {
+
+    private int countResidentPages(ProcessControlBlock pcb) {
         PageTable pt = pcb.getPageTable();
-        int pages = pt.getNumberOfPages();
-        int totalFrames = VirtualMemoryManager.getTotalFrames();
+        int count = 0;
+        for (int vpn = 0; vpn < pt.getNumberOfPages(); vpn++) {
+            if (pt.getEntry(vpn).isValid()) count++;
+        }
+        return count;
+    }
 
-        // four passes for ESCA classes 0→3
-        for (int pass = 0; pass < 4; pass++) {
-            for (int i = 0; i < pages; i++) {
-                // advance clock hand
-                clockHand = (clockHand + 1) % pages;
-                PageTableEntry e = pt.getEntry(clockHand);
-
-                if (!e.isValid()) continue;  // not in memory at all
-
-                boolean R = e.isReferenceBit();
-                boolean D = e.isDirtyBit();
-                int cls = (R ? 2 : 0) + (D ? 1 : 0);
-
-                // pass 0: look for cls==0 (0,0)
-                // pass 1: look for cls==1 (0,1)
-                // pass 2: clear all R bits, continue
-                // pass 3: look for cls==2 or cls==3
-                if (pass == 2) {
-                    // clear reference bits on the fly
-                    if (R) e.setReferenceBit(false);
-                    continue;
-                }
-
-                if ( (pass == 0 && cls == 0)
-                        || (pass == 1 && cls == 1)
-                        || (pass == 3 && (cls == 2 || cls == 3)) )
-                {
-                    // we’ve found our victim!
-                    int frame = e.getFrameNumber();
-
-                    // if dirty, write back
-                    if (D) {
-                        byte[] pageData = new byte[VirtualMemoryManager.getPageSize()];
-                        int start = frame * VirtualMemoryManager.getPageSize();
-                        System.arraycopy(memory, start, pageData, 0, pageData.length);
-                        pcb.writeBackPage(clockHand, pageData);
-                    }
-
-                    // invalidate the PTE and free the frame
-                    e.setValid(false);
-                    e.setReferenceBit(false);
-                    e.setDirtyBit(false);
-                    FrameTable.getInstance().freeFrame(frame);
-
-                    return frame;
-                }
+    private int evictFromSameProcess(ProcessControlBlock pcb, int faultingVpn) {
+        PageTable pt = pcb.getPageTable();
+        for (int vpn = 0; vpn < pt.getNumberOfPages(); vpn++) {
+            if (vpn == faultingVpn) continue;
+            PageTableEntry e = pt.getEntry(vpn);
+            if (e.isValid()) {
+                int f = e.getFrameNumber();
+                e.setValid(false);
+                FrameTable.getInstance().freeFrame(f);
+                return f;
             }
         }
-        logError("evictFrame: no suitable page found to evict!");
         return -1;
     }
 
+    private int evictFromOtherProcess(ProcessControlBlock requester) {
+        for (ProcessControlBlock pcb : processControlBlocks) {
+            if (pcb == requester) continue;  // skip self
+
+            PageTable pt = pcb.getPageTable();
+            for (int vpn = 0; vpn < pt.getNumberOfPages(); vpn++) {
+                PageTableEntry e = pt.getEntry(vpn);
+                if (e.isValid()) {
+                    int f = e.getFrameNumber();
+                    e.setValid(false);
+                    FrameTable.getInstance().freeFrame(f);
+                    log("Evicted frame " + f + " from P" + pcb.getPid());
+                    return f;
+                }
+            }
+        }
+        return -1;  // no victim found globally
+    }
+
+
     public ProcessControlBlock load(byte[] program, ProcessControlBlock pcb) {
-        if(!validateLoad(program, pcb)){
+        if (!validateLoad(program, pcb)) {
             return null;
         }
+
         ByteBuffer bb = ByteBuffer.wrap(program);
         bb.order(ByteOrder.LITTLE_ENDIAN);
-        log("Loading program " + pcb.getPid());
-        //program size is first int in the program header
+
         int programSize = bb.getInt();
-        log("Program size: " + programSize);
-
-        //program counter(pc) is second int in the program header
+        programSize += 1; //added end
         int programCounter = bb.getInt();
-
-        //loader address is third int in the program header
-        //int loaderAddress = bb.getInt();
         int pageSize = VirtualMemoryManager.getPageSize();
         int pagesNeeded = (int) Math.ceil((double) programSize / pageSize);
 
         PageTable pageTable = new PageTable(pagesNeeded);
 
-        int programByteIndex = 12; // Program body starts after 3 ints (header)
-
         for (int virtualPageNumber = 0; virtualPageNumber < pagesNeeded; virtualPageNumber++) {
-            int frameNumber = FrameTable.getInstance().allocateFreeFrame();
-            if (frameNumber == -1) {
-                logError("No free frames available for process: " + pcb.getPid());
-                return null; // or handle page fault / out of memory situation
-            }
-
-            int physicalAddress = frameNumber * pageSize;
-            int bytesToCopy = Math.min(pageSize, programSize - (virtualPageNumber * pageSize));
-
-            if (physicalAddress + bytesToCopy > memory.length) {
-                logError("Not enough physical memory to load page " + virtualPageNumber + " for process " + pcb.getPid());
-                return null;
-            }
-            System.arraycopy(program, programByteIndex, memory, physicalAddress, bytesToCopy);
-            programByteIndex += bytesToCopy;
-
-            if (virtualPageNumber == pagesNeeded - 1) {
-                // next byte after code
-                memory[physicalAddress + bytesToCopy] = (byte)Cpu.END;
-            }
-
-            // Create PageTableEntry
             PageTableEntry entry = new PageTableEntry();
-            entry.setFrameNumber(frameNumber);
-            entry.setValid(true);
-            entry.setReferenceBit(false);
-            entry.setDirtyBit(false);
+            entry.setValid(false); // not loaded into RAM yet
 
             pageTable.setEntry(virtualPageNumber, entry);
         }
 
-        // Set PCB info
         pcb.setPageTable(pageTable);
         pcb.setProgramSize(programSize);
         pcb.setBackingStore(program);
         pcb.setPc(programCounter);
         pcb.setProgramStart(0);
         pcb.setCodeStart(programCounter);
-
-        log(coreDump(pcb));
+        pcb.setMaxPages(maxPagesPerProgram);
+        processControlBlocks.add(pcb);
         clock.tick();
 
         return pcb;
     }
 
+
     private boolean validateLoad(byte[] program, ProcessControlBlock pcb) {
-        if(program == null) {
+        if (program == null) {
             logError("Process: " + pcb.getPid() + " | " + "Program is null");
             return false;
         }
 
-        if(program.length < 12) {
+        if (program.length < 12) {
             logError("Process: " + pcb.getPid() + " | " + "Program size is less than 12 bytes");
             return false;
         }
 
-        int pageSize = VirtualMemoryManager.getPageSize();
-        int requiredPages = (int) Math.ceil((double)(program.length - 12) / pageSize);
-
-        if (requiredPages > numberOfPages) {
-            logError("Program too large to fit into memory. Required pages: " + requiredPages + ", available pages: " + numberOfPages);
-            return false;
-        }
-
-
         return true;
-    }
-
-    public void clear() {
-        Arrays.fill(memory, (byte) 0);
-        cpu.setProgramCounter(0);
-        log("Memory cleared");
-        clockHand = -1;
     }
 
     public void clear(ProcessControlBlock pcb) {
@@ -283,8 +227,6 @@ public class Memory implements Logging {
 
                 // Invalidate the page table entry
                 entry.setValid(false);
-                entry.setReferenceBit(false);
-                entry.setDirtyBit(false);
             }
         }
 
@@ -347,7 +289,11 @@ public class Memory implements Logging {
         return coreDump(pcb.getCodeStart(), pcb.getCodeStart() + pcb.getProgramSize());
     }
 
-    public int getMemorySize() {
-        return memory.length;
+    public int getMaxPagesPerProgram() {
+        return maxPagesPerProgram;
+    }
+
+    public void setMaxPagesPerProgram(int maxPagesPerProgram) {
+        this.maxPagesPerProgram = maxPagesPerProgram;
     }
 }

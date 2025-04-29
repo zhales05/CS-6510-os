@@ -23,17 +23,16 @@ public class Cpu implements Logging {
     static final int DIV = 19;
     static final int SWI = 20;
     static final int MVI = 22;
-    static final int END = 99;
+    static final int GAR = 32;
+    static final int TRA = 0;
+
+    public static final int END = 99;
 
     private Cpu() {
     }
 
     public int getProgramCounter() {
         return registers[11];
-    }
-
-    public void setProgramCounter(int val) {
-        registers[11] = val;
     }
 
     public void addToPC(int val) {
@@ -202,7 +201,9 @@ public class Cpu implements Logging {
                     os.terminateProcess(currentPcb);
                     idle = true;
                     return;
-
+//                case GAR,TRA:
+//                    log("GAR");
+//                    break;
                 default:
                     logError("Process " + currentPcb.getPid() + ": Invalid instruction " + curr);
                     return;

@@ -24,6 +24,7 @@ public class ProcessControlBlock implements Logging {
 
     private PageTable pageTable;
     private byte[] backingStore;
+    private int maxPages = Integer.MAX_VALUE;
 
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
@@ -284,14 +285,6 @@ public class ProcessControlBlock implements Logging {
         return responseTime;
     }
 
-    public void setResponseTime(int responseTime) {
-        this.responseTime = responseTime;
-    }
-
-    public int getProgramStart() {
-        return programStart;
-    }
-
     public void setProgramStart(int programStart) {
         this.programStart = programStart;
     }
@@ -316,10 +309,6 @@ public class ProcessControlBlock implements Logging {
 
     public void setProgramSize(int programSize) {
         this.programSize = programSize;
-    }
-
-    public int getPc() {
-        return registers[11];
     }
 
     public void setPc(int pc) {
@@ -350,9 +339,6 @@ public class ProcessControlBlock implements Logging {
         this.codeStart = codeStart;
     }
 
-    public int getArrivalTime() {
-        return arrivalTime;
-    }
 
     public List<ProcessExecutionBurst> getTimeLine() {
         return timeLine;
@@ -388,11 +374,11 @@ public class ProcessControlBlock implements Logging {
         return page;
     }
 
-    public void writeBackPage(int pageNumber, byte[] pageData) {
-        int pageSize = VirtualMemoryManager.getPageSize();
-        int headerSize = 12;
-        int offset     = headerSize + pageNumber * pageSize;
-        System.arraycopy(pageData, 0, backingStore, offset, pageData.length);
+    public int getMaxPages() {
+        return maxPages;
     }
 
+    public void setMaxPages(int maxPages) {
+        this.maxPages = maxPages;
+    }
 }

@@ -2,11 +2,11 @@ package os;
 
 import os.util.Logging;
 
-import java.util.Arrays;
 
 public class FrameTable implements Logging {
     private static FrameTable instance;
     private boolean[] frameUsed;
+
 
     private FrameTable(int totalFrames) {
         frameUsed = new boolean[totalFrames];
@@ -20,27 +20,31 @@ public class FrameTable implements Logging {
     }
 
     public int allocateFreeFrame() {
-        for (int i = 0; i < frameUsed.length; i++) {
+           for (int i = 0; i < frameUsed.length; i++) {
             if (!frameUsed[i]) {
                 frameUsed[i] = true;
-                return i; // frame i allocated
+                return i;
             }
         }
-        return -1; // No free frames available
+        return -1; // No free frames
     }
 
+
     public void freeFrame(int frameNumber) {
-        frameUsed[frameNumber] = false;
+        if (frameUsed[frameNumber]) {
+            frameUsed[frameNumber] = false;
+        }
     }
+
 
     public boolean isFrameFree(int frameNumber) {
         return !frameUsed[frameNumber];
     }
 
     public void reinitialize() {
-        log("Clearing out existing memory");
-        Arrays.fill(frameUsed, false);
+        frameUsed = new boolean[VirtualMemoryManager.getTotalFrames()];
     }
+
 
     public int getTotalFrames() {
         return frameUsed.length;

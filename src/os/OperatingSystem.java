@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -24,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Think like an interface that allows them to talk to each other
  */
 public class OperatingSystem implements Logging {
-    private static final Memory memory = Memory.getInstance();
+    private final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
 
@@ -32,9 +29,8 @@ public class OperatingSystem implements Logging {
     public int[] sharedArray = new int[10];
     private int in = 0;
     private int out = 0;
-    //this will eventually be instantiated based on the input from the user
-    //this scheduler will eventually need to be able to update the scheduling algorithm
     private final Scheduler scheduler = new Scheduler(this);
+
 
     public void startShell() {
         clock.addObserver(scheduler);
@@ -43,8 +39,6 @@ public class OperatingSystem implements Logging {
 
     //Making the express decision that the quantum values come after the scheduling algorithm
     void setSchedule(String[] inputs) {
-        //TODO: add error checking for inputs
-        //TODO: make enums/variables for the scheduling algorithms
         switch (inputs[1]) {
             case "fcfs":
                 scheduler.setReadyQueue(new FCFSReadyQueue());
@@ -106,9 +100,12 @@ public class OperatingSystem implements Logging {
 
     private byte[] readProgram(String filePath) {
         try {
-            return Files.readAllBytes(Paths.get(filePath));
+            byte[] original = Files.readAllBytes(Paths.get(filePath));
+            byte[] withEnd = Arrays.copyOf(original, original.length + 1);
+            withEnd[withEnd.length - 1] = (byte) Cpu.END;
+            return withEnd;
         } catch (IOException e) {
-            logError("Error reading file: " + ": " + e.getMessage());
+            logError("Error reading file: " + filePath + ": " + e.getMessage());
             return null;
         }
     }
@@ -124,6 +121,8 @@ public class OperatingSystem implements Logging {
             logError("Process doesn't exist");
             return null;
         }
+
+
         pcb = memory.load(program, pcb);
         return pcb;
     }
@@ -244,23 +243,23 @@ public class OperatingSystem implements Logging {
 
     public void terminateProcess(ProcessControlBlock pcb) {
         scheduler.addToTerminatedQueue(pcb);
-        memory.clear(pcb);  // Your method already exists!
+        //memory.clear(pcb);
     }
 
     void transitionProcess() {
         cpu.transition();
     }
 
+    public List<ProcessControlBlock> getAllProcesses(){
+        return scheduler.getCurrentProcesses();
+    }
+
     public void addToIOQueue(ProcessControlBlock pcb) {
         scheduler.addToIOQueue(pcb);
     }
 
-    public void stopProcess() {
-        cpu.stopProcess();
-    }
-
     public void setPageNumber(int pageNumber) {
-        memory.setPageNumber(pageNumber);
+        memory.setMaxPagesPerProgram(pageNumber);
     }
 
     public void testStuff() {

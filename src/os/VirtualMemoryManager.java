@@ -14,7 +14,7 @@ public class VirtualMemoryManager {
     }
 
     public static int getTotalFrames() {
-        return Memory.getInstance().getMemorySize() / pageSize;
+        return Memory.getMemorySize() / pageSize;
     }
 
     public static int getFrameSize() {
