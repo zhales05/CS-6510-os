@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class Cpu implements Logging {
     private static Cpu instance;
-    private final Memory memory = Memory.getInstance();
+    private static final Memory memory = Memory.getInstance();
     private boolean idle = true;
     private boolean kernelMode = false;
 
@@ -29,6 +29,7 @@ public class Cpu implements Logging {
     public static final int END = 99;
 
     private Cpu() {
+        System.out.println("Constructing Cpu instance " + this);
     }
 
     public int getProgramCounter() {
@@ -52,8 +53,7 @@ public class Cpu implements Logging {
         if (instance == null) {
             instance = new Cpu();
         }
-
-        return instance;
+            return instance;
     }
 
     private boolean validateRegister(int r) {

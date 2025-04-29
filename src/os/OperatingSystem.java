@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Think like an interface that allows them to talk to each other
  */
 public class OperatingSystem implements Logging {
-    private final Memory memory = Memory.getInstance();
+    private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
 

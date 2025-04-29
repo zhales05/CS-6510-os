@@ -11,24 +11,25 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Memory implements Logging {
-    private static Memory instance;
     private static final int MEMORY_SIZE = 10000;
-
-    private static final Cpu cpu = Cpu.getInstance();
-    private static final Clock clock = Clock.getInstance();
+    private static  Memory instance;
 
     private final byte[] memory = new byte[MEMORY_SIZE];
     private int maxPagesPerProgram = Integer.MAX_VALUE;
     private List<ProcessControlBlock> processControlBlocks = new ArrayList<>();
 
+    // Cpu and Clock are no longer static final here
+    private static final Cpu cpu = Cpu.getInstance();
+    private static final Clock clock = Clock.getInstance();
+
     private Memory() {
+        System.out.println("Constructed Memory " + this);
     }
 
     public static Memory getInstance() {
         if (instance == null) {
             instance = new Memory();
         }
-
         return instance;
     }
 
