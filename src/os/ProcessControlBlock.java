@@ -3,6 +3,7 @@ package os;
 import os.queues.QueueId;
 import os.util.Logging;
 import os.util.ProcessExecutionBurst;
+import os.util.ProcessStatus;
 import vm.hardware.Clock;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package os;
+package os.util;
 
 public enum ProcessStatus {
     NEW,

@@ -1,7 +1,7 @@
 package os.queues;
 
 import os.ProcessControlBlock;
-import os.ProcessStatus;
+import os.util.ProcessStatus;
 
 public class MFQReadyQueue implements IReadyQueue {
     private static final int TOTAL_QUANTUMS = 5;

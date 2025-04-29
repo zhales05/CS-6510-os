@@ -3,6 +3,7 @@ package vm.hardware;
 import os.*;
 import os.queues.QueueId;
 import os.util.Logging;
+import os.util.ProcessStatus;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -23,7 +24,6 @@ public class Memory implements Logging {
     private static final Clock clock = Clock.getInstance();
 
     private Memory() {
-        System.out.println("Constructed Memory " + this);
     }
 
     public static Memory getInstance() {

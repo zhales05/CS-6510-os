@@ -1,7 +1,7 @@
 package os.queues;
 
 import os.ProcessControlBlock;
-import os.ProcessStatus;
+import os.util.ProcessStatus;
 import os.util.Logging;
 import vm.hardware.Clock;
 

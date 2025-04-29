@@ -28,7 +28,6 @@ public class Cpu implements Logging {
     public static final int END = 99;
 
     private Cpu() {
-        System.out.println("Constructing Cpu instance " + this);
     }
 
     public int getProgramCounter() {

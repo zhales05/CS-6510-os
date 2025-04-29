@@ -4,6 +4,7 @@ package os;
 import os.queues.*;
 import os.util.Logging;
 import os.util.MetricsTracker;
+import os.util.ProcessStatus;
 import os.util.SystemGanttChart;
 import util.Observer;
 import vm.hardware.Clock;
