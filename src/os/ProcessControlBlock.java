@@ -3,6 +3,7 @@ package os;
 import os.queues.QueueId;
 import os.util.Logging;
 import os.util.ProcessExecutionBurst;
+import os.util.ProcessStatus;
 import vm.hardware.Clock;
 
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ public class ProcessControlBlock implements Logging {
     private final String filePath;
     private final List<ProcessControlBlock> children = new ArrayList<>();
     private final int[] registers = new int[12];
+    private boolean shareDataAccess = false;
+
+    private PageTable pageTable;
+    private byte[] backingStore;
+    private int maxPages = Integer.MAX_VALUE;
+    private int pageFaults = 0;
 
     //process specific metrics
     private final List<ProcessExecutionBurst> timeLine = new ArrayList<>();
@@ -75,10 +82,10 @@ public class ProcessControlBlock implements Logging {
                 completionTime = clock.getTime();
                 evaluateMetrics();
                 printfTimeline();
+                log(Integer.toString(pageFaults));
                 break;
         }
     }
-
 
     public void addChild(ProcessControlBlock pcb) {
         log("Adding child " + pcb.getPid() + " to " + pid);
@@ -259,33 +266,16 @@ public class ProcessControlBlock implements Logging {
         return null;
     }
 
-
     public int getTurnAroundTime() {
         return turnAroundTime;
-    }
-
-    public void setTurnAroundTime(int turnAroundTime) {
-        this.turnAroundTime = turnAroundTime;
     }
 
     public int getWaitingTime() {
         return waitingTime;
     }
 
-    public void setWaitingTime(int waitingTime) {
-        this.waitingTime = waitingTime;
-    }
-
     public int getResponseTime() {
         return responseTime;
-    }
-
-    public void setResponseTime(int responseTime) {
-        this.responseTime = responseTime;
-    }
-
-    public int getProgramStart() {
-        return programStart;
     }
 
     public void setProgramStart(int programStart) {
@@ -312,10 +302,6 @@ public class ProcessControlBlock implements Logging {
 
     public void setProgramSize(int programSize) {
         this.programSize = programSize;
-    }
-
-    public int getPc() {
-        return registers[11];
     }
 
     public void setPc(int pc) {
@@ -346,11 +332,54 @@ public class ProcessControlBlock implements Logging {
         this.codeStart = codeStart;
     }
 
-    public int getArrivalTime() {
-        return arrivalTime;
-    }
 
     public List<ProcessExecutionBurst> getTimeLine() {
         return timeLine;
+    }
+
+    public boolean isShareDataAccess() {
+        return shareDataAccess;
+    }
+
+    public void setShareDataAccess(boolean shareDataAccess) {
+        this.shareDataAccess = shareDataAccess;
+    }
+
+    public PageTable getPageTable() {
+        return pageTable;
+    }
+
+    public void setPageTable(PageTable pageTable) {
+        this.pageTable = pageTable;
+    }
+
+    public void setBackingStore(byte[] programBytes) {
+        this.backingStore = programBytes;
+    }
+
+    public byte[] getBackingStorePage(int pageNumber) {
+        int pageSize = VirtualMemoryManager.getPageSize();
+        int offset   = 12 + pageNumber * pageSize;  // skip 12-byte header
+        int length   = Math.min(pageSize, programSize - pageNumber * pageSize);
+
+        byte[] page = new byte[length];
+        System.arraycopy(backingStore, offset, page, 0, length);
+        return page;
+    }
+
+    public int getMaxPages() {
+        return maxPages;
+    }
+
+    public void setMaxPages(int maxPages) {
+        this.maxPages = maxPages;
+    }
+
+    public int getPageFaults() {
+        return pageFaults;
+    }
+
+    public void incrementPageFault() {
+        pageFaults++;
     }
 }

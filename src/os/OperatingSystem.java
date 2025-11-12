@@ -4,7 +4,6 @@ import os.queues.FCFSReadyQueue;
 import os.queues.MFQReadyQueue;
 import os.queues.RRReadyQueue;
 import os.util.Logging;
-import os.util.VerboseModeLogger;
 import vm.hardware.Clock;
 import vm.hardware.Cpu;
 import vm.hardware.Memory;
@@ -14,8 +13,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The OperatingSystem class is a facade between the hardware and the os software
@@ -25,9 +24,13 @@ public class OperatingSystem implements Logging {
     private static final Memory memory = Memory.getInstance();
     private static final Cpu cpu = Cpu.getInstance();
     private static final Clock clock = Clock.getInstance();
-    //this will eventually be instantiated based on the input from the user
-    //this scheduler will eventually need to be able to update the scheduling algorithm
+
+    public AtomicInteger counter = new AtomicInteger(0);
+    public int[] sharedArray = new int[10];
+    private int in = 0;
+    private int out = 0;
     private final Scheduler scheduler = new Scheduler(this);
+
 
     public void startShell() {
         clock.addObserver(scheduler);
@@ -36,8 +39,6 @@ public class OperatingSystem implements Logging {
 
     //Making the express decision that the quantum values come after the scheduling algorithm
     void setSchedule(String[] inputs) {
-        //TODO: add error checking for inputs
-        //TODO: make enums/variables for the scheduling algorithms
         switch (inputs[1]) {
             case "fcfs":
                 scheduler.setReadyQueue(new FCFSReadyQueue());
@@ -52,6 +53,24 @@ public class OperatingSystem implements Logging {
                 logError("Unknown scheduling algorithm");
                 break;
         }
+    }
+
+    public void writeToSharedMemory(int value) {
+        counter.incrementAndGet();
+        sharedArray[getIn()] = value;
+        incrementIn();
+    }
+
+    public int readFromSharedMemory() {
+        counter.decrementAndGet();
+        int currOut = getOut();
+        incrementOut();
+        return sharedArray[currOut];
+    }
+
+    public void unlinkFromSharedMemory() {
+        counter.set(0);
+        sharedArray = new int[10];
     }
 
     void assembleFile(String filePath, String loaderAddress, boolean mac) {
@@ -81,9 +100,12 @@ public class OperatingSystem implements Logging {
 
     private byte[] readProgram(String filePath) {
         try {
-            return Files.readAllBytes(Paths.get(filePath));
+            byte[] original = Files.readAllBytes(Paths.get(filePath));
+            byte[] withEnd = Arrays.copyOf(original, original.length + 1);
+            withEnd[withEnd.length - 1] = (byte) Cpu.END;
+            return withEnd;
         } catch (IOException e) {
-            logError("Error reading file: " + ": " + e.getMessage());
+            logError("Error reading file: " + filePath + ": " + e.getMessage());
             return null;
         }
     }
@@ -99,8 +121,15 @@ public class OperatingSystem implements Logging {
             logError("Process doesn't exist");
             return null;
         }
+
+
         pcb = memory.load(program, pcb);
         return pcb;
+    }
+
+    void setPageSize(int pageSize) {
+        VirtualMemoryManager.setPageSize(pageSize);
+        FrameTable.getInstance().reinitialize();
     }
 
     public void runProcess(ProcessControlBlock pcb) {
@@ -110,30 +139,84 @@ public class OperatingSystem implements Logging {
         }
     }
 
-    boolean isVerboseMode(String[] inputs) {
-        return inputs[inputs.length - 1].equals("-v");
-    }
-
     void schedule(String[] inputs) {
         if (inputs.length < 3) {
             logError("Not enough inputs provided");
             return;
         }
         scheduler.clearCurrentProcesses();
+        List<ProcessControlBlock> toAdd = new ArrayList<>();
+        boolean sharedAccess = false;
         //grabbing filename and clock starting time
         for (int i = 1; i < inputs.length; i += 2) {
+            if (!inputs[i].isEmpty() && '|' == inputs[i].charAt(0)) {
+               log("Shared Memory");
+               sharedAccess = true;
+               break;
+            }
+
             if (i + 1 >= inputs.length) {
                 logError("Not enough inputs provided, you likely forgot to add the starting clock time");
                 return;
             }
 
             ProcessControlBlock pcb = new ProcessControlBlock(scheduler.getNewPid(), inputs[i], Integer.parseInt(inputs[i + 1]));
+            toAdd.add(pcb);
             scheduler.addToJobQueue(pcb);
         }
-        scheduler.processJobs();
+        // set shared access if needed
+        // can only be found retroactively based on the pipe so this is the best way.
+        if(sharedAccess) {
+            for(ProcessControlBlock pcb : toAdd) {
+                pcb.setShareDataAccess(sharedAccess);
+            }
+        }
+    }
+
+    void loadJobs(){
+        scheduler.loadJobs();
+    }
+
+    void moveToReadyAndRun(String[] inputs) {
+        scheduler.run(inputs);
+        run();
+    }
+
+    void moveToReadyAndRun() {
+        scheduler.processJobsForReadyQueue();
+    }
+
+    void run(){
+        scheduler.runThroughReadyQueue();
         scheduler.systemGanttChart();
     }
 
+    void ps(String[] inputs) {
+        if(inputs.length == 1) {
+            printProcesses(true, true);
+        }
+    }
+
+    private void printProcesses(boolean showProcesses, boolean showFreeFrames) {
+        if (showProcesses) {
+            System.out.println("Processes:");
+            for (ProcessControlBlock pcb : scheduler.getCurrentProcesses()) {
+                System.out.println("PID: " + pcb.getPid() +
+                        " | Status: " + pcb.getStatus() +
+                        " | Frames: " + pcb.getPageTable().getUsedFrames());
+            }
+        }
+
+        if (showFreeFrames) {
+            System.out.println("\nFree Frames:");
+            for (int i = 0; i < FrameTable.getInstance().getTotalFrames(); i++) {
+                if (FrameTable.getInstance().isFrameFree(i)) {
+                    System.out.print(i + " ");
+                }
+            }
+            System.out.println();
+        }
+    }
 
     void printHelp() {
         final String FILE_PATH = "files/Engineering Glossary List.txt";
@@ -151,7 +234,7 @@ public class OperatingSystem implements Logging {
 
     void coreDump(String[] inputs) {
         if (inputs.length == 1) {
-            System.out.println(memory.coreDump());
+            System.out.println(memory.fullCoreDump());
             return;
         }
 
@@ -160,18 +243,23 @@ public class OperatingSystem implements Logging {
 
     public void terminateProcess(ProcessControlBlock pcb) {
         scheduler.addToTerminatedQueue(pcb);
+        //memory.clear(pcb);
     }
 
-    void transitionProcess(ProcessControlBlock next) {
-        cpu.transition(next);
+    void transitionProcess() {
+        cpu.transition();
+    }
+
+    public List<ProcessControlBlock> getAllProcesses(){
+        return scheduler.getCurrentProcesses();
     }
 
     public void addToIOQueue(ProcessControlBlock pcb) {
         scheduler.addToIOQueue(pcb);
     }
 
-    public void stopProcess() {
-        cpu.stopProcess();
+    public void setPageNumber(int pageNumber) {
+        memory.setMaxPagesPerProgram(pageNumber);
     }
 
     public void testStuff() {
@@ -251,4 +339,19 @@ public class OperatingSystem implements Logging {
     }
 
 
+    public int getIn() {
+        return in;
+    }
+
+    public void incrementIn() {
+        this.in = (in + 1) % 10;
+    }
+
+    public int getOut() {
+        return out;
+    }
+
+    public void incrementOut() {
+        this.out = (out + 1) % 10;
+    }
 }

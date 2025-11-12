@@ -4,8 +4,8 @@ package os;
 import os.queues.*;
 import os.util.Logging;
 import os.util.MetricsTracker;
+import os.util.ProcessStatus;
 import os.util.SystemGanttChart;
-import os.util.SystemGanttChartGui;
 import util.Observer;
 import vm.hardware.Clock;
 
@@ -38,9 +38,8 @@ class Scheduler implements Logging, Observer {
     }
 
     public Scheduler(OperatingSystem parentOs) {
-        //this(parentOs, new RRReadyQueue(5));
-        //this(parentOs, new FCFSReadyQueue());
-        this(parentOs, new MFQReadyQueue(5, 10));
+        this(parentOs, new RRReadyQueue(5));
+        //this(parentOs, new MFQReadyQueue(5, 10));
     }
 
     public void addToJobQueue(ProcessControlBlock pcb) {
@@ -54,12 +53,6 @@ class Scheduler implements Logging, Observer {
         jobQueue.add(pcb);
     }
 
-    /**
-     * This method is responsible for adding a process to the IO queue
-     * this process will have been running every single time
-     *
-     * @param pcb the process to add to the IO queue
-     */
     public void addToIOQueue(ProcessControlBlock pcb) {
         ioQueue.add(pcb);
         transitionProcess();
@@ -99,14 +92,14 @@ class Scheduler implements Logging, Observer {
         return currentProcess;
     }
 
-    public void processJobs() {
+    public void processJobsForReadyQueue() {
         MetricsTracker metricsTracker = new MetricsTracker();
         metrics.add(metricsTracker);
 
         while (!jobQueue.isEmpty()) {
             ProcessControlBlock pcb = getJob();
             if (pcb.getStartAfter() <= clock.getTime()) {
-                pcb = parentOs.loadIntoMemory(pcb);
+                pcb = loadIntoMemory(pcb);
                 //checking if error with load
                 if (pcb == null) {
                     continue;
@@ -117,18 +110,38 @@ class Scheduler implements Logging, Observer {
             } else {
                 //put back in job queue
                 pushToBackOfJobQueue(pcb);
-                //ticking clock se we don't get stuck with a process that never starts
+                //ticking clock so we don't get stuck with a process that never starts
                 clock.tick();
             }
         }
-
-        runThroughReadyQueue();
-
         //print metrics here for now
-        metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
+       // metricsTracker.calculateMetrics(currentProcesses, readyQueue.getQuantum(), currentProcesses.getLast().getFilePath());
     }
 
-    private void runThroughReadyQueue() {
+    public void loadJobs(){
+        for (ProcessControlBlock pcb : jobQueue) {
+            loadIntoMemory(pcb);
+        }
+    }
+
+    public void run(String[] inputs) {
+        Set<String> inputSet = new HashSet<>(Arrays.asList(inputs));  // faster lookup
+        Iterator<ProcessControlBlock> iterator = jobQueue.iterator();
+
+        while (iterator.hasNext()) {
+            ProcessControlBlock pcb = iterator.next();
+            if (inputSet.contains(pcb.getFilePath())) {
+                addToReadyQueue(pcb);
+                iterator.remove();
+            }
+        }
+    }
+
+    public ProcessControlBlock loadIntoMemory(ProcessControlBlock pcb) {
+        return parentOs.loadIntoMemory(pcb);
+    }
+
+    public void runThroughReadyQueue() {
         while (!readyQueue.isEmpty() || !ioQueue.isEmpty()) {
             ProcessControlBlock pcb = getFromReadyQueue();
             if (pcb == null) {
@@ -177,28 +190,13 @@ class Scheduler implements Logging, Observer {
         }
     }
 
-    /**
-     * This method is responsible for transitioning the current process to the next process in the ready queue
-     * this is only used if the there is a current process running
-     */
     private void transitionProcess() {
         readyQueue.resetQuantumCounter();
         if (currentProcess != null) {
-            //setting the new current process
-            currentProcess = getFromReadyQueue();
-            //running the new current process
-            if (currentProcess != null) {
-                currentProcess.setStatus(ProcessStatus.RUNNING, QueueId.RUNNING_QUEUE);
-                parentOs.transitionProcess(currentProcess);
-            } else {
-                //nothing in ready queue, probably stuck in IO
-                parentOs.stopProcess();
-                currentProcess = null;
-                clock.tick();
-            }
+            parentOs.transitionProcess();
         }
-        //if current process == null then we're probably waiting on io and the clock ticked
     }
+
 
     public void setReadyQueue(IReadyQueue readyQueue) {
         log("Setting ready queue to " + readyQueue.getClass().getSimpleName());
@@ -211,7 +209,20 @@ class Scheduler implements Logging, Observer {
 
     public void systemGanttChart() {
         SystemGanttChart.makeChart(currentProcesses);
-        //SystemGanttChartGui.makeChart(currentProcesses);
+        System.out.println("Total Page Faults: " + totalPageFaults());
     }
+
+    private int totalPageFaults() {
+        int pageFaults = 0;
+        for (ProcessControlBlock pcb : currentProcesses) {
+            pageFaults += pcb.getPageFaults();
+        }
+        return pageFaults;
+    }
+
+    public List<ProcessControlBlock> getCurrentProcesses(){
+        return currentProcesses;
+    }
+
 
 }

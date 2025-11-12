@@ -1,7 +1,7 @@
 package os.queues;
 
 import os.ProcessControlBlock;
-import os.ProcessStatus;
+import os.util.ProcessStatus;
 
 import java.util.LinkedList;
 import java.util.Queue;

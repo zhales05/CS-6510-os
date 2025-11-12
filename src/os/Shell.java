@@ -43,10 +43,12 @@ public class Shell implements Logging {
                 inputs = previousCommand;
             }
 
-            if (os.isVerboseMode(inputs)) {
+            if (isVerboseMode(inputs)) {
                 VerboseModeLogger.getInstance().setVerboseMode(true);
                 //getting rid of the -v flag input - reminder in our program it can only be at the very end
                 inputs = Arrays.copyOf(inputs, inputs.length - 1);
+            } else {
+                VerboseModeLogger.getInstance().setVerboseMode(false);
             }
 
             switch (inputs[0]) {
@@ -54,6 +56,37 @@ public class Shell implements Logging {
                     log("Starting execute");
                     //add some error checks here for input
                     os.schedule(inputs);
+                    os.moveToReadyAndRun();
+                    os.run();
+                    break;
+                case "load":
+                    log("loading program");
+                    os.schedule(inputs);
+                    os.loadJobs();
+                    break;
+                case "setpagesize":
+                    log("setting page size");
+                    if (inputs.length < 2) {
+                        logError("Usage: setpagesize <size>");
+                        break;
+                    }
+                    os.setPageSize(Integer.parseInt(inputs[1]));
+                    break;
+                case "setpagenumber":
+                    log("setting page number");
+                    os.setPageNumber(Integer.parseInt(inputs[1]));
+                    break;
+                case "getpagesize":
+                    log("get page size");
+                    System.out.println(VirtualMemoryManager.getPageSize());
+                    break;
+                case "run":
+                    log("running program");
+                    String[] programInputs = Arrays.copyOfRange(inputs, 1, inputs.length);
+                    os.moveToReadyAndRun(programInputs);
+                    break;
+                case "ps":
+                    os.ps(inputs);
                     break;
                 case "myvm":
                     prompt = "MYVM-> ";
@@ -98,6 +131,10 @@ public class Shell implements Logging {
                 previousCommand = inputs;
             }
         }
+    }
+
+    boolean isVerboseMode(String[] inputs) {
+        return inputs[inputs.length - 1].equals("-v");
     }
 
 
